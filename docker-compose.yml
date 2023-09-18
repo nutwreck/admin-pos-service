@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  ### ===================
+  ### APP SERVICE
+  ### ===================
+  app:
+    container_name: admin-pos-service-go
+    build: .
+    env_file:
+      - .env
+    ports:
+      - 7778:7778
+    networks:
+      - digylabs-admin-pos-services
+  ### ========================
+  ### VOLUMES PERSISTENT DATA
+  ### ========================
+# volumes:
+#   pg-data:
+  ### ===================================
+  ### NETWORKS GROUP FOR ONE SAME SERVICE
+  ### ===================================
+networks:
+  digylabs-admin-pos-service:
