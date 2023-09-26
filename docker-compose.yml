@@ -3,7 +3,7 @@ services:
   ### ===================
   ### APP SERVICE
   ### ===================
-  app_pos:
+  app:
     container_name: admin-pos-service-go
     build: .
     env_file:
@@ -11,7 +11,7 @@ services:
     ports:
       - 7778:7778
     networks:
-      - digylabs-admin-pos-services
+      - digylabs-admin-pos-service
   ### ========================
   ### VOLUMES PERSISTENT DATA
   ### ========================
