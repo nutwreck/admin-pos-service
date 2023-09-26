@@ -18,7 +18,7 @@ func Sign(configs *schemes.JWtMetaRequest) (string, time.Time, error) {
 	claims["jwt"] = configs.Data
 	claims["exp"] = expiredAt.Unix()
 	claims["audience"] = configs.Options.Audience
-	claims["authorization"] = true
+	claims["authorization"] = constants.TRUE_VALUE
 
 	to := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	accessToken, err := to.SignedString([]byte(configs.SecretKey))
@@ -55,10 +55,10 @@ func GenerateRefreshTokenFromClaims(claims jwt.MapClaims, jwtSecretKey []byte) (
 	return tokenString, nil
 }
 
-func ConvertToken(tokenString string) (*schemes.SchemeJWTConvert, error) {
+func ConvertToken(tokenString string) (*schemes.JWTConvert, error) {
 	var (
 		jwtSecretKey = []byte(GodotEnv("JWT_SECRET_KEY"))
-		result       schemes.SchemeJWTConvert
+		result       schemes.JWTConvert
 	)
 
 	// Parse token
@@ -77,7 +77,7 @@ func ConvertToken(tokenString string) (*schemes.SchemeJWTConvert, error) {
 		//expiration := claims["exp"].(float64)
 		jwtData := claims["jwt"].(map[string]interface{})
 		email := jwtData["email"].(string)
-		id := jwtData["id"].(string)
+		id := jwtData["ucode"].(string)
 		role := jwtData["role"].(string)
 
 		// Format Unix timestamp to time.Time

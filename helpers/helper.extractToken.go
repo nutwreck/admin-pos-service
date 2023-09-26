@@ -7,9 +7,9 @@ import (
 )
 
 type AccessToken struct {
-	ID    string
-	Email string
-	Role  string
+	ID    string `json:"ucode"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
 }
 
 func ExtractToken(claimsToken *jwt.Token) AccessToken {

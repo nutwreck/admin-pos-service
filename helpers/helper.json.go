@@ -13,8 +13,8 @@ func Strigify(payload interface{}) []byte {
 	return response
 }
 
-func Parse(payload []byte) schemas.SchemeResponses {
-	var jsonResponse schemas.SchemeResponses
+func Parse(payload []byte) schemas.Responses {
+	var jsonResponse schemas.Responses
 	err := json.Unmarshal(payload, &jsonResponse)
 
 	if err != nil {

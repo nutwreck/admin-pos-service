@@ -1,5 +1,5 @@
 package schemes
 
-type SchemeCountData struct {
+type CountData struct {
 	CountData int64 `json:"count_data"`
 }

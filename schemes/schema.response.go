@@ -1,12 +1,12 @@
 package schemes
 
-type SchemeResponses struct {
+type Responses struct {
 	StatusCode int         `json:"code" example:"200"`
 	Message    string      `json:"message" example:"status OK"`
 	Data       interface{} `json:"data"`
 }
 
-type SchemeResponsesPagination struct {
+type ResponsesPagination struct {
 	StatusCode int         `json:"code" example:"200"`
 	Message    string      `json:"message" example:"status OK"`
 	Page       int         `json:"page" example:"1"`
@@ -16,42 +16,42 @@ type SchemeResponsesPagination struct {
 	Data       interface{} `json:"data"`
 }
 
-type SchemeResponses201Example struct {
+type Responses201Example struct {
 	StatusCode int         `json:"code" example:"201"`
 	Message    string      `json:"message" example:"Create Successfully"`
 	Data       interface{} `json:"data"`
 }
 
-type SchemeResponses400Example struct {
+type Responses400Example struct {
 	StatusCode int         `json:"code" example:"400"`
 	Message    string      `json:"message" example:"status bad request"`
 	Data       interface{} `json:"data"`
 }
 
-type SchemeResponses401Example struct {
+type Responses401Example struct {
 	StatusCode int    `json:"code" example:"401"`
 	Message    string `json:"message" example:"Authorization header is required"`
 }
 
-type SchemeResponses403Example struct {
+type Responses403Example struct {
 	StatusCode int         `json:"code" example:"403"`
 	Message    string      `json:"message" example:"status forbidden"`
 	Data       interface{} `json:"data"`
 }
 
-type SchemeResponses404Example struct {
+type Responses404Example struct {
 	StatusCode int         `json:"code" example:"404"`
 	Message    string      `json:"message" example:"status not found"`
 	Data       interface{} `json:"data"`
 }
 
-type SchemeResponses409Example struct {
+type Responses409Example struct {
 	StatusCode int         `json:"code" example:"409"`
 	Message    string      `json:"message" example:"status conflict data"`
 	Data       interface{} `json:"data"`
 }
 
-type SchemeResponses500Example struct {
+type Responses500Example struct {
 	StatusCode int         `json:"code" example:"500"`
 	Message    string      `json:"message" example:"status internal error"`
 	Data       interface{} `json:"data"`

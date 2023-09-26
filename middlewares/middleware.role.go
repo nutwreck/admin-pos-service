@@ -6,13 +6,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 
 	"github.com/nutwreck/admin-pos-service/constants"
 	"github.com/nutwreck/admin-pos-service/helpers"
 	"github.com/nutwreck/admin-pos-service/pkg"
+	"github.com/nutwreck/admin-pos-service/repositories"
+	"github.com/nutwreck/admin-pos-service/schemes"
 )
 
-func AuthRole(roles map[string]bool) gin.HandlerFunc {
+func AuthRole(db *gorm.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(func(ctx *gin.Context) {
 		bearer := ctx.GetHeader("Authorization")
 
@@ -37,9 +40,18 @@ func AuthRole(roles map[string]bool) gin.HandlerFunc {
 
 		accessToken := helpers.ExtractToken(decodeToken)
 
-		if !roles[accessToken.Role] {
-			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"code": "403", "message": "Role Access Not Allowed"})
+		//CEK ROLE
+		newUser := repositories.NewRepositoryUser(db)
+		var bodyRole schemes.Role
+		bodyRole.ID = accessToken.Role
+		_, error := newUser.EntityGetRole(&bodyRole)
+		if error.Type == "error_result_01" {
+			helpers.APIResponse(ctx, "Role account is not found", error.Code, nil)
+			return
 		}
+		// if !roles[accessToken.Role] {
+		// 	ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"code": "403", "message": "Role Access Not Allowed"})
+		// }
 
 		ctx.Next()
 	})

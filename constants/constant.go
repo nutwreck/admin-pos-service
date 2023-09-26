@@ -9,35 +9,15 @@ var (
 	EMPTY_NUMBER = 0
 )
 
-// ROLE USER
-type RoleUser struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+// ROLE TYPE
+/* Untuk membedakan role untuk internal (sys) dan external (user) */
+type RoleType struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
-var RoleUsers = []RoleUser{
-	{ID: "superadmin", Name: "SuperAdmin"},
-	{ID: "admin", Name: "Admin"},
-}
-
-// JENIS KELAMIN
-type JenisKelamin struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-var JenisKelamins = []JenisKelamin{
-	{ID: 1, Name: "laki-laki"},
-	{ID: 2, Name: "perempuan"},
-}
-
-// STATUS PERNIKAHAN
-type StatusPernikahan struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-var StatusPernikahans = []StatusPernikahan{
-	{ID: 1, Name: "belum menikah"},
-	{ID: 2, Name: "menikah"},
+var RoleTypes = []RoleType{
+	{ID: "sys", Name: "sys", Description: "Digunakan untuk mengelompokkan role yang digunakan internal sistem"},
+	{ID: "user", Name: "user", Description: "Digunakan untuk mengelompokkan role yang digunakan user"},
 }

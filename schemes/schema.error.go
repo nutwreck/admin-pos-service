@@ -5,19 +5,19 @@ type SchemeDatabaseError struct {
 	Code int
 }
 
-type SchemeErrorResponse struct {
+type ErrorResponse struct {
 	StatusCode int         `json:"code"`
 	Error      interface{} `json:"error"`
 }
 
-type SchemeUnathorizatedError struct {
+type UnathorizatedError struct {
 	Status  string `json:"status"`
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 
 // Struktur data untuk membaca JSON Error
-type SchemeReadMsgErrorValidator struct {
+type ReadMsgErrorValidator struct {
 	Results struct {
 		Errors []map[string]struct {
 			Message string `json:"message"`
@@ -29,7 +29,7 @@ type SchemeReadMsgErrorValidator struct {
 }
 
 // Struktur data untuk menyimpan hasil array list Error
-type SchemeResultMsgErrorValidator struct {
+type ResultMsgErrorValidator struct {
 	Message string `json:"message"`
 	Value   string `json:"value"`
 	Param   string `json:"param"`

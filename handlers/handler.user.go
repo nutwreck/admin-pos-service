@@ -11,6 +11,7 @@ import (
 	gpc "github.com/restuwahyu13/go-playground-converter"
 
 	"github.com/nutwreck/admin-pos-service/configs"
+	"github.com/nutwreck/admin-pos-service/constants"
 	"github.com/nutwreck/admin-pos-service/entities"
 	"github.com/nutwreck/admin-pos-service/helpers"
 	"github.com/nutwreck/admin-pos-service/pkg"
@@ -47,16 +48,16 @@ func (h *handlerUser) HandlerPing(ctx *gin.Context) {
 // @Tags		User
 // @Accept		json
 // @Produce		json
-// @Param		user body schemes.SchemeUserRequest true "Add User"
-// @Success 200 {object} schemes.SchemeResponses
-// @Failure 400 {object} schemes.SchemeResponses400Example
-// @Failure 403 {object} schemes.SchemeResponses403Example
-// @Failure 404 {object} schemes.SchemeResponses404Example
-// @Failure 409 {object} schemes.SchemeResponses409Example
-// @Failure 500 {object} schemes.SchemeResponses500Example
+// @Param		user body schemes.UserRequest true "Add User"
+// @Success 200 {object} schemes.Responses
+// @Failure 400 {object} schemes.Responses400Example
+// @Failure 403 {object} schemes.Responses403Example
+// @Failure 404 {object} schemes.Responses404Example
+// @Failure 409 {object} schemes.Responses409Example
+// @Failure 500 {object} schemes.Responses500Example
 // @Router /api/v1/auth/register [post]
 func (h *handlerUser) HandlerRegister(ctx *gin.Context) {
-	var body schemes.SchemeUser
+	var body schemes.User
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -98,16 +99,16 @@ func (h *handlerUser) HandlerRegister(ctx *gin.Context) {
 // @Tags		User
 // @Accept		json
 // @Produce		json
-// @Param		user body schemes.SchemeLoginUser true "Login User"
-// @Success 200 {object} schemes.SchemeResponses
-// @Failure 400 {object} schemes.SchemeResponses400Example
-// @Failure 403 {object} schemes.SchemeResponses403Example
-// @Failure 404 {object} schemes.SchemeResponses404Example
-// @Failure 409 {object} schemes.SchemeResponses409Example
-// @Failure 500 {object} schemes.SchemeResponses500Example
+// @Param		user body schemes.LoginUser true "Login User"
+// @Success 200 {object} schemes.Responses
+// @Failure 400 {object} schemes.Responses400Example
+// @Failure 403 {object} schemes.Responses403Example
+// @Failure 404 {object} schemes.Responses404Example
+// @Failure 409 {object} schemes.Responses409Example
+// @Failure 500 {object} schemes.Responses500Example
 // @Router /api/v1/auth/login [post]
 func (h *handlerUser) HandlerLogin(ctx *gin.Context) {
-	var body schemes.SchemeUser
+	var body schemes.User
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -129,13 +130,18 @@ func (h *handlerUser) HandlerLogin(ctx *gin.Context) {
 		return
 	}
 
+	if !*res.Active {
+		helpers.APIResponse(ctx, "User account is disabled", http.StatusForbidden, nil)
+		return
+	}
+
 	if error.Type == "error_login_02" {
 		helpers.APIResponse(ctx, "Email or Password is wrong", error.Code, nil)
 		return
 	}
 
 	accessToken, expiredAt, errorJwt := pkg.Sign(&schemes.JWtMetaRequest{
-		Data:      gin.H{"id": res.ID, "email": res.Email, "role": res.Role},
+		Data:      gin.H{"ucode": res.ID, "email": res.Email, "role": res.RoleID},
 		SecretKey: pkg.GodotEnv("JWT_SECRET_KEY"),
 		Options:   schemes.JwtMetaOptions{Audience: pkg.GodotEnv("JWT_AUD"), ExpiredAt: configs.DayExpiredJWT},
 	})
@@ -154,12 +160,12 @@ func (h *handlerUser) HandlerLogin(ctx *gin.Context) {
 // @Tags		User
 // @Accept		json
 // @Produce		json
-// @Success 200 {object} schemes.SchemeResponses
-// @Failure 400 {object} schemes.SchemeResponses400Example
-// @Failure 403 {object} schemes.SchemeResponses403Example
-// @Failure 404 {object} schemes.SchemeResponses404Example
-// @Failure 409 {object} schemes.SchemeResponses409Example
-// @Failure 500 {object} schemes.SchemeResponses500Example
+// @Success 200 {object} schemes.Responses
+// @Failure 400 {object} schemes.Responses400Example
+// @Failure 403 {object} schemes.Responses403Example
+// @Failure 404 {object} schemes.Responses404Example
+// @Failure 409 {object} schemes.Responses409Example
+// @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
 // @Router /api/v1/auth/refresh-token [get]
 func (h *handlerUser) HandlerRefreshToken(ctx *gin.Context) {
@@ -206,21 +212,21 @@ func (h *handlerUser) HandlerRefreshToken(ctx *gin.Context) {
 // @Tags		User
 // @Accept		json
 // @Produce		json
-// @Param		User body schemes.SchemeUpdateUserExample true "Update User"
-// @Success 200 {object} schemes.SchemeResponses
-// @Failure 400 {object} schemes.SchemeResponses400Example
-// @Failure 401 {object} schemes.SchemeResponses401Example
-// @Failure 403 {object} schemes.SchemeResponses403Example
-// @Failure 404 {object} schemes.SchemeResponses404Example
-// @Failure 409 {object} schemes.SchemeResponses409Example
-// @Failure 500 {object} schemes.SchemeResponses500Example
+// @Param		User body schemes.UpdateUserExample true "Update User"
+// @Success 200 {object} schemes.Responses
+// @Failure 400 {object} schemes.Responses400Example
+// @Failure 401 {object} schemes.Responses401Example
+// @Failure 403 {object} schemes.Responses403Example
+// @Failure 404 {object} schemes.Responses404Example
+// @Failure 409 {object} schemes.Responses409Example
+// @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
 // @Router /api/v1/auth/update [put]
 func (h *handlerUser) HandlerUpdate(ctx *gin.Context) {
 	var (
-		body      schemes.SchemeUpdateUser
-		bodyUser  schemes.SchemeUser
-		result    schemes.SchemeUser
+		body      schemes.UpdateUser
+		bodyUser  schemes.User
+		result    schemes.User
 		activeGet = false
 		id        string
 	)
@@ -237,7 +243,7 @@ func (h *handlerUser) HandlerUpdate(ctx *gin.Context) {
 	//Validasi User
 	bodyUser.ID = convertToken.ID
 	resGetUser, error := h.user.EntityGetUser(&bodyUser)
-	if error.Type == "error_login_01" {
+	if error.Type == "error_result_01" {
 		helpers.APIResponse(ctx, "User account is not never registered", error.Code, nil)
 		return
 	}
@@ -245,15 +251,14 @@ func (h *handlerUser) HandlerUpdate(ctx *gin.Context) {
 
 	//Get Body
 	body.ID = id
-	body.FirstName = ctx.PostForm("first_name")
-	body.LastName = ctx.PostForm("last_name")
+	body.Name = ctx.PostForm("name")
 	body.OldPassword = ctx.PostForm("old_password")
 	body.NewPassword = ctx.PostForm("new_password")
 	body.DataPassword = resGetUser.Password
-	body.Role = ctx.PostForm("role")
+	body.RoleID = ctx.PostForm("role_id")
 	activeStr := ctx.PostForm("active")
 	if activeStr == "true" {
-		activeGet = true
+		activeGet = constants.TRUE_VALUE
 	}
 	body.Active = &activeGet
 
@@ -289,10 +294,9 @@ func (h *handlerUser) HandlerUpdate(ctx *gin.Context) {
 
 	result.Active = activeGet
 	result.Email = resGetUser.Email
-	result.FirstName = resultUpdate.FirstName
-	result.LastName = resultUpdate.LastName
+	result.Name = resultUpdate.Name
 	result.ID = resGetUser.ID
-	result.Role = resultUpdate.Role
+	result.RoleID = resultUpdate.RoleID
 
 	helpers.APIResponse(ctx, fmt.Sprintf("Update User data success for this id %s", id), http.StatusCreated, result)
 }
@@ -308,19 +312,20 @@ func (h *handlerUser) HandlerUpdate(ctx *gin.Context) {
 // @Tags		User
 // @Accept		json
 // @Produce		json
-// @Success 200 {object} schemes.SchemeResponses
-// @Failure 400 {object} schemes.SchemeResponses400Example
-// @Failure 401 {object} schemes.SchemeResponses401Example
-// @Failure 403 {object} schemes.SchemeResponses403Example
-// @Failure 404 {object} schemes.SchemeResponses404Example
-// @Failure 409 {object} schemes.SchemeResponses409Example
-// @Failure 500 {object} schemes.SchemeResponses500Example
+// @Success 200 {object} schemes.Responses
+// @Failure 400 {object} schemes.Responses400Example
+// @Failure 401 {object} schemes.Responses401Example
+// @Failure 403 {object} schemes.Responses403Example
+// @Failure 404 {object} schemes.Responses404Example
+// @Failure 409 {object} schemes.Responses409Example
+// @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
 // @Router /api/v1/auth/data-user [get]
 func (h *handlerUser) HandleDataUser(ctx *gin.Context) {
 	var (
-		bodyUser schemes.SchemeUser
-		result   schemes.SchemeUser
+		bodyUser schemes.User
+		bodyRole schemes.Role
+		result   schemes.GetUser
 	)
 
 	bearer := ctx.GetHeader("Authorization")
@@ -332,20 +337,35 @@ func (h *handlerUser) HandleDataUser(ctx *gin.Context) {
 		return
 	}
 
-	//Validasi User
+	//Get User
 	bodyUser.ID = convertToken.ID
 	resGetUser, error := h.user.EntityGetUser(&bodyUser)
-	if error.Type == "error_login_01" {
+	if error.Type == "error_result_01" {
 		helpers.APIResponse(ctx, "User account is not never registered", error.Code, nil)
+		return
+	}
+
+	// Get Role
+	bodyRole.ID = resGetUser.RoleID
+	resGetRole, error := h.user.EntityGetRole(&bodyRole)
+	if error.Type == "error_result_01" {
+		helpers.APIResponse(ctx, "Role account in not found", error.Code, nil)
+		return
+	}
+	if !*resGetRole.Active {
+		helpers.APIResponse(ctx, "Role account is disabled", http.StatusForbidden, nil)
 		return
 	}
 
 	result.Active = *resGetUser.Active
 	result.Email = resGetUser.Email
-	result.FirstName = resGetUser.FirstName
-	result.LastName = resGetUser.LastName
+	result.Name = resGetUser.Name
 	result.ID = resGetUser.ID
-	result.Role = resGetUser.Role
+	result.Role = schemes.GetRole{
+		ID:   resGetRole.ID,
+		Name: resGetRole.Name,
+		Type: resGetRole.Type,
+	}
 
 	helpers.APIResponse(ctx, "User data already to use", http.StatusOK, result)
 }
@@ -356,7 +376,7 @@ func (h *handlerUser) HandleDataUser(ctx *gin.Context) {
 *=======================================
  */
 
-func ValidatorUser(ctx *gin.Context, input schemes.SchemeUser, Type string) (interface{}, int) {
+func ValidatorUser(ctx *gin.Context, input schemes.User, Type string) (interface{}, int) {
 	var schema gpc.ErrorConfig
 
 	if Type == "register" {
@@ -364,23 +384,13 @@ func ValidatorUser(ctx *gin.Context, input schemes.SchemeUser, Type string) (int
 			Options: []gpc.ErrorMetaConfig{
 				{
 					Tag:     "required",
-					Field:   "FirstName",
-					Message: "FirstName is required on body",
+					Field:   "Name",
+					Message: "Name is required on body",
 				},
 				{
 					Tag:     "lowercase",
-					Field:   "FirstName",
-					Message: "FirstName must be lowercase",
-				},
-				{
-					Tag:     "required",
-					Field:   "LastName",
-					Message: "LastName is required on body",
-				},
-				{
-					Tag:     "lowercase",
-					Field:   "LastName",
-					Message: "LastName must be lowercase",
+					Field:   "Name",
+					Message: "Name must be lowercase",
 				},
 				{
 					Tag:     "required",
@@ -404,13 +414,13 @@ func ValidatorUser(ctx *gin.Context, input schemes.SchemeUser, Type string) (int
 				},
 				{
 					Tag:     "required",
-					Field:   "Role",
-					Message: "Role is required on body",
+					Field:   "RoleID",
+					Message: "Role ID is required on body",
 				},
 				{
-					Tag:     "lowercase",
-					Field:   "Role",
-					Message: "Role must be lowercase",
+					Tag:     "uuid",
+					Field:   "RoleID",
+					Message: "Role ID must be uuid",
 				},
 			},
 		}
@@ -438,78 +448,22 @@ func ValidatorUser(ctx *gin.Context, input schemes.SchemeUser, Type string) (int
 		}
 	}
 
-	if Type == "update" {
-		schema = gpc.ErrorConfig{
-			Options: []gpc.ErrorMetaConfig{
-				{
-					Tag:     "required",
-					Field:   "FirstName",
-					Message: "FirstName is required on body",
-				},
-				{
-					Tag:     "lowercase",
-					Field:   "FirstName",
-					Message: "FirstName must be lowercase",
-				},
-				{
-					Tag:     "required",
-					Field:   "LastName",
-					Message: "LastName is required on body",
-				},
-				{
-					Tag:     "lowercase",
-					Field:   "LastName",
-					Message: "LastName must be lowercase",
-				},
-				{
-					Tag:     "gte",
-					Field:   "OldPassword",
-					Message: "Old Password must be greater than equal 8 character",
-				},
-				{
-					Tag:     "gte",
-					Field:   "NewPassword",
-					Message: "New Password must be greater than equal 8 character",
-				},
-				{
-					Tag:     "required",
-					Field:   "Role",
-					Message: "Role is required on body",
-				},
-				{
-					Tag:     "lowercase",
-					Field:   "Role",
-					Message: "Role must be lowercase",
-				},
-			},
-		}
-	}
-
 	err, code := pkg.GoValidator(&input, schema.Options)
 	return err, code
 }
-func ValidatorUpdateUser(ctx *gin.Context, input schemes.SchemeUpdateUser) (interface{}, int) {
+
+func ValidatorUpdateUser(ctx *gin.Context, input schemes.UpdateUser) (interface{}, int) {
 	schema := gpc.ErrorConfig{
 		Options: []gpc.ErrorMetaConfig{
 			{
 				Tag:     "required",
-				Field:   "FirstName",
-				Message: "FirstName is required on body",
+				Field:   "Name",
+				Message: "Name is required on body",
 			},
 			{
 				Tag:     "lowercase",
-				Field:   "FirstName",
-				Message: "FirstName must be lowercase",
-			},
-			{
-				Tag:     "required",
-				Field:   "LastName",
-				Message: "LastName is required on body",
-			},
-			{
-				Tag:     "lowercase",
-				Field:   "LastName",
-				Message: "LastName must be lowercase",
+				Field:   "Name",
+				Message: "Name must be lowercase",
 			},
 			{
 				Tag:     "gte",
@@ -523,13 +477,13 @@ func ValidatorUpdateUser(ctx *gin.Context, input schemes.SchemeUpdateUser) (inte
 			},
 			{
 				Tag:     "required",
-				Field:   "Role",
-				Message: "Role is required on body",
+				Field:   "RoleID",
+				Message: "Role ID is required on body",
 			},
 			{
-				Tag:     "lowercase",
-				Field:   "Role",
-				Message: "Role must be lowercase",
+				Tag:     "uuid",
+				Field:   "RoleID",
+				Message: "Role ID must be uuid",
 			},
 		},
 	}

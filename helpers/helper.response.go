@@ -11,7 +11,7 @@ import (
 
 func APIResponse(ctx *gin.Context, Message string, StatusCode int, Data interface{}) {
 
-	jsonResponse := schemes.SchemeResponses{
+	jsonResponse := schemes.Responses{
 		StatusCode: StatusCode,
 		Message:    Message,
 		Data:       Data,
@@ -25,7 +25,7 @@ func APIResponse(ctx *gin.Context, Message string, StatusCode int, Data interfac
 }
 
 func APIResponsePagination(ctx *gin.Context, Message string, StatusCode int, Data interface{}, Page int, PerPage int, TotalPage int, TotalData int) {
-	jsonResponse := schemes.SchemeResponsesPagination{
+	jsonResponse := schemes.ResponsesPagination{
 		StatusCode: StatusCode,
 		Message:    Message,
 		Page:       Page,
@@ -44,8 +44,8 @@ func APIResponsePagination(ctx *gin.Context, Message string, StatusCode int, Dat
 
 func ErrorResponse(ctx *gin.Context, Error interface{}) {
 	var (
-		data              schemes.SchemeReadMsgErrorValidator
-		errorsWithoutKeys []schemes.SchemeResultMsgErrorValidator
+		data              schemes.ReadMsgErrorValidator
+		errorsWithoutKeys []schemes.ResultMsgErrorValidator
 	)
 
 	if err := json.Unmarshal([]byte(Strigify(Error)), &data); err != nil {
@@ -59,7 +59,7 @@ func ErrorResponse(ctx *gin.Context, Error interface{}) {
 		}
 	}
 
-	err := schemes.SchemeErrorResponse{
+	err := schemes.ErrorResponse{
 		StatusCode: http.StatusBadRequest,
 		Error:      errorsWithoutKeys,
 	}
