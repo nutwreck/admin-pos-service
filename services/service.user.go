@@ -14,20 +14,19 @@ func NewServiceUser(user entities.EntityUser) *serviceUser {
 	return &serviceUser{user: user}
 }
 
-func (s *serviceUser) EntityRegister(input *schemes.SchemeUser) (*models.ModelUser, schemes.SchemeDatabaseError) {
-	var schema schemes.SchemeUser
-	schema.FirstName = input.FirstName
-	schema.LastName = input.LastName
+func (s *serviceUser) EntityRegister(input *schemes.User) (*models.User, schemes.SchemeDatabaseError) {
+	var schema schemes.User
+	schema.Name = input.Name
 	schema.Email = input.Email
 	schema.Password = input.Password
-	schema.Role = input.Role
+	schema.RoleID = input.RoleID
 
 	res, err := s.user.EntityRegister(&schema)
 	return res, err
 }
 
-func (s *serviceUser) EntityLogin(input *schemes.SchemeUser) (*models.ModelUser, schemes.SchemeDatabaseError) {
-	var schema schemes.SchemeUser
+func (s *serviceUser) EntityLogin(input *schemes.User) (*models.User, schemes.SchemeDatabaseError) {
+	var schema schemes.User
 	schema.Email = input.Email
 	schema.Password = input.Password
 
@@ -35,8 +34,8 @@ func (s *serviceUser) EntityLogin(input *schemes.SchemeUser) (*models.ModelUser,
 	return res, err
 }
 
-func (s *serviceUser) EntityGetUser(input *schemes.SchemeUser) (*models.ModelUser, schemes.SchemeDatabaseError) {
-	var schema schemes.SchemeUser
+func (s *serviceUser) EntityGetUser(input *schemes.User) (*models.User, schemes.SchemeDatabaseError) {
+	var schema schemes.User
 	schema.ID = input.ID
 	schema.Email = input.Email
 
@@ -44,15 +43,22 @@ func (s *serviceUser) EntityGetUser(input *schemes.SchemeUser) (*models.ModelUse
 	return res, err
 }
 
-func (s *serviceUser) EntityUpdate(input *schemes.SchemeUpdateUser) (*models.ModelUser, schemes.SchemeDatabaseError) {
-	var schema schemes.SchemeUpdateUser
+func (s *serviceUser) EntityGetRole(input *schemes.Role) (*models.Role, schemes.SchemeDatabaseError) {
+	var schema schemes.Role
+	schema.ID = input.ID
+
+	res, err := s.user.EntityGetRole(&schema)
+	return res, err
+}
+
+func (s *serviceUser) EntityUpdate(input *schemes.UpdateUser) (*models.User, schemes.SchemeDatabaseError) {
+	var schema schemes.UpdateUser
 	schema.Active = input.Active
-	schema.FirstName = input.FirstName
-	schema.LastName = input.LastName
+	schema.Name = input.Name
 	schema.OldPassword = input.OldPassword
 	schema.NewPassword = input.NewPassword
 	schema.DataPassword = input.DataPassword
-	schema.Role = input.Role
+	schema.RoleID = input.RoleID
 	schema.ID = input.ID
 
 	res, err := s.user.EntityUpdate(&schema)

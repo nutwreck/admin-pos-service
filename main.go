@@ -9,6 +9,9 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
+	"github.com/nutwreck/admin-pos-service/constants"
+	"github.com/nutwreck/admin-pos-service/database/schemas"
+	"github.com/nutwreck/admin-pos-service/database/seeder"
 	"github.com/nutwreck/admin-pos-service/models"
 	"github.com/nutwreck/admin-pos-service/pkg"
 	"github.com/nutwreck/admin-pos-service/routes"
@@ -21,8 +24,6 @@ import (
 //	@title			Admin POS API
 //	@version		1.0
 //	@description	Dokumentasi untuk Service API Admin POS
-
-//  @Schemes http https
 
 //	@securityDefinitions.basic	BasicAuth
 
@@ -48,8 +49,9 @@ func main() {
 	* ========================
 	 */
 
-	routes.NewRouteUser(db, app)
 	routes.NewRouteConstant(app)
+	routes.NewRouteUser(db, app)
+	routes.NewRouteMaster(db, app)
 
 	/**
 	* ========================
@@ -88,10 +90,22 @@ func setupDatabase() *gorm.DB {
 		return nil
 	}
 
-	//  Initialize all model for auto migration here
+	// Create schemas
+	schemas.CreateMasterSchema(db)
+
+	// Migrate table
 	err = db.AutoMigrate(
-		&models.ModelUser{},
+		&models.User{},
+		&models.Menu{},
+		&models.Role{},
+		&models.MenuDetail{},
+		// &models.MasterMenuDetailFunction{},
+		// &models.MappingRoleMenu{},
+		// &models.MappingRoleMenuUser{},
 	)
+
+	// Seeder data
+	seeder.SeedRoles(db)
 
 	if err != nil {
 		defer logrus.Info("Database migration failed")
@@ -122,7 +136,7 @@ func setupApp() *gin.Engine {
 	app.Use(helmet.Default())
 	app.Use(gzip.Gzip(gzip.BestCompression))
 	app.Use(cors.New(cors.Config{
-		AllowAllOrigins: true,
+		AllowAllOrigins: constants.TRUE_VALUE,
 		AllowMethods:    []string{"GET", "POST", "DELETE", "PATCH", "PUT", "OPTIONS"},
 		AllowHeaders:    []string{"Content-Type", "Authorization", "Accept-Encoding"},
 	}))

@@ -6,13 +6,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 
 	"github.com/nutwreck/admin-pos-service/constants"
 	"github.com/nutwreck/admin-pos-service/helpers"
 	"github.com/nutwreck/admin-pos-service/pkg"
+	"github.com/nutwreck/admin-pos-service/repositories"
+	"github.com/nutwreck/admin-pos-service/schemes"
 )
 
-func AuthToken() gin.HandlerFunc {
+func AuthToken(db *gorm.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(func(ctx *gin.Context) {
 		bearer := ctx.GetHeader("Authorization")
 
@@ -36,6 +39,17 @@ func AuthToken() gin.HandlerFunc {
 		}
 
 		accessToken := helpers.ExtractToken(decodeToken)
+
+		//CEK USER STATUS
+		newUser := repositories.NewRepositoryUser(db)
+		var bodyUser schemes.User
+		bodyUser.ID = accessToken.ID
+		_, error := newUser.EntityGetUser(&bodyUser)
+		if error.Type == "error_result_01" {
+			helpers.APIResponse(ctx, "User account is not never registered or active", error.Code, nil)
+			return
+		}
+
 		ctx.Set("user", accessToken)
 		ctx.Next()
 	})

@@ -25,13 +25,12 @@ func NewRepositoryUser(db *gorm.DB) *repositoryUser {
 *===========================================
  */
 
-func (r *repositoryUser) EntityRegister(input *schemes.SchemeUser) (*models.ModelUser, schemes.SchemeDatabaseError) {
-	var user models.ModelUser
-	user.FirstName = input.FirstName
-	user.LastName = input.LastName
+func (r *repositoryUser) EntityRegister(input *schemes.User) (*models.User, schemes.SchemeDatabaseError) {
+	var user models.User
+	user.Name = input.Name
 	user.Email = input.Email
 	user.Password = input.Password
-	user.Role = input.Role
+	user.RoleID = input.RoleID
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
@@ -67,8 +66,8 @@ func (r *repositoryUser) EntityRegister(input *schemes.SchemeUser) (*models.Mode
 *===========================================
  */
 
-func (r *repositoryUser) EntityLogin(input *schemes.SchemeUser) (*models.ModelUser, schemes.SchemeDatabaseError) {
-	var user models.ModelUser
+func (r *repositoryUser) EntityLogin(input *schemes.User) (*models.User, schemes.SchemeDatabaseError) {
+	var user models.User
 	user.Email = input.Email
 	user.Password = input.Password
 
@@ -106,20 +105,20 @@ func (r *repositoryUser) EntityLogin(input *schemes.SchemeUser) (*models.ModelUs
 *===========================================
  */
 
-func (r *repositoryUser) EntityGetUser(input *schemes.SchemeUser) (*models.ModelUser, schemes.SchemeDatabaseError) {
-	var user models.ModelUser
+func (r *repositoryUser) EntityGetUser(input *schemes.User) (*models.User, schemes.SchemeDatabaseError) {
+	var user models.User
 	user.ID = input.ID
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
 	db := r.db.Model(&user)
 
-	checkExist := db.Debug().First(&user, "id = ?", input.ID)
+	checkExist := db.Debug().Where("id = ? AND active = ?", input.ID, true).First(&user)
 
 	if checkExist.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusNotFound,
-			Type: "error_login_01",
+			Type: "error_result_01",
 		}
 		return &user, <-err
 	}
@@ -134,9 +133,9 @@ func (r *repositoryUser) EntityGetUser(input *schemes.SchemeUser) (*models.Model
 *==================================================
  */
 
-func (r *repositoryUser) EntityUpdate(input *schemes.SchemeUpdateUser) (*models.ModelUser, schemes.SchemeDatabaseError) {
+func (r *repositoryUser) EntityUpdate(input *schemes.UpdateUser) (*models.User, schemes.SchemeDatabaseError) {
 	var (
-		user           models.ModelUser
+		user           models.User
 		oldPassword    string
 		newPassword    string
 		changePassword string
@@ -176,9 +175,8 @@ func (r *repositoryUser) EntityUpdate(input *schemes.SchemeUpdateUser) (*models.
 
 	db := r.db.Model(&user)
 
-	user.FirstName = input.FirstName
-	user.LastName = input.LastName
-	user.Role = input.Role
+	user.Name = input.Name
+	user.RoleID = input.RoleID
 	user.Active = input.Active
 	if changePassword != constants.EMPTY_VALUE {
 		user.Password = changePassword
@@ -205,4 +203,31 @@ func (r *repositoryUser) EntityUpdate(input *schemes.SchemeUpdateUser) (*models.
 
 	err <- schemes.SchemeDatabaseError{}
 	return &user, <-err
+}
+
+/**
+* =================================================
+* Repository Result Master Role By ID Teritory
+*==================================================
+ */
+func (r *repositoryUser) EntityGetRole(input *schemes.Role) (*models.Role, schemes.SchemeDatabaseError) {
+	var role models.Role
+	role.ID = input.ID
+
+	err := make(chan schemes.SchemeDatabaseError, 1)
+
+	db := r.db.Model(&role)
+
+	getData := db.Debug().Where("id = ? AND active = ?", input.ID, true).First(&role)
+
+	if getData.RowsAffected < 1 {
+		err <- schemes.SchemeDatabaseError{
+			Code: http.StatusNotFound,
+			Type: "error_result_01",
+		}
+		return &role, <-err
+	}
+
+	err <- schemes.SchemeDatabaseError{}
+	return &role, <-err
 }

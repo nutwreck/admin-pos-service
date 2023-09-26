@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	"github.com/nutwreck/admin-pos-service/configs"
 	"github.com/nutwreck/admin-pos-service/handlers"
 	"github.com/nutwreck/admin-pos-service/middlewares"
 	"github.com/nutwreck/admin-pos-service/repositories"
@@ -20,8 +19,8 @@ func NewRouteUser(db *gorm.DB, router *gin.Engine) {
 	route := router.Group(routeUser)
 
 	routePrivate := router.Group(routeUser)
-	routePrivate.Use(middlewares.AuthToken())
-	routePrivate.Use(middlewares.AuthRole(configs.RoleConfig))
+	routePrivate.Use(middlewares.AuthToken(db))
+	routePrivate.Use(middlewares.AuthRole(db))
 
 	route.GET("/ping", handlerUser.HandlerPing)
 	route.POST("/register", handlerUser.HandlerRegister)

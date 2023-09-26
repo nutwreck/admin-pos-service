@@ -10,19 +10,23 @@ import (
 	"github.com/nutwreck/admin-pos-service/pkg"
 )
 
-type ModelUser struct {
+type User struct {
 	ID        string    `json:"id" gorm:"primary_key"`
-	FirstName string    `json:"first_name" gorm:"type:varchar;  not null"`
-	LastName  string    `json:"last_name" gorm:"type:varchar; not null"`
+	Name      string    `json:"name" gorm:"type:varchar;  not null"`
 	Email     string    `json:"email" gorm:"type:varchar; unique; not null"`
 	Password  string    `json:"password" gorm:"type:varchar; not null"`
-	Role      string    `json:"role" gorm:"type:varchar; not null"`
+	Role      Role      `json:"role" gorm:"foreignkey:RoleID"`
+	RoleID    string    `json:"role_id" gorm:"type:varchar; not null"`
 	Active    *bool     `json:"active" gorm:"type:boolean; not null"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (m *ModelUser) BeforeCreate(db *gorm.DB) error {
+func (User) TableName() string {
+	return "master.users"
+}
+
+func (m *User) BeforeCreate(db *gorm.DB) error {
 	m.ID = uuid.NewString()
 	m.Password = pkg.HashPassword(m.Password)
 	m.Active = &constants.TRUE_VALUE
@@ -30,7 +34,7 @@ func (m *ModelUser) BeforeCreate(db *gorm.DB) error {
 	return nil
 }
 
-func (m *ModelUser) BeforeUpdate(db *gorm.DB) error {
+func (m *User) BeforeUpdate(db *gorm.DB) error {
 	m.Password = pkg.HashPassword(m.Password)
 	m.UpdatedAt = time.Now()
 	return nil
