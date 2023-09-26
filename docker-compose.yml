@@ -3,7 +3,7 @@ services:
   ### ===================
   ### APP SERVICE
   ### ===================
-  app:
+  app_pos:
     container_name: admin-pos-service-go
     build: .
     env_file:
