@@ -9,7 +9,7 @@ services:
     env_file:
       - .env
     ports:
-      - 7778:7778
+      - 8881:8881
     networks:
       - digylabs-admin-pos-service
   ### ========================

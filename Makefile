@@ -8,7 +8,7 @@ goinstall:
 	${GO} get -u .
 
 gorun:
-	${GIN} -a 4000 -p 7778 -b bin/main run main.go
+	${GIN} -a 4000 -p 8881 -b bin/main run main.go
 
 gobuild:
 	${GO} build -o main .
