@@ -5,7 +5,7 @@
 FROM golang:latest as builder
 MAINTAINER DigyLabs Production <work.digy@gmail.com>
 USER ${USER}
-WORKDIR /app_pos
+WORKDIR /app
 ENV GO111MODULE="on"
 COPY go.mod \
   go.sum ./
@@ -17,11 +17,11 @@ COPY . ./
 # ======================
 
 FROM builder
-WORKDIR /app_pos
+WORKDIR /app
 RUN apt-get update \
   && apt-get install -y \
   make
-COPY --from=builder . ./app_pos
+COPY --from=builder . ./app
 RUN make gobuild
 EXPOSE 7778
 CMD ["./main"]
