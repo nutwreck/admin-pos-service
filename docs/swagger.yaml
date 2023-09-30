@@ -13,6 +13,33 @@ definitions:
     - email
     - password
     type: object
+  schemes.MenuDetailFunctionRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      link:
+        example: /add
+        type: string
+      menu_detail_id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        format: uuid
+        type: string
+      menu_id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        format: uuid
+        type: string
+      name:
+        description: Input with Lowercase
+        example: add produk
+        maxLength: 200
+        type: string
+    required:
+    - link
+    - menu_detail_id
+    - menu_id
+    - name
+    type: object
   schemes.MenuRequest:
     properties:
       active:
@@ -455,6 +482,225 @@ paths:
       summary: Get List Type Role
       tags:
       - Constant
+  /api/v1/master/menu-detail-function/create:
+    post:
+      consumes:
+      - application/json
+      description: Create Master Menu Detail Function
+      parameters:
+      - description: Create Master Menu Detail Function
+        in: body
+        name: menu
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.MenuDetailFunctionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Master Menu Detail Function
+      tags:
+      - Master Menu Detail Function
+  /api/v1/master/menu-detail-function/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete Master Menu Detail Function
+      parameters:
+      - description: Delete Master Menu Detail Function
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete Master Menu Detail Function
+      tags:
+      - Master Menu Detail Function
+  /api/v1/master/menu-detail-function/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List Master Menu Detail Function
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : menudetailfunction.id,
+          menudetailfunction.name, menu.id, menu.name, menudetail.id, menudetail.name,
+          menudetailfunction.active, default is menu.name ASC | If you don''t want
+          to use it, fill it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by name using LIKE pattern
+        in: query
+        name: name
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Master Menu Detail Function
+      tags:
+      - Master Menu Detail Function
+  /api/v1/master/menu-detail-function/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Get Update Master Menu Detail Function
+      parameters:
+      - description: Update Master Menu Detail Function
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Master Menu Detail Function
+        in: body
+        name: menu
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.MenuDetailFunctionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update Master Menu Detail Function
+      tags:
+      - Master Menu Detail Function
   /api/v1/master/menu-detail/create:
     post:
       consumes:
@@ -640,7 +886,7 @@ paths:
   /api/v1/master/menu-detail/update/{id}:
     put:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Get Update Master Menu Detail
       parameters:
       - description: Update Master Menu Detail

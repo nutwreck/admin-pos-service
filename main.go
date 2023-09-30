@@ -99,7 +99,7 @@ func setupDatabase() *gorm.DB {
 		&models.Menu{},
 		&models.Role{},
 		&models.MenuDetail{},
-		// &models.MasterMenuDetailFunction{},
+		&models.MenuDetailFunction{},
 		// &models.MappingRoleMenu{},
 		// &models.MappingRoleMenuUser{},
 	)

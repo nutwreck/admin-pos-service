@@ -388,7 +388,7 @@ func (h *handleMenuDetail) HandlerDelete(ctx *gin.Context) {
 // @Summary		Get Update Master Menu Detail
 // @Description	Get Update Master Menu Detail
 // @Tags		Master Menu Detail
-// @Accept		json
+// @Accept		mpfd
 // @Produce		json
 // @Param		id path string true "Update Master Menu Detail"
 // @Param 		menu_id formData string true "Menu ID (UUID)"
