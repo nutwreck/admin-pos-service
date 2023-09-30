@@ -53,6 +53,36 @@ definitions:
     required:
     - name
     type: object
+  schemes.OutletRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      address:
+        example: jl. merdeka barat, ngaliyan, kota semarang
+        maxLength: 1000
+        type: string
+      description:
+        example: isi dengan catatan tentang outlet ini
+        maxLength: 1000
+        type: string
+      merchant_id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      name:
+        description: Input with Lowercase
+        example: cabang 1 warung berkah
+        type: string
+      phone:
+        example: "085768576857"
+        minLength: 12
+        type: string
+    required:
+    - address
+    - merchant_id
+    - name
+    - phone
+    type: object
   schemes.Responses:
     properties:
       code:
@@ -1176,6 +1206,481 @@ paths:
       summary: Get Update Master Menu
       tags:
       - Master Menu
+  /api/v1/master/merchant/create:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create Merchant
+      parameters:
+      - description: Name of the Merchant | input with lowecase
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Phone of the Merchant | input numeric
+        in: formData
+        name: phone
+        required: true
+        type: string
+      - description: Address of the Merchant
+        in: formData
+        name: address
+        type: string
+      - description: Description of the Merchant
+        in: formData
+        name: description
+        type: string
+      - description: File to be uploaded | Max Size File 1MB
+        in: formData
+        name: logo
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Merchant
+      tags:
+      - Merchant
+  /api/v1/master/merchant/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete Merchant
+      parameters:
+      - description: Delete Merchant
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete Merchant
+      tags:
+      - Merchant
+  /api/v1/master/merchant/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List Merchant
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : merchant.id, merchant.name,
+          merchant.active, merchant.created_at, default is merchant.name ASC | If
+          you don''t want to use it, fill it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by name using LIKE pattern
+        in: query
+        name: name
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Merchant
+      tags:
+      - Merchant
+  /api/v1/master/merchant/update/{id}:
+    put:
+      consumes:
+      - multipart/form-data
+      description: Get Update Merchant
+      parameters:
+      - description: Update Merchant
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Name of the Merchant | input with lowecase
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Phone of the Merchant | input numeric
+        in: formData
+        name: phone
+        required: true
+        type: string
+      - description: Address of the Merchant
+        in: formData
+        name: address
+        required: true
+        type: string
+      - description: Description of the Merchant
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: File to be uploaded | Max Size File 1MB
+        in: formData
+        name: logo
+        type: file
+      - description: Status Data
+        in: formData
+        name: active
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update Merchant
+      tags:
+      - Merchant
+  /api/v1/master/outlet/create:
+    post:
+      consumes:
+      - application/json
+      description: Create Outlet
+      parameters:
+      - description: Create Outlet
+        in: body
+        name: outlet
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.OutletRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Outlet
+      tags:
+      - Outlet
+  /api/v1/master/outlet/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete Outlet
+      parameters:
+      - description: Delete Outlet
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete Outlet
+      tags:
+      - Outlet
+  /api/v1/master/outlet/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List Outlet
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : outlet.id, outlet.name,
+          outlet.phone, outlet.created_at, outlet.active, merchant.id, merchant.name,
+          default is merchant.name ASC | If you don''t want to use it, fill it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by name using LIKE pattern
+        in: query
+        name: name
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Outlet
+      tags:
+      - Outlet
+  /api/v1/master/outlet/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Get Update Outlet
+      parameters:
+      - description: Update Outlet
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Outlet
+        in: body
+        name: outlet
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.OutletRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update Outlet
+      tags:
+      - Outlet
   /api/v1/master/role/create:
     post:
       consumes:

@@ -53,4 +53,24 @@ func NewRouteMaster(db *gorm.DB, router *gin.Engine) {
 	route.GET("/menu-detail-function/results", handlerMenuDetailFunction.HandlerResults)
 	route.DELETE("/menu-detail-function/delete/:id", handlerMenuDetailFunction.HandlerDelete)
 	route.PUT("/menu-detail-function/update/:id", handlerMenuDetailFunction.HandlerUpdate)
+
+	// Master Merchant
+	repositoryMerchant := repositories.NewRepositoryMerchant(db)
+	serviceMerchant := services.NewServiceMerchant(repositoryMerchant)
+	handlerMerchant := handlers.NewHandlerMerchant(serviceMerchant)
+	router.GET("/api/v1/master/merchant/ping", handlerMerchant.HandlerPing)
+	route.POST("/merchant/create", handlerMerchant.HandlerCreate)
+	route.GET("/merchant/results", handlerMerchant.HandlerResults)
+	route.DELETE("/merchant/delete/:id", handlerMerchant.HandlerDelete)
+	route.PUT("/merchant/update/:id", handlerMerchant.HandlerUpdate)
+
+	// Master Outlet
+	repositoryOutlet := repositories.NewRepositoryOutlet(db)
+	serviceOutlet := services.NewServiceOutlet(repositoryOutlet)
+	handlerOutlet := handlers.NewHandlerOutlet(serviceOutlet)
+	router.GET("/api/v1/master/outlet/ping", handlerOutlet.HandlerPing)
+	route.POST("/outlet/create", handlerOutlet.HandlerCreate)
+	route.GET("/outlet/results", handlerOutlet.HandlerResults)
+	route.DELETE("/outlet/delete/:id", handlerOutlet.HandlerDelete)
+	route.PUT("/outlet/update/:id", handlerOutlet.HandlerUpdate)
 }
