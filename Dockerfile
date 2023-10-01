@@ -6,7 +6,7 @@ FROM golang:latest as builder
 MAINTAINER DigyLabs Production <work.digy@gmail.com>
 USER ${USER}
 WORKDIR /app
-ENV GO111MODULE="on"
+ENV GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 COPY go.mod \
   go.sum ./
 RUN go mod download

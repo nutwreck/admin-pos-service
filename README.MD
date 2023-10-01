@@ -7,13 +7,22 @@ API backend rest Admin POS Service using Gin Framework and Gorm ORM Database.
 - ### App Lifecyle
 
 ```sh
-$ go run main.go || make go run
+$ go run main.go || make go run || ./run.sh for start service and generate swagger
 ```
 
 - ### Docker Lifecycle
 
 ```sh
-$ docker-compose up -d --build
+$ docker-compose build
+```
+```sh
+$ docker login
+```
+```sh
+$ docker tag admin-pos-service-app:latest digylabs/admin-pos-service-app:latest
+```
+```sh
+$ docker push digylabs/admin-pos-service-app:latest
 ```
 
 - ### Swagger
