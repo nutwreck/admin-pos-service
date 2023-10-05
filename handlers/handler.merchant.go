@@ -40,13 +40,13 @@ func (h *handlerMerchant) HandlerPing(ctx *gin.Context) {
 * Handler Create New Merchant Teritory
 *======================================
  */
-// CreateMerchant godoc
-// @Summary		Create Merchant
-// @Description	Create Merchant
-// @Tags		Merchant
+// CreateMasterMerchant godoc
+// @Summary		Create Master Merchant
+// @Description	Create Master Merchant
+// @Tags		Master Merchant
 // @Accept		mpfd
 // @Produce		json
-// @Param 		name formData string true "Name of the Merchant | input with lowecase"
+// @Param 		name formData string true "Name of the Merchant | input with lowercase"
 // @Param 		phone formData string true "Phone of the Merchant | input numeric"
 // @Param 		address formData string false "Address of the Merchant"
 // @Param 		description formData string false "Description of the Merchant"
@@ -158,10 +158,10 @@ func (h *handlerMerchant) HandlerCreate(ctx *gin.Context) {
 * Handler Results All Merchant Teritory
 *=======================================
  */
-// GetListMerchant godoc
-// @Summary		Get List Merchant
-// @Description	Get List Merchant
-// @Tags		Merchant
+// GetListMasterMerchant godoc
+// @Summary		Get List Master Merchant
+// @Description	Get List Master Merchant
+// @Tags		Master Merchant
 // @Accept		json
 // @Produce		json
 // @Param sort query string false "Use ASC or DESC | Available column sort : merchant.id, merchant.name, merchant.active, merchant.created_at, default is merchant.name ASC | If you don't want to use it, fill it blank"
@@ -248,13 +248,13 @@ func (h *handlerMerchant) HandlerResults(ctx *gin.Context) {
 * Handler Delete Merchant By ID Teritory
 *=======================================
  */
-// GetDeleteMerchant godoc
-// @Summary		Get Delete Merchant
-// @Description	Get Delete Merchant
-// @Tags		Merchant
+// GetDeleteMasterMerchant godoc
+// @Summary		Get Delete Master Merchant
+// @Description	Get Delete Master Merchant
+// @Tags		Master Merchant
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete Merchant"
+// @Param		id path string true "Delete Master Merchant"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -313,14 +313,14 @@ func (h *handlerMerchant) HandlerDelete(ctx *gin.Context) {
 * Handler Update Merchant By ID Teritory
 *=======================================
  */
-// GetUpdateMerchant godoc
-// @Summary		Get Update Merchant
-// @Description	Get Update Merchant
-// @Tags		Merchant
+// GetUpdateMasterMerchant godoc
+// @Summary		Get Update Master Merchant
+// @Description	Get Update Master Merchant
+// @Tags		Master Merchant
 // @Accept		mpfd
 // @Produce		json
-// @Param		id path string true "Update Merchant"
-// @Param 		name formData string true "Name of the Merchant | input with lowecase"
+// @Param		id path string true "Update Master Merchant"
+// @Param 		name formData string true "Name of the Merchant | input with lowercase"
 // @Param 		phone formData string true "Phone of the Merchant | input numeric"
 // @Param 		address formData string true "Address of the Merchant"
 // @Param 		description formData string true "Description of the Merchant"
@@ -486,9 +486,14 @@ func ValidatorMerchant(ctx *gin.Context, input schemes.Merchant, Type string) (i
 					Message: "Phone is required on body",
 				},
 				{
-					Tag:     "required",
+					Tag:     "numeric",
 					Field:   "Phone",
 					Message: "Phone must be number",
+				},
+				{
+					Tag:     "gte",
+					Field:   "Phone",
+					Message: "Phone number must be 12 character",
 				},
 				{
 					Tag:     "required",
@@ -555,9 +560,14 @@ func ValidatorMerchant(ctx *gin.Context, input schemes.Merchant, Type string) (i
 					Message: "Phone is required on body",
 				},
 				{
-					Tag:     "required",
+					Tag:     "numeric",
 					Field:   "Phone",
 					Message: "Phone must be number",
+				},
+				{
+					Tag:     "gte",
+					Field:   "Phone",
+					Message: "Phone number must be 12 character",
 				},
 				{
 					Tag:     "required",
