@@ -203,6 +203,39 @@ definitions:
     - name
     - type
     type: object
+  schemes.SupplierRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      address:
+        example: JL. Pahlawan, Ngaliyan, Semarang
+        maxLength: 1000
+        type: string
+      description:
+        example: Supplier beras
+        maxLength: 1000
+        type: string
+      merchant_id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      name:
+        example: cv makmur sentosa
+        type: string
+      outlet_id:
+        example: 870e8900-e29b-41d4-a716-446655440000
+        type: string
+      phone:
+        example: "087987875765"
+        minLength: 12
+        type: string
+    required:
+    - address
+    - merchant_id
+    - name
+    - outlet_id
+    - phone
+    type: object
   schemes.UpdateUserExample:
     properties:
       active:
@@ -1210,9 +1243,9 @@ paths:
     post:
       consumes:
       - multipart/form-data
-      description: Create Merchant
+      description: Create Master Merchant
       parameters:
-      - description: Name of the Merchant | input with lowecase
+      - description: Name of the Merchant | input with lowercase
         in: formData
         name: name
         required: true
@@ -1271,16 +1304,16 @@ paths:
             $ref: '#/definitions/schemes.Responses500Example'
       security:
       - ApiKeyAuth: []
-      summary: Create Merchant
+      summary: Create Master Merchant
       tags:
-      - Merchant
+      - Master Merchant
   /api/v1/master/merchant/delete/{id}:
     delete:
       consumes:
       - application/json
-      description: Get Delete Merchant
+      description: Get Delete Master Merchant
       parameters:
-      - description: Delete Merchant
+      - description: Delete Master Merchant
         in: path
         name: id
         required: true
@@ -1318,14 +1351,14 @@ paths:
             $ref: '#/definitions/schemes.Responses500Example'
       security:
       - ApiKeyAuth: []
-      summary: Get Delete Merchant
+      summary: Get Delete Master Merchant
       tags:
-      - Merchant
+      - Master Merchant
   /api/v1/master/merchant/results:
     get:
       consumes:
       - application/json
-      description: Get List Merchant
+      description: Get List Master Merchant
       parameters:
       - description: 'Use ASC or DESC | Available column sort : merchant.id, merchant.name,
           merchant.active, merchant.created_at, default is merchant.name ASC | If
@@ -1384,21 +1417,21 @@ paths:
             $ref: '#/definitions/schemes.Responses500Example'
       security:
       - ApiKeyAuth: []
-      summary: Get List Merchant
+      summary: Get List Master Merchant
       tags:
-      - Merchant
+      - Master Merchant
   /api/v1/master/merchant/update/{id}:
     put:
       consumes:
       - multipart/form-data
-      description: Get Update Merchant
+      description: Get Update Master Merchant
       parameters:
-      - description: Update Merchant
+      - description: Update Master Merchant
         in: path
         name: id
         required: true
         type: string
-      - description: Name of the Merchant | input with lowecase
+      - description: Name of the Merchant | input with lowercase
         in: formData
         name: name
         required: true
@@ -1460,16 +1493,16 @@ paths:
             $ref: '#/definitions/schemes.Responses500Example'
       security:
       - ApiKeyAuth: []
-      summary: Get Update Merchant
+      summary: Get Update Master Merchant
       tags:
-      - Merchant
+      - Master Merchant
   /api/v1/master/outlet/create:
     post:
       consumes:
       - application/json
-      description: Create Outlet
+      description: Create Master Outlet
       parameters:
-      - description: Create Outlet
+      - description: Create Master Outlet
         in: body
         name: outlet
         required: true
@@ -1512,16 +1545,16 @@ paths:
             $ref: '#/definitions/schemes.Responses500Example'
       security:
       - ApiKeyAuth: []
-      summary: Create Outlet
+      summary: Create Master Outlet
       tags:
-      - Outlet
+      - Master Outlet
   /api/v1/master/outlet/delete/{id}:
     delete:
       consumes:
       - application/json
-      description: Get Delete Outlet
+      description: Get Delete Master Outlet
       parameters:
-      - description: Delete Outlet
+      - description: Delete Master Outlet
         in: path
         name: id
         required: true
@@ -1559,14 +1592,14 @@ paths:
             $ref: '#/definitions/schemes.Responses500Example'
       security:
       - ApiKeyAuth: []
-      summary: Get Delete Outlet
+      summary: Get Delete Master Outlet
       tags:
-      - Outlet
+      - Master Outlet
   /api/v1/master/outlet/results:
     get:
       consumes:
       - application/json
-      description: Get List Outlet
+      description: Get List Master Outlet
       parameters:
       - description: 'Use ASC or DESC | Available column sort : outlet.id, outlet.name,
           outlet.phone, outlet.created_at, outlet.active, merchant.id, merchant.name,
@@ -1625,21 +1658,21 @@ paths:
             $ref: '#/definitions/schemes.Responses500Example'
       security:
       - ApiKeyAuth: []
-      summary: Get List Outlet
+      summary: Get List Master Outlet
       tags:
-      - Outlet
+      - Master Outlet
   /api/v1/master/outlet/update/{id}:
     put:
       consumes:
       - application/json
-      description: Get Update Outlet
+      description: Get Update Master Outlet
       parameters:
-      - description: Update Outlet
+      - description: Update Master Outlet
         in: path
         name: id
         required: true
         type: string
-      - description: Update Outlet
+      - description: Update Master Outlet
         in: body
         name: outlet
         required: true
@@ -1678,9 +1711,9 @@ paths:
             $ref: '#/definitions/schemes.Responses500Example'
       security:
       - ApiKeyAuth: []
-      summary: Get Update Outlet
+      summary: Get Update Master Outlet
       tags:
-      - Outlet
+      - Master Outlet
   /api/v1/master/role/create:
     post:
       consumes:
@@ -1901,6 +1934,224 @@ paths:
       summary: Get Update Master Role
       tags:
       - Master Role
+  /api/v1/master/supplier/create:
+    post:
+      consumes:
+      - application/json
+      description: Create Master Supplier
+      parameters:
+      - description: Create Master Supplier
+        in: body
+        name: supplier
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.SupplierRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Master Supplier
+      tags:
+      - Master Supplier
+  /api/v1/master/supplier/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete Master Supplier
+      parameters:
+      - description: Delete Master Supplier
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete Master Supplier
+      tags:
+      - Master Supplier
+  /api/v1/master/supplier/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List Master Supplier
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : id, name, active,
+          created_at, updated_at, default is created_at DESC | If you don''t want
+          to use it, fill it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by name using LIKE pattern
+        in: query
+        name: name
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Master Supplier
+      tags:
+      - Master Supplier
+  /api/v1/master/supplier/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Get Update Master Supplier
+      parameters:
+      - description: Update Master Supplier
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Master Supplier
+        in: body
+        name: supplier
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.SupplierRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update Master Supplier
+      tags:
+      - Master Supplier
 securityDefinitions:
   ApiKeyAuth:
     description: 'User JWT Bearer - Format Input Value : Bearer[ space ][ JWTToken

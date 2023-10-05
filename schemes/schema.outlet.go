@@ -31,7 +31,7 @@ type GetOutlet struct {
 type OutletRequest struct {
 	// Input with Lowercase
 	Name        string `json:"name" validate:"required,lowercase" example:"cabang 1 warung berkah"`
-	Phone       string `json:"phone" validate:"required,gte=12" example:"085768576857"`
+	Phone       string `json:"phone" validate:"required,gte=12,numeric" example:"085768576857"`
 	Address     string `json:"address" validate:"required,max=1000" example:"jl. merdeka barat, ngaliyan, kota semarang"`
 	MerchantID  string `json:"merchant_id" validate:"required,uuid" example:"550e8400-e29b-41d4-a716-446655440000"`
 	Description string `json:"description" validate:"max=1000" example:"isi dengan catatan tentang outlet ini"`

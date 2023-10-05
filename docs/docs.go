@@ -1458,7 +1458,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Create Merchant",
+                "description": "Create Master Merchant",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -1466,13 +1466,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Merchant"
+                    "Master Merchant"
                 ],
-                "summary": "Create Merchant",
+                "summary": "Create Master Merchant",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Name of the Merchant | input with lowecase",
+                        "description": "Name of the Merchant | input with lowercase",
                         "name": "name",
                         "in": "formData",
                         "required": true
@@ -1562,7 +1562,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get Delete Merchant",
+                "description": "Get Delete Master Merchant",
                 "consumes": [
                     "application/json"
                 ],
@@ -1570,13 +1570,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Merchant"
+                    "Master Merchant"
                 ],
-                "summary": "Get Delete Merchant",
+                "summary": "Get Delete Master Merchant",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Delete Merchant",
+                        "description": "Delete Master Merchant",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1635,7 +1635,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get List Merchant",
+                "description": "Get List Master Merchant",
                 "consumes": [
                     "application/json"
                 ],
@@ -1643,9 +1643,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Merchant"
+                    "Master Merchant"
                 ],
-                "summary": "Get List Merchant",
+                "summary": "Get List Master Merchant",
                 "parameters": [
                     {
                         "type": "string",
@@ -1731,7 +1731,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get Update Merchant",
+                "description": "Get Update Master Merchant",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -1739,20 +1739,20 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Merchant"
+                    "Master Merchant"
                 ],
-                "summary": "Get Update Merchant",
+                "summary": "Get Update Master Merchant",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Update Merchant",
+                        "description": "Update Master Merchant",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Name of the Merchant | input with lowecase",
+                        "description": "Name of the Merchant | input with lowercase",
                         "name": "name",
                         "in": "formData",
                         "required": true
@@ -1845,7 +1845,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Create Outlet",
+                "description": "Create Master Outlet",
                 "consumes": [
                     "application/json"
                 ],
@@ -1853,12 +1853,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Outlet"
+                    "Master Outlet"
                 ],
-                "summary": "Create Outlet",
+                "summary": "Create Master Outlet",
                 "parameters": [
                     {
-                        "description": "Create Outlet",
+                        "description": "Create Master Outlet",
                         "name": "outlet",
                         "in": "body",
                         "required": true,
@@ -1926,7 +1926,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get Delete Outlet",
+                "description": "Get Delete Master Outlet",
                 "consumes": [
                     "application/json"
                 ],
@@ -1934,13 +1934,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Outlet"
+                    "Master Outlet"
                 ],
-                "summary": "Get Delete Outlet",
+                "summary": "Get Delete Master Outlet",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Delete Outlet",
+                        "description": "Delete Master Outlet",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1999,7 +1999,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get List Outlet",
+                "description": "Get List Master Outlet",
                 "consumes": [
                     "application/json"
                 ],
@@ -2007,9 +2007,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Outlet"
+                    "Master Outlet"
                 ],
-                "summary": "Get List Outlet",
+                "summary": "Get List Master Outlet",
                 "parameters": [
                     {
                         "type": "string",
@@ -2095,7 +2095,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get Update Outlet",
+                "description": "Get Update Master Outlet",
                 "consumes": [
                     "application/json"
                 ],
@@ -2103,19 +2103,19 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Outlet"
+                    "Master Outlet"
                 ],
-                "summary": "Get Update Outlet",
+                "summary": "Get Update Master Outlet",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Update Outlet",
+                        "description": "Update Master Outlet",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Update Outlet",
+                        "description": "Update Master Outlet",
                         "name": "outlet",
                         "in": "body",
                         "required": true,
@@ -2502,6 +2502,338 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/master/supplier/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create Master Supplier",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Master Supplier"
+                ],
+                "summary": "Create Master Supplier",
+                "parameters": [
+                    {
+                        "description": "Create Master Supplier",
+                        "name": "supplier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemes.SupplierRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses201Example"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/supplier/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get Delete Master Supplier",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Master Supplier"
+                ],
+                "summary": "Get Delete Master Supplier",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Delete Master Supplier",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/supplier/results": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get List Master Supplier",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Master Supplier"
+                ],
+                "summary": "Get List Master Supplier",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Use ASC or DESC | Available column sort : id, name, active, created_at, updated_at, default is created_at DESC | If you don't want to use it, fill it blank",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0",
+                        "name": "perpage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by name using LIKE pattern",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Search by ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.ResponsesPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/supplier/update/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get Update Master Supplier",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Master Supplier"
+                ],
+                "summary": "Get Update Master Supplier",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Update Master Supplier",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Master Supplier",
+                        "name": "supplier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemes.SupplierRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2779,6 +3111,49 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 100,
                     "example": "sys"
+                }
+            }
+        },
+        "schemes.SupplierRequest": {
+            "type": "object",
+            "required": [
+                "address",
+                "merchant_id",
+                "name",
+                "outlet_id",
+                "phone"
+            ],
+            "properties": {
+                "active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "address": {
+                    "type": "string",
+                    "maxLength": 1000,
+                    "example": "JL. Pahlawan, Ngaliyan, Semarang"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000,
+                    "example": "Supplier beras"
+                },
+                "merchant_id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "cv makmur sentosa"
+                },
+                "outlet_id": {
+                    "type": "string",
+                    "example": "870e8900-e29b-41d4-a716-446655440000"
+                },
+                "phone": {
+                    "type": "string",
+                    "minLength": 12,
+                    "example": "087987875765"
                 }
             }
         },

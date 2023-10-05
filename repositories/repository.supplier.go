@@ -12,76 +12,67 @@ import (
 	"github.com/nutwreck/admin-pos-service/schemes"
 )
 
-type repositoryOutlite struct {
+type repositorySupplier struct {
 	db *gorm.DB
 }
 
-func NewRepositoryOutlet(db *gorm.DB) *repositoryOutlite {
-	return &repositoryOutlite{db: db}
+func NewRepositorySupplier(db *gorm.DB) *repositorySupplier {
+	return &repositorySupplier{db: db}
 }
 
 /**
 * ==========================================
-* Repository Create New Outlet Teritory
+* Repository Create New Supplier Teritory
 *===========================================
  */
 
-func (r *repositoryOutlite) EntityCreate(input *schemes.Outlet) (*models.Outlet, schemes.SchemeDatabaseError) {
-	var outlet models.Outlet
-	outlet.Name = input.Name
-	outlet.Phone = input.Phone
-	outlet.Address = input.Address
-	outlet.MerchantID = input.MerchantID
-	outlet.Description = input.Description
+func (r *repositorySupplier) EntityCreate(input *schemes.Supplier) (*models.Supplier, schemes.SchemeDatabaseError) {
+	var supplier models.Supplier
+	supplier.Name = input.Name
+	supplier.Phone = input.Phone
+	supplier.Address = input.Address
+	supplier.Description = input.Description
+	supplier.MerchantID = input.MerchantID
+	supplier.OutletID = input.OutletID
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
-	db := r.db.Model(&outlet)
+	db := r.db.Model(&supplier)
 
-	// checkOutletName := db.Debug().First(&outlet, "name = ?", outlet.Name)
+	checkSupplierPhone := db.Debug().First(&supplier, "phone = ?", supplier.Phone)
 
-	// if checkOutletName.RowsAffected > 0 {
-	// 	err <- schemes.SchemeDatabaseError{
-	// 		Code: http.StatusConflict,
-	// 		Type: "error_create_01",
-	// 	}
-	// 	return &outlet, <-err
-	// }
-
-	checkOutletPhone := db.Debug().First(&outlet, "phone = ?", outlet.Phone)
-
-	if checkOutletPhone.RowsAffected > 0 {
+	if checkSupplierPhone.RowsAffected > 0 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusConflict,
-			Type: "error_create_02",
+			Type: "error_create_01",
 		}
-		return &outlet, <-err
+		return &supplier, <-err
 	}
 
-	addoutlet := db.Debug().Create(&outlet).Commit()
+	addSupplier := db.Debug().Create(&supplier).Commit()
 
-	if addoutlet.RowsAffected < 1 {
+	if addSupplier.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusForbidden,
-			Type: "error_create_03",
+			Type: "error_create_02",
 		}
-		return &outlet, <-err
+		return &supplier, <-err
 	}
 
 	err <- schemes.SchemeDatabaseError{}
-	return &outlet, <-err
+	return &supplier, <-err
 }
 
 /**
 * ==========================================
-* Repository Results All Outlet Teritory
+* Repository Results All Supplier Teritory
 *===========================================
  */
 
-func (r *repositoryOutlite) EntityResults(input *schemes.Outlet) (*[]schemes.GetOutlet, int64, schemes.SchemeDatabaseError) {
+func (r *repositorySupplier) EntityResults(input *schemes.Supplier) (*[]schemes.GetSupplier, int64, schemes.SchemeDatabaseError) {
 	var (
-		outlet          []models.Outlet
-		result          []schemes.GetOutlet
+		supplier        []models.Supplier
+		result          []schemes.GetSupplier
 		countData       schemes.CountData
 		args            []interface{}
 		totalData       int64
@@ -93,7 +84,7 @@ func (r *repositoryOutlite) EntityResults(input *schemes.Outlet) (*[]schemes.Get
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
-	db := r.db.Model(&outlet)
+	db := r.db.Model(&supplier)
 
 	if input.Sort != constants.EMPTY_VALUE {
 		unScape, _ := url.QueryUnescape(input.Sort)
@@ -105,38 +96,40 @@ func (r *repositoryOutlite) EntityResults(input *schemes.Outlet) (*[]schemes.Get
 	//Untuk mengambil jumlah data tanpa limit
 	queryCountData = `
 		SELECT
-			COUNT(outlet.*) AS count_data
-		FROM master.outlets AS outlet
+			COUNT(supplier.*) AS count_data
+		FROM master.suppliers AS supplier
 	`
 
 	//Untuk mengambil detail data
 	queryData = `
 		SELECT
-			outlet.id,
-			outlet.name,
-			outlet.phone,
-			COALESCE(outlet.address,'') AS address,
-			COALESCE(outlet.description,'') AS description,
-			outlet.created_at,
-			outlet.active,
+			supplier.id,
+			supplier.name,
+			supplier.phone,
+			COALESCE(supplier.address,'') AS address,
+			COALESCE(supplier.description,'') AS description,
+			supplier.active,
 			merchant.id AS merchant_id,
-			merchant.name AS merchant_name
-		FROM master.outlets AS outlet
+			merchant.name AS merchant_name,
+			outlet.id AS outlet_id,
+			outlet.name AS outlet_name
+		FROM master.suppliers AS supplier
 	`
 
 	queryAdditional = `
-		JOIN master.merchants AS merchant ON outlet.merchant_id = merchant.id AND merchant.active = true
+		JOIN master.merchants AS merchant ON supplier.merchant_id = merchant.id AND merchant.active = true
+		JOIN master.outlets AS outlet ON supplier.outlet_id = outlet.id AND outlet.active = true
 	`
 
 	queryAdditional += ` WHERE TRUE`
 
 	if input.Name != constants.EMPTY_VALUE {
-		queryAdditional += ` AND outlet.name LIKE ?`
+		queryAdditional += ` AND supplier.name LIKE ?`
 		args = append(args, "%"+strings.ToUpper(input.Name)+"%")
 	}
 
-	if input.ID != constants.EMPTY_VALUE {
-		queryAdditional += ` AND outlet.id = ?`
+	if input.ID != uint64(constants.EMPTY_NUMBER) {
+		queryAdditional += ` AND supplier.id = ?`
 		args = append(args, input.ID)
 	}
 
@@ -176,29 +169,26 @@ func (r *repositoryOutlite) EntityResults(input *schemes.Outlet) (*[]schemes.Get
 *===========================================
  */
 
-func (r *repositoryOutlite) EntityResult(input *schemes.Outlet) (*models.Outlet, schemes.SchemeDatabaseError) {
-	var outlet models.Outlet
-	outlet.ID = input.ID
+func (r *repositorySupplier) EntityResult(input *schemes.Supplier) (*models.Supplier, schemes.SchemeDatabaseError) {
+	var supplier models.Supplier
+	supplier.ID = input.ID
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
-	db := r.db.Model(&outlet)
+	db := r.db.Model(&supplier)
 
-	checkOutletName := db.Debug().First(&outlet)
+	checkSupplierId := db.Debug().First(&supplier)
 
-	if checkOutletName.RowsAffected < 1 {
+	if checkSupplierId.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusNotFound,
 			Type: "error_result_01",
 		}
-		return &outlet, <-err
+		return &supplier, <-err
 	}
 
-	// Menggunakan Preload untuk mengisi data relasi Merchant
-	db.Preload("Merchant").First(&outlet)
-
 	err <- schemes.SchemeDatabaseError{}
-	return &outlet, <-err
+	return &supplier, <-err
 }
 
 /**
@@ -207,39 +197,41 @@ func (r *repositoryOutlite) EntityResult(input *schemes.Outlet) (*models.Outlet,
 *===========================================
  */
 
-func (r *repositoryOutlite) EntityDelete(input *schemes.Outlet) (*models.Outlet, schemes.SchemeDatabaseError) {
-	var outlet models.Outlet
-	outlet.ID = input.ID
+func (r *repositorySupplier) EntityDelete(input *schemes.Supplier) (*models.Supplier, schemes.SchemeDatabaseError) {
+	var supplier models.Supplier
+	supplier.ID = input.ID
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
-	db := r.db.Model(&outlet)
+	db := r.db.Model(&supplier)
 
-	checkOutletName := db.Debug().First(&outlet)
+	checkSupplierId := db.Debug().First(&supplier)
 
-	if checkOutletName.RowsAffected < 1 {
+	if checkSupplierId.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusNotFound,
 			Type: "error_delete_01",
 		}
-		return &outlet, <-err
 	}
 
 	// Menggunakan Preload untuk mengisi data relasi Merchant
-	db.Preload("Merchant").First(&outlet)
+	db.Preload("Merchant").First(&supplier)
 
-	deleteoutlet := db.Debug().Delete(&outlet)
+	// Menggunakan Preload untuk mengisi data relasi Outlet
+	db.Preload("Outlet").First(&supplier)
 
-	if deleteoutlet.RowsAffected < 1 {
+	deleteSupplier := db.Debug().Delete(&supplier)
+
+	if deleteSupplier.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusForbidden,
 			Type: "error_delete_02",
 		}
-		return &outlet, <-err
+		return &supplier, <-err
 	}
 
 	err <- schemes.SchemeDatabaseError{}
-	return &outlet, <-err
+	return &supplier, <-err
 }
 
 /**
@@ -248,41 +240,42 @@ func (r *repositoryOutlite) EntityDelete(input *schemes.Outlet) (*models.Outlet,
 *===========================================
  */
 
-func (r *repositoryOutlite) EntityUpdate(input *schemes.Outlet) (*models.Outlet, schemes.SchemeDatabaseError) {
-	var outlet models.Outlet
-	outlet.ID = input.ID
+func (r *repositorySupplier) EntityUpdate(input *schemes.Supplier) (*models.Supplier, schemes.SchemeDatabaseError) {
+	var supplier models.Supplier
+	supplier.ID = input.ID
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
-	db := r.db.Model(&outlet)
+	db := r.db.Model(&supplier)
 
-	checkOutletName := db.Debug().First(&outlet)
+	checkSupplierId := db.Debug().First(&supplier)
 
-	if checkOutletName.RowsAffected < 1 {
+	if checkSupplierId.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusNotFound,
 			Type: "error_update_01",
 		}
-		return &outlet, <-err
+		return &supplier, <-err
 	}
 
-	outlet.Name = input.Name
-	outlet.Phone = input.Phone
-	outlet.Address = input.Address
-	outlet.MerchantID = input.MerchantID
-	outlet.Description = input.Description
-	outlet.Active = input.Active
+	supplier.Name = input.Name
+	supplier.Phone = input.Phone
+	supplier.Address = input.Address
+	supplier.Description = input.Description
+	supplier.MerchantID = input.MerchantID
+	supplier.OutletID = input.OutletID
+	supplier.Active = input.Active
 
-	updateoutlet := db.Debug().Updates(&outlet)
+	updateSupplier := db.Debug().Updates(&supplier)
 
-	if updateoutlet.RowsAffected < 1 {
+	if updateSupplier.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusForbidden,
 			Type: "error_update_02",
 		}
-		return &outlet, <-err
+		return &supplier, <-err
 	}
 
 	err <- schemes.SchemeDatabaseError{}
-	return &outlet, <-err
+	return &supplier, <-err
 }

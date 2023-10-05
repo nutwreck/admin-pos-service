@@ -104,6 +104,7 @@ func setupDatabase() *gorm.DB {
 		// &models.MappingRoleMenuUser{},
 		&models.Merchant{},
 		&models.Outlet{},
+		&models.Supplier{},
 	)
 
 	// Seeder data

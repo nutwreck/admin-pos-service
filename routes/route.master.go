@@ -73,4 +73,14 @@ func NewRouteMaster(db *gorm.DB, router *gin.Engine) {
 	route.GET("/outlet/results", handlerOutlet.HandlerResults)
 	route.DELETE("/outlet/delete/:id", handlerOutlet.HandlerDelete)
 	route.PUT("/outlet/update/:id", handlerOutlet.HandlerUpdate)
+
+	// Master Supplier
+	repositorySupplier := repositories.NewRepositorySupplier(db)
+	serviceSupplier := services.NewServiceSupplier(repositorySupplier)
+	handlerSupplier := handlers.NewHandlerSupplier(serviceSupplier)
+	router.GET("/api/v1/master/supplier/ping", handlerSupplier.HandlerPing)
+	route.POST("/supplier/create", handlerSupplier.HandlerCreate)
+	route.GET("/supplier/results", handlerSupplier.HandlerResults)
+	route.DELETE("/supplier/delete/:id", handlerSupplier.HandlerDelete)
+	route.PUT("/supplier/update/:id", handlerSupplier.HandlerUpdate)
 }
