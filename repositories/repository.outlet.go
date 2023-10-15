@@ -33,10 +33,23 @@ func (r *repositoryOutlite) EntityCreate(input *schemes.Outlet) (*models.Outlet,
 	outlet.Address = input.Address
 	outlet.MerchantID = input.MerchantID
 	outlet.Description = input.Description
+	outlet.IsPrimary = input.IsPrimary
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
 	db := r.db.Model(&outlet)
+
+	if *outlet.IsPrimary {
+		checkPrimary := db.Debug().Where("merchant_id = ? AND is_primary = ?", outlet.MerchantID, outlet.IsPrimary).First(&outlet)
+
+		if checkPrimary.RowsAffected > 0 {
+			err <- schemes.SchemeDatabaseError{
+				Code: http.StatusConflict,
+				Type: "error_create_04",
+			}
+			return &outlet, <-err
+		}
+	}
 
 	// checkOutletName := db.Debug().First(&outlet, "name = ?", outlet.Name)
 
@@ -119,6 +132,7 @@ func (r *repositoryOutlite) EntityResults(input *schemes.Outlet) (*[]schemes.Get
 			COALESCE(outlet.description,'') AS description,
 			outlet.created_at,
 			outlet.active,
+			outlet.is_primary,
 			merchant.id AS merchant_id,
 			merchant.name AS merchant_name
 		FROM master.outlets AS outlet
@@ -130,9 +144,14 @@ func (r *repositoryOutlite) EntityResults(input *schemes.Outlet) (*[]schemes.Get
 
 	queryAdditional += ` WHERE TRUE`
 
+	if input.MerchantID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND outlet.merchant_id = ?`
+		args = append(args, input.MerchantID)
+	}
+
 	if input.Name != constants.EMPTY_VALUE {
 		queryAdditional += ` AND outlet.name LIKE ?`
-		args = append(args, "%"+strings.ToUpper(input.Name)+"%")
+		args = append(args, "%"+input.Name+"%")
 	}
 
 	if input.ID != constants.EMPTY_VALUE {
@@ -272,6 +291,19 @@ func (r *repositoryOutlite) EntityUpdate(input *schemes.Outlet) (*models.Outlet,
 	outlet.MerchantID = input.MerchantID
 	outlet.Description = input.Description
 	outlet.Active = input.Active
+	outlet.IsPrimary = input.IsPrimary
+
+	if *outlet.IsPrimary {
+		checkPrimary := db.Debug().Where("merchant_id = ? AND is_primary = ?", outlet.MerchantID, outlet.IsPrimary).First(&outlet)
+
+		if checkPrimary.RowsAffected > 0 {
+			err <- schemes.SchemeDatabaseError{
+				Code: http.StatusConflict,
+				Type: "error_update_03",
+			}
+			return &outlet, <-err
+		}
+	}
 
 	updateoutlet := db.Debug().Updates(&outlet)
 

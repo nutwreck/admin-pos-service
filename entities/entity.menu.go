@@ -7,7 +7,7 @@ import (
 
 type EntityMenu interface {
 	EntityCreate(input *schemes.Menu) (*models.Menu, schemes.SchemeDatabaseError)
-	EntityResults(input *schemes.Menu) (*[]models.Menu, int64, schemes.SchemeDatabaseError)
+	EntityResults(input *schemes.Menu) (*[]schemes.GetMenu, int64, schemes.SchemeDatabaseError)
 	EntityDelete(input *schemes.Menu) (*models.Menu, schemes.SchemeDatabaseError)
 	EntityUpdate(input *schemes.Menu) (*models.Menu, schemes.SchemeDatabaseError)
 }

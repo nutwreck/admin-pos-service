@@ -14,14 +14,15 @@ func NewServiceUser(user entities.EntityUser) *serviceUser {
 	return &serviceUser{user: user}
 }
 
-func (s *serviceUser) EntityRegister(input *schemes.User) (*models.User, schemes.SchemeDatabaseError) {
+func (s *serviceUser) EntityAddUser(input *schemes.User) (*models.User, schemes.SchemeDatabaseError) {
 	var schema schemes.User
 	schema.Name = input.Name
 	schema.Email = input.Email
 	schema.Password = input.Password
+	schema.MerchantID = input.MerchantID
 	schema.RoleID = input.RoleID
 
-	res, err := s.user.EntityRegister(&schema)
+	res, err := s.user.EntityAddUser(&schema)
 	return res, err
 }
 
@@ -51,6 +52,22 @@ func (s *serviceUser) EntityGetRole(input *schemes.Role) (*models.Role, schemes.
 	return res, err
 }
 
+func (s *serviceUser) EntityGetMerchant(input *schemes.Merchant) (*models.Merchant, schemes.SchemeDatabaseError) {
+	var schema schemes.Merchant
+	schema.ID = input.ID
+
+	res, err := s.user.EntityGetMerchant(&schema)
+	return res, err
+}
+
+func (s *serviceUser) EntityGetUserOutlet(input *schemes.UserOutlet) (*[]schemes.GetUserOutlet, schemes.SchemeDatabaseError) {
+	var schema schemes.UserOutlet
+	schema.UserID = input.UserID
+
+	res, err := s.user.EntityGetUserOutlet(&schema)
+	return res, err
+}
+
 func (s *serviceUser) EntityUpdate(input *schemes.UpdateUser) (*models.User, schemes.SchemeDatabaseError) {
 	var schema schemes.UpdateUser
 	schema.Active = input.Active
@@ -59,6 +76,7 @@ func (s *serviceUser) EntityUpdate(input *schemes.UpdateUser) (*models.User, sch
 	schema.NewPassword = input.NewPassword
 	schema.DataPassword = input.DataPassword
 	schema.RoleID = input.RoleID
+	schema.MerchantID = input.MerchantID
 	schema.ID = input.ID
 
 	res, err := s.user.EntityUpdate(&schema)

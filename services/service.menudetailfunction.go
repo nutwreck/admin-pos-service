@@ -22,6 +22,7 @@ func NewServiceMenuDetailFunction(menuDetailFunction entities.EntityMenuDetailFu
 
 func (s *serviceMenuDetailFunction) EntityCreate(input *schemes.MenuDetailFunction) (*models.MenuDetailFunction, schemes.SchemeDatabaseError) {
 	var menuDetailFunction schemes.MenuDetailFunction
+	menuDetailFunction.MerchantID = input.MerchantID
 	menuDetailFunction.Name = input.Name
 	menuDetailFunction.MenuID = input.MenuID
 	menuDetailFunction.MenuDetailID = input.MenuDetailID
@@ -42,6 +43,7 @@ func (s *serviceMenuDetailFunction) EntityResults(input *schemes.MenuDetailFunct
 	menuDetailFunction.Sort = input.Sort
 	menuDetailFunction.Page = input.Page
 	menuDetailFunction.PerPage = input.PerPage
+	menuDetailFunction.MerchantID = input.MerchantID
 	menuDetailFunction.Name = input.Name
 	menuDetailFunction.ID = input.ID
 
@@ -72,6 +74,7 @@ func (s *serviceMenuDetailFunction) EntityDelete(input *schemes.MenuDetailFuncti
 func (s *serviceMenuDetailFunction) EntityUpdate(input *schemes.MenuDetailFunction) (*models.MenuDetailFunction, schemes.SchemeDatabaseError) {
 	var menuDetailFunction schemes.MenuDetailFunction
 	menuDetailFunction.ID = input.ID
+	menuDetailFunction.MerchantID = input.MerchantID
 	menuDetailFunction.Name = input.Name
 	menuDetailFunction.MenuID = input.MenuID
 	menuDetailFunction.MenuDetailID = input.MenuDetailID

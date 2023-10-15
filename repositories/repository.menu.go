@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/nutwreck/admin-pos-service/configs"
 	"github.com/nutwreck/admin-pos-service/constants"
 	"github.com/nutwreck/admin-pos-service/models"
 	"github.com/nutwreck/admin-pos-service/schemes"
@@ -28,13 +27,14 @@ func NewRepositoryMenu(db *gorm.DB) *repositoryMenu {
 
 func (r *repositoryMenu) EntityCreate(input *schemes.Menu) (*models.Menu, schemes.SchemeDatabaseError) {
 	var menu models.Menu
+	menu.MerchantID = input.MerchantID
 	menu.Name = input.Name
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
 	db := r.db.Model(&menu)
 
-	checkMenuName := db.Debug().First(&menu, "name = ?", menu.Name)
+	checkMenuName := db.Debug().Where("merchant_id = ? AND name = ?", menu.MerchantID, menu.Name).First(&menu)
 
 	if checkMenuName.RowsAffected > 0 {
 		err <- schemes.SchemeDatabaseError{
@@ -64,11 +64,17 @@ func (r *repositoryMenu) EntityCreate(input *schemes.Menu) (*models.Menu, scheme
 *=================================================
  */
 
-func (r *repositoryMenu) EntityResults(input *schemes.Menu) (*[]models.Menu, int64, schemes.SchemeDatabaseError) {
+func (r *repositoryMenu) EntityResults(input *schemes.Menu) (*[]schemes.GetMenu, int64, schemes.SchemeDatabaseError) {
 	var (
-		menu      []models.Menu
-		totalData int64
-		sort      string = configs.SortByDefault + " " + configs.OrderByDefault
+		menu            []models.Menu
+		result          []schemes.GetMenu
+		countData       schemes.CountData
+		args            []interface{}
+		totalData       int64
+		sortData        string = "menu.created_at DESC"
+		queryCountData  string = constants.EMPTY_VALUE
+		queryData       string = constants.EMPTY_VALUE
+		queryAdditional string = constants.EMPTY_VALUE
 	)
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
@@ -77,34 +83,79 @@ func (r *repositoryMenu) EntityResults(input *schemes.Menu) (*[]models.Menu, int
 
 	if input.Sort != constants.EMPTY_VALUE {
 		unScape, _ := url.QueryUnescape(input.Sort)
-		sort = strings.Replace(unScape, "'", constants.EMPTY_VALUE, -1)
-	}
-
-	if input.Name != constants.EMPTY_VALUE {
-		db = db.Where("name LIKE ?", "%"+input.Name+"%")
-	}
-
-	if input.ID != constants.EMPTY_VALUE {
-		db = db.Where("id LIKE ?", "%"+input.ID+"%")
+		sortData = strings.Replace(unScape, "'", constants.EMPTY_VALUE, -1)
 	}
 
 	offset := int((input.Page - 1) * input.PerPage)
 
-	checkMenu := db.Debug().Order(sort).Offset(offset).Limit(int(input.PerPage)).Find(&menu)
+	//Untuk mengambil jumlah data tanpa limit
+	queryCountData = `
+		SELECT
+			COUNT(menu.*) AS count_data
+		FROM master.menus AS menu
+	`
 
-	if checkMenu.RowsAffected < 1 {
+	//Untuk mengambil detail data
+	queryData = `
+		SELECT
+			menu.id,
+			menu.name,
+			menu.active,
+			merchant.id AS merchant_id,
+			merchant.name AS merchant_name,
+			menu.created_at
+		FROM master.menus AS menu
+	`
+
+	queryAdditional = `
+		JOIN master.merchants AS merchant ON menu.merchant_id = merchant.id AND merchant.active = true
+	`
+
+	queryAdditional += ` WHERE TRUE`
+
+	if input.MerchantID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menu.merchant_id = ?`
+		args = append(args, input.MerchantID)
+	}
+
+	if input.Name != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menu.name LIKE ?`
+		args = append(args, "%"+input.Name+"%")
+	}
+
+	if input.ID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menu.id = ?`
+		args = append(args, input.ID)
+	}
+
+	//Eksekusi query ambil jumlah data tanpa limit
+	db.Raw(queryCountData+queryAdditional, args...).Scan(&countData)
+
+	queryAdditional += ` ORDER BY ` + sortData
+
+	if input.Page != constants.EMPTY_NUMBER || input.PerPage != constants.EMPTY_NUMBER {
+		queryAdditional += ` LIMIT ?`
+		args = append(args, int(input.PerPage))
+
+		queryAdditional += ` OFFSET ?`
+		args = append(args, offset)
+	}
+
+	getDatas := db.Raw(queryData+queryAdditional, args...).Scan(&result)
+
+	if getDatas.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusNotFound,
 			Type: "error_results_01",
 		}
-		return &menu, totalData, <-err
+		return &result, totalData, <-err
 	}
 
 	// Menghitung total data yang diambil
-	db.Model(&models.Menu{}).Count(&totalData)
+	totalData = countData.CountData
 
 	err <- schemes.SchemeDatabaseError{}
-	return &menu, totalData, <-err
+	return &result, totalData, <-err
 }
 
 /**
@@ -169,6 +220,7 @@ func (r *repositoryMenu) EntityUpdate(input *schemes.Menu) (*models.Menu, scheme
 		return &menu, <-err
 	}
 
+	menu.MerchantID = input.MerchantID
 	menu.Name = input.Name
 	menu.Active = input.Active
 

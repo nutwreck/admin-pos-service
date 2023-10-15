@@ -45,6 +45,7 @@ func (h *handleMenuDetail) HandlerPing(ctx *gin.Context) {
 // @Tags		Master Menu Detail
 // @Accept		mpfd
 // @Produce		json
+// @Param 		merchant_id formData string true "Merchant ID (UUID)"
 // @Param 		menu_id formData string true "Menu ID (UUID)"
 // @Param 		name formData string true "Name of the Menu Detail"
 // @Param 		link formData string true "Link of the Menu Detail"
@@ -70,6 +71,7 @@ func (h *handleMenuDetail) HandlerCreate(ctx *gin.Context) {
 
 	fileImage, _ := ctx.FormFile("image")
 	fileIcon, _ := ctx.FormFile("icon")
+	body.MerchantID = ctx.PostForm("merchant_id")
 	body.Name = ctx.PostForm("name")
 	body.MenuID = ctx.PostForm("menu_id")
 	body.Link = ctx.PostForm("link")
@@ -227,9 +229,10 @@ func (h *handleMenuDetail) HandlerCreate(ctx *gin.Context) {
 // @Tags		Master Menu Detail
 // @Accept		json
 // @Produce		json
-// @Param sort query string false "Use ASC or DESC | Available column sort : menudetail.id, menudetail.menu_id, menu.name, menudetail.name, menudetail.link, menudetail.active, default is menu.name ASC | If you don't want to use it, fill it blank"
+// @Param sort query string false "Use ASC or DESC | Available column sort : menudetail.id, menudetail.menu_id, menu.name, menudetail.name, menudetail.link, menudetail.active, merchant.id, merchant.name, default is menudetail.created_at DESC | If you don't want to use it, fill it blank"
 // @Param page query int false "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0"
 // @Param perpage query int false "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0"
+// @Param merchant_id query string false "Search by merchant"
 // @Param name query string false "Search by name using LIKE pattern"
 // @Param id query string false "Search by ID"
 // @Success 200 {object} schemes.ResponsesPagination
@@ -278,6 +281,10 @@ func (h *handleMenuDetail) HandlerResults(ctx *gin.Context) {
 		}
 		reqPerPage = perPage
 		body.PerPage = perPage
+	}
+	merchantParam := ctx.DefaultQuery("merchant_id", constants.EMPTY_VALUE)
+	if merchantParam != constants.EMPTY_VALUE {
+		body.MerchantID = merchantParam
 	}
 	nameParam := ctx.DefaultQuery("name", constants.EMPTY_VALUE)
 	if nameParam != constants.EMPTY_VALUE {
@@ -391,6 +398,7 @@ func (h *handleMenuDetail) HandlerDelete(ctx *gin.Context) {
 // @Accept		mpfd
 // @Produce		json
 // @Param		id path string true "Update Master Menu Detail"
+// @Param 		merchant_id formData string true "Merchant ID (UUID)"
 // @Param 		menu_id formData string true "Menu ID (UUID)"
 // @Param 		name formData string true "Name of the Menu Detail"
 // @Param 		link formData string true "Link of the Menu Detail"
@@ -420,6 +428,7 @@ func (h *handleMenuDetail) HandlerUpdate(ctx *gin.Context) {
 	id := ctx.Param("id")
 	body.ID = id
 	body.Name = ctx.PostForm("name")
+	body.MerchantID = ctx.PostForm("merchant_id")
 	body.MenuID = ctx.PostForm("menu_id")
 	body.Link = ctx.PostForm("link")
 	activeStr := ctx.PostForm("active")
@@ -538,6 +547,23 @@ func (h *handleMenuDetail) HandlerUpdate(ctx *gin.Context) {
 	//Cek data sebelumnya
 	getDataPrevious, error := h.menuDetail.EntityResult(&body)
 	if error.Type == "error_result_01" {
+		if fileImage != nil {
+			deleteFile := helpers.DeleteFileFromStorageClient(encryptedImageFileName)
+			if deleteFile != nil {
+				fmt.Println("DELETE IMAGE ERROR ==> " + deleteFile.Error())
+				helpers.APIResponse(ctx, "Delete image failed", http.StatusInternalServerError, nil)
+				return
+			}
+		}
+		if fileIcon != nil {
+			deleteFile := helpers.DeleteFileFromStorageClient(encryptedIconFileName)
+			if deleteFile != nil {
+				fmt.Println("DELETE ICO ERROR ==> " + deleteFile.Error())
+				helpers.APIResponse(ctx, "Delete icon failed", http.StatusInternalServerError, nil)
+				return
+			}
+		}
+
 		helpers.APIResponse(ctx, "Master Menu Detail data not found", error.Code, nil)
 		return
 	}
@@ -637,6 +663,16 @@ func ValidatorMenuDetail(ctx *gin.Context, input schemes.MenuDetail, Type string
 					Field:   "Link",
 					Message: "Link is required on body",
 				},
+				{
+					Tag:     "required",
+					Field:   "MerchantID",
+					Message: "Merchant ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MerchantID",
+					Message: "Merchant ID must be uuid",
+				},
 			},
 		}
 	}
@@ -700,6 +736,16 @@ func ValidatorMenuDetail(ctx *gin.Context, input schemes.MenuDetail, Type string
 					Tag:     "required",
 					Field:   "Link",
 					Message: "Link is required on body",
+				},
+				{
+					Tag:     "required",
+					Field:   "MerchantID",
+					Message: "Merchant ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MerchantID",
+					Message: "Merchant ID must be uuid",
 				},
 			},
 		}

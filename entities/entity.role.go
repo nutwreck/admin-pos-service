@@ -7,7 +7,7 @@ import (
 
 type EntityRole interface {
 	EntityCreate(input *schemes.Role) (*models.Role, schemes.SchemeDatabaseError)
-	EntityResults(input *schemes.Role) (*[]models.Role, int64, schemes.SchemeDatabaseError)
+	EntityResults(input *schemes.Role) (*[]schemes.GetAllRole, int64, schemes.SchemeDatabaseError)
 	EntityDelete(input *schemes.Role) (*models.Role, schemes.SchemeDatabaseError)
 	EntityUpdate(input *schemes.Role) (*models.Role, schemes.SchemeDatabaseError)
 }

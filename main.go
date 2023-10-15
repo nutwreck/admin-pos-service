@@ -105,10 +105,25 @@ func setupDatabase() *gorm.DB {
 		&models.Merchant{},
 		&models.Outlet{},
 		&models.Supplier{},
+		&models.UserOutlet{},
+		&models.PaymentCategory{},
+		&models.PaymentMethod{},
+		&models.UnitOfMeasurementType{},
+		&models.UnitOfMeasurement{},
+		&models.Customer{},
+		&models.ProductCategory{},
 	)
 
 	// Seeder data
+	seeder.SeedMerchant(db)
+	seeder.SeedOutlet(db)
 	seeder.SeedRoles(db)
+	seeder.SeedUser(db)
+	seeder.SeedUserOutlet(db)
+	seeder.SeederPaymentCategory(db)
+	seeder.SeederPaymentMethod(db)
+	seeder.SeederUnitOfMeasurementType(db)
+	seeder.SeederUnitOfMeasurement(db)
 
 	if err != nil {
 		defer logrus.Info("Database migration failed")

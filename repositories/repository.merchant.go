@@ -131,7 +131,7 @@ func (r *repositoryMerchant) EntityResults(input *schemes.Merchant) (*[]schemes.
 
 	if input.Name != constants.EMPTY_VALUE {
 		queryAdditional += ` AND merchant.name LIKE ?`
-		args = append(args, "%"+strings.ToUpper(input.Name)+"%")
+		args = append(args, "%"+input.Name+"%")
 	}
 
 	if input.ID != constants.EMPTY_VALUE {

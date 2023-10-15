@@ -98,9 +98,10 @@ func (h *handleMenu) HandlerCreate(ctx *gin.Context) {
 // @Tags		Master Menu
 // @Accept		json
 // @Produce		json
-// @Param sort query string false "Use ASC or DESC | Available column sort : id, name, active, created_at, updated_at, default is created_at DESC | If you don't want to use it, fill it blank"
+// @Param sort query string false "Use ASC or DESC | Available column sort : menu.id, menu.name, menu.active, merchant.id, merchant.name, menu.created_at, default is menu.created_at DESC | If you don't want to use it, fill it blank"
 // @Param page query int false "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0"
 // @Param perpage query int false "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0"
+// @Param merchant_id query string false "Search by merchant"
 // @Param name query string false "Search by name using LIKE pattern"
 // @Param id query string false "Search by ID"
 // @Success 200 {object} schemes.ResponsesPagination
@@ -149,6 +150,10 @@ func (h *handleMenu) HandlerResults(ctx *gin.Context) {
 		}
 		reqPerPage = perPage
 		body.PerPage = perPage
+	}
+	merchantParam := ctx.DefaultQuery("merchant_id", constants.EMPTY_VALUE)
+	if merchantParam != constants.EMPTY_VALUE {
+		body.MerchantID = merchantParam
 	}
 	nameParam := ctx.DefaultQuery("name", constants.EMPTY_VALUE)
 	if nameParam != constants.EMPTY_VALUE {
@@ -255,6 +260,7 @@ func (h *handleMenu) HandlerUpdate(ctx *gin.Context) {
 	id := ctx.Param("id")
 	body.ID = id
 	body.Name = ctx.PostForm("name")
+	body.MerchantID = ctx.PostForm("merchant_id")
 	activeStr := ctx.PostForm("active")
 	if activeStr == "true" {
 		activeGet = constants.TRUE_VALUE
@@ -317,6 +323,16 @@ func ValidatorMenu(ctx *gin.Context, input schemes.Menu, Type string) (interface
 					Field:   "Name",
 					Message: "Name maximal 200 character",
 				},
+				{
+					Tag:     "required",
+					Field:   "MerchantID",
+					Message: "Merchant ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MerchantID",
+					Message: "Merchant ID must be uuid",
+				},
 			},
 		}
 	}
@@ -365,6 +381,16 @@ func ValidatorMenu(ctx *gin.Context, input schemes.Menu, Type string) (interface
 					Tag:     "max",
 					Field:   "Name",
 					Message: "Name maximal 200 character",
+				},
+				{
+					Tag:     "required",
+					Field:   "MerchantID",
+					Message: "Merchant ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MerchantID",
+					Message: "Merchant ID must be uuid",
 				},
 			},
 		}

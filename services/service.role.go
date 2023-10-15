@@ -24,6 +24,7 @@ func (s *serviceRole) EntityCreate(input *schemes.Role) (*models.Role, schemes.S
 	var role schemes.Role
 	role.Name = input.Name
 	role.Type = input.Type
+	role.MerchantID = input.MerchantID
 
 	res, err := s.role.EntityCreate(&role)
 	return res, err
@@ -35,11 +36,12 @@ func (s *serviceRole) EntityCreate(input *schemes.Role) (*models.Role, schemes.S
 *==============================================
  */
 
-func (s *serviceRole) EntityResults(input *schemes.Role) (*[]models.Role, int64, schemes.SchemeDatabaseError) {
+func (s *serviceRole) EntityResults(input *schemes.Role) (*[]schemes.GetAllRole, int64, schemes.SchemeDatabaseError) {
 	var role schemes.Role
 	role.Sort = input.Sort
 	role.Page = input.Page
 	role.PerPage = input.PerPage
+	role.MerchantID = input.MerchantID
 	role.Type = input.Type
 	role.Name = input.Name
 	role.ID = input.ID
@@ -73,6 +75,7 @@ func (s *serviceRole) EntityUpdate(input *schemes.Role) (*models.Role, schemes.S
 	role.ID = input.ID
 	role.Name = input.Name
 	role.Type = input.Type
+	role.MerchantID = input.MerchantID
 	role.Active = input.Active
 
 	res, err := s.role.EntityUpdate(&role)

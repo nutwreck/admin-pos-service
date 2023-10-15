@@ -6,11 +6,14 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
+	"github.com/nutwreck/admin-pos-service/configs"
 	"github.com/nutwreck/admin-pos-service/constants"
 )
 
 type MenuDetailFunction struct {
 	ID           string     `json:"id" gorm:"primary_key"`
+	Merchant     Merchant   `json:"merchant" gorm:"foreignkey:MerchantID"`
+	MerchantID   string     `json:"merchant_id" gorm:"type:varchar; not null"`
 	Menu         Menu       `json:"menu" gorm:"foreignkey:MenuID"`
 	MenuID       string     `json:"menu_id" gorm:"type:varchar;  not null"`
 	MenuDetail   MenuDetail `json:"menu_detail" gorm:"foreignkey:MenuDetailID"`
@@ -27,13 +30,15 @@ func (MenuDetailFunction) TableName() string {
 }
 
 func (m *MenuDetailFunction) BeforeCreate(db *gorm.DB) error {
-	m.ID = uuid.NewString()
-	m.Active = &constants.TRUE_VALUE
-	m.CreatedAt = time.Now()
+	if !configs.IsSeederRunning {
+		m.ID = uuid.NewString()
+		m.Active = &constants.TRUE_VALUE
+		m.CreatedAt = time.Now().Local()
+	}
 	return nil
 }
 
 func (m *MenuDetailFunction) BeforeUpdate(db *gorm.DB) error {
-	m.UpdatedAt = time.Now()
+	m.UpdatedAt = time.Now().Local()
 	return nil
 }

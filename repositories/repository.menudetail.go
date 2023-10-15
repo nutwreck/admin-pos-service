@@ -28,6 +28,7 @@ func NewRepositoryMenuDetail(db *gorm.DB) *repositoryMenuDetail {
 
 func (r *repositoryMenuDetail) EntityCreate(input *schemes.MenuDetail) (*models.MenuDetail, schemes.SchemeDatabaseError) {
 	var menuDetail models.MenuDetail
+	menuDetail.MerchantID = input.MerchantID
 	menuDetail.Name = input.Name
 	menuDetail.MenuID = input.MenuID
 	menuDetail.Link = input.Link
@@ -38,7 +39,7 @@ func (r *repositoryMenuDetail) EntityCreate(input *schemes.MenuDetail) (*models.
 
 	db := r.db.Model(&menuDetail)
 
-	checkMenuName := db.Debug().Where("name = ? AND menu_id = ?", menuDetail.Name, menuDetail.MenuID).First(&menuDetail)
+	checkMenuName := db.Debug().Where("merchant_id = ? AND name = ? AND menu_id = ?", menuDetail.MerchantID, menuDetail.Name, menuDetail.MenuID).First(&menuDetail)
 
 	if checkMenuName.RowsAffected > 0 {
 		err <- schemes.SchemeDatabaseError{
@@ -75,7 +76,7 @@ func (r *repositoryMenuDetail) EntityResults(input *schemes.MenuDetail) (*[]sche
 		countData       schemes.CountData
 		args            []interface{}
 		totalData       int64
-		sortData        string = "menu.name ASC"
+		sortData        string = "menudetail.created_at DESC"
 		queryCountData  string = constants.EMPTY_VALUE
 		queryData       string = constants.EMPTY_VALUE
 		queryAdditional string = constants.EMPTY_VALUE
@@ -115,19 +116,28 @@ func (r *repositoryMenuDetail) EntityResults(input *schemes.MenuDetail) (*[]sche
 				WHEN menudetail.icon != '' THEN CONCAT('` + configs.AccessFile + `',menudetail.icon)
 				ELSE ''
 			END AS icon,
-			menudetail.active
+			menudetail.active,
+			merchant.id AS merchant_id,
+			merchant.name AS merchant_name,
+			menudetail.created_at
 		FROM master.menu_details AS menudetail
 	`
 
 	queryAdditional = `
 		JOIN master.menus AS menu ON menudetail.menu_id = menu.id AND menu.active = true
+		JOIN master.merchants AS merchant ON menudetail.merchant_id = merchant.id AND merchant.active = true
 	`
 
 	queryAdditional += ` WHERE TRUE`
 
+	if input.MerchantID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menudetail.merchant_id = ?`
+		args = append(args, input.MerchantID)
+	}
+
 	if input.Name != constants.EMPTY_VALUE {
 		queryAdditional += ` AND menudetail.name LIKE ?`
-		args = append(args, "%"+strings.ToUpper(input.Name)+"%")
+		args = append(args, "%"+input.Name+"%")
 	}
 
 	if input.ID != constants.EMPTY_VALUE {
@@ -227,6 +237,7 @@ func (r *repositoryMenuDetail) EntityUpdate(input *schemes.MenuDetail) (*models.
 		return &menuDetail, <-err
 	}
 
+	menuDetail.MerchantID = input.MerchantID
 	menuDetail.Name = input.Name
 	menuDetail.Link = input.Link
 	menuDetail.Image = input.Image

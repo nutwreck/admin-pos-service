@@ -5,11 +5,13 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/google/uuid"
+	"github.com/nutwreck/admin-pos-service/configs"
 	"github.com/nutwreck/admin-pos-service/constants"
 )
 
 type ProductCategory struct {
-	ID         uint64    `json:"id" gorm:"primary_key;autoIncrement"`
+	ID         string    `json:"id" gorm:"primary_key"`
 	Merchant   Merchant  `json:"merchant" gorm:"foreignkey:MerchantID"`
 	MerchantID string    `json:"merchant_id" gorm:"type:varchar; not null"`
 	Outlet     Outlet    `json:"outlet" gorm:"foreignkey:OutletID"`
@@ -25,12 +27,15 @@ func (ProductCategory) TableName() string {
 }
 
 func (m *ProductCategory) BeforeCreate(db *gorm.DB) error {
-	m.Active = &constants.TRUE_VALUE
-	m.CreatedAt = time.Now()
+	if !configs.IsSeederRunning {
+		m.ID = uuid.NewString()
+		m.Active = &constants.TRUE_VALUE
+		m.CreatedAt = time.Now().Local()
+	}
 	return nil
 }
 
 func (m *ProductCategory) BeforeUpdate(db *gorm.DB) error {
-	m.UpdatedAt = time.Now()
+	m.UpdatedAt = time.Now().Local()
 	return nil
 }

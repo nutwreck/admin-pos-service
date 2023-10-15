@@ -22,6 +22,7 @@ func NewServiceMenu(menu entities.EntityMenu) *serviceMenu {
 
 func (s *serviceMenu) EntityCreate(input *schemes.Menu) (*models.Menu, schemes.SchemeDatabaseError) {
 	var menu schemes.Menu
+	menu.MerchantID = input.MerchantID
 	menu.Name = input.Name
 
 	res, err := s.menu.EntityCreate(&menu)
@@ -34,11 +35,12 @@ func (s *serviceMenu) EntityCreate(input *schemes.Menu) (*models.Menu, schemes.S
 *==============================================
  */
 
-func (s *serviceMenu) EntityResults(input *schemes.Menu) (*[]models.Menu, int64, schemes.SchemeDatabaseError) {
+func (s *serviceMenu) EntityResults(input *schemes.Menu) (*[]schemes.GetMenu, int64, schemes.SchemeDatabaseError) {
 	var menu schemes.Menu
 	menu.Sort = input.Sort
 	menu.Page = input.Page
 	menu.PerPage = input.PerPage
+	menu.MerchantID = input.MerchantID
 	menu.Name = input.Name
 	menu.ID = input.ID
 
@@ -69,6 +71,7 @@ func (s *serviceMenu) EntityDelete(input *schemes.Menu) (*models.Menu, schemes.S
 func (s *serviceMenu) EntityUpdate(input *schemes.Menu) (*models.Menu, schemes.SchemeDatabaseError) {
 	var menu schemes.Menu
 	menu.ID = input.ID
+	menu.MerchantID = input.MerchantID
 	menu.Name = input.Name
 	menu.Active = input.Active
 
