@@ -6,9 +6,11 @@ import (
 )
 
 type EntityUser interface {
-	EntityRegister(input *schemes.User) (*models.User, schemes.SchemeDatabaseError)
+	EntityAddUser(input *schemes.User) (*models.User, schemes.SchemeDatabaseError)
 	EntityLogin(input *schemes.User) (*models.User, schemes.SchemeDatabaseError)
 	EntityGetUser(input *schemes.User) (*models.User, schemes.SchemeDatabaseError)
 	EntityUpdate(input *schemes.UpdateUser) (*models.User, schemes.SchemeDatabaseError)
 	EntityGetRole(input *schemes.Role) (*models.Role, schemes.SchemeDatabaseError)
+	EntityGetMerchant(input *schemes.Merchant) (*models.Merchant, schemes.SchemeDatabaseError)
+	EntityGetUserOutlet(input *schemes.UserOutlet) (*[]schemes.GetUserOutlet, schemes.SchemeDatabaseError)
 }

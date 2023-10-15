@@ -1,8 +1,41 @@
 definitions:
+  schemes.CustomerRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      address:
+        example: JL. Pahlawan, Ngaliyan, Semarang
+        maxLength: 1000
+        type: string
+      description:
+        example: customer tetap
+        maxLength: 1000
+        type: string
+      merchant_id:
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
+        type: string
+      name:
+        example: candra
+        type: string
+      outlet_id:
+        example: 4e769a02-0214-4277-90d0-bdf7f7b7c064
+        type: string
+      phone:
+        example: "087987875765"
+        minLength: 12
+        type: string
+    required:
+    - address
+    - merchant_id
+    - name
+    - outlet_id
+    - phone
+    type: object
   schemes.LoginUser:
     properties:
       email:
-        example: pos.root@digy.com
+        example: pos.superadmin@digy.com
         format: email
         type: string
       password:
@@ -26,8 +59,11 @@ definitions:
         format: uuid
         type: string
       menu_id:
-        example: 550e8400-e29b-41d4-a716-446655440000
+        example: 890e8400-e29b-41d4-a716-446655440000
         format: uuid
+        type: string
+      merchant_id:
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
         type: string
       name:
         description: Input with Lowercase
@@ -38,6 +74,7 @@ definitions:
     - link
     - menu_detail_id
     - menu_id
+    - merchant_id
     - name
     type: object
   schemes.MenuRequest:
@@ -45,12 +82,16 @@ definitions:
       active:
         example: true
         type: boolean
+      merchant_id:
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
+        type: string
       name:
         description: Input with Lowercase
         example: master
         maxLength: 200
         type: string
     required:
+    - merchant_id
     - name
     type: object
   schemes.OutletRequest:
@@ -66,8 +107,11 @@ definitions:
         example: isi dengan catatan tentang outlet ini
         maxLength: 1000
         type: string
+      is_primary:
+        example: true
+        type: boolean
       merchant_id:
-        example: 550e8400-e29b-41d4-a716-446655440000
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
         type: string
       name:
         description: Input with Lowercase
@@ -79,9 +123,48 @@ definitions:
         type: string
     required:
     - address
+    - is_primary
     - merchant_id
     - name
     - phone
+    type: object
+  schemes.PaymentCategoryRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      merchant_id:
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
+        type: string
+      name:
+        description: Input with Lowercase
+        example: tunai
+        maxLength: 200
+        type: string
+    required:
+    - merchant_id
+    - name
+    type: object
+  schemes.ProductCategoryRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      merchant_id:
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
+        type: string
+      name:
+        description: Input with Lowercase
+        example: mie
+        maxLength: 200
+        type: string
+      outlet_id:
+        example: 4e769a02-0214-4277-90d0-bdf7f7b7c064
+        type: string
+    required:
+    - merchant_id
+    - name
+    - outlet_id
     type: object
   schemes.Responses:
     properties:
@@ -189,6 +272,9 @@ definitions:
       active:
         example: true
         type: boolean
+      merchant_id:
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
+        type: string
       name:
         description: Input with Lowercase
         example: root
@@ -200,6 +286,7 @@ definitions:
         maxLength: 100
         type: string
     required:
+    - merchant_id
     - name
     - type
     type: object
@@ -217,13 +304,13 @@ definitions:
         maxLength: 1000
         type: string
       merchant_id:
-        example: 550e8400-e29b-41d4-a716-446655440000
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
         type: string
       name:
         example: cv makmur sentosa
         type: string
       outlet_id:
-        example: 870e8900-e29b-41d4-a716-446655440000
+        example: 4e769a02-0214-4277-90d0-bdf7f7b7c064
         type: string
       phone:
         example: "087987875765"
@@ -236,14 +323,63 @@ definitions:
     - outlet_id
     - phone
     type: object
+  schemes.UnitOfMeasurementRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      conversion_factor:
+        example: 0.1
+        type: number
+      merchant_id:
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
+        type: string
+      name:
+        description: Input with Lowercase
+        example: Kilogram
+        maxLength: 200
+        type: string
+      symbol:
+        example: kg
+        type: string
+      uom_type_id:
+        example: 32838ab3-6773-4db1-b17d-b562eec8a117
+        type: string
+    required:
+    - conversion_factor
+    - merchant_id
+    - name
+    - symbol
+    - uom_type_id
+    type: object
+  schemes.UnitOfMeasurementTypeRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      merchant_id:
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
+        type: string
+      name:
+        description: Input with Lowercase
+        example: volume
+        maxLength: 200
+        type: string
+    required:
+    - merchant_id
+    - name
+    type: object
   schemes.UpdateUserExample:
     properties:
       active:
         example: true
         type: boolean
+      merchant_id:
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
+        type: string
       name:
         description: Input with Lowercase
-        example: root
+        example: superadmin
         type: string
       new_password:
         example: "12345679"
@@ -254,12 +390,28 @@ definitions:
         minLength: 8
         type: string
       role_id:
-        example: ca7af74f-2fbf-4dd7-b9bd-eba0903170d0
+        example: 01f33858-0cf9-45eb-9e1f-c6a26ca759c4
         type: string
     required:
     - active
+    - merchant_id
     - name
     - role_id
+    type: object
+  schemes.UserOutletRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      outlet_id:
+        example: 4e769a02-0214-4277-90d0-bdf7f7b7c064
+        type: string
+      user_id:
+        example: b4305629-ae51-4837-ab90-02c6498b3bff
+        type: string
+    required:
+    - outlet_id
+    - user_id
     type: object
   schemes.UserRequest:
     properties:
@@ -268,23 +420,27 @@ definitions:
         type: boolean
       email:
         description: Email is Unique
-        example: pos.root@digy.com
+        example: pos.superadmin@digy.com
         format: email
+        type: string
+      merchant_id:
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
         type: string
       name:
         description: Input with Lowercase
-        example: root
+        example: superadmin
         type: string
       password:
         example: "12345678"
         minLength: 8
         type: string
       role_id:
-        example: ca7af74f-2fbf-4dd7-b9bd-eba0903170d0
+        example: 01f33858-0cf9-45eb-9e1f-c6a26ca759c4
         type: string
     required:
     - active
     - email
+    - merchant_id
     - name
     - password
     - role_id
@@ -295,6 +451,50 @@ info:
   title: Admin POS API
   version: "1.0"
 paths:
+  /api/v1/auth/add-user:
+    post:
+      consumes:
+      - application/json
+      description: add by json user
+      parameters:
+      - description: Add New User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Add New User
+      tags:
+      - User
   /api/v1/auth/data-user:
     get:
       consumes:
@@ -415,48 +615,6 @@ paths:
       summary: Refresh Token User
       tags:
       - User
-  /api/v1/auth/register:
-    post:
-      consumes:
-      - application/json
-      description: add by json user
-      parameters:
-      - description: Add User
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/schemes.UserRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/schemes.Responses'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/schemes.Responses400Example'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/schemes.Responses403Example'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/schemes.Responses404Example'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/schemes.Responses409Example'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/schemes.Responses500Example'
-      summary: Register User
-      tags:
-      - User
   /api/v1/auth/update:
     put:
       consumes:
@@ -545,6 +703,233 @@ paths:
       summary: Get List Type Role
       tags:
       - Constant
+  /api/v1/master/customer/create:
+    post:
+      consumes:
+      - application/json
+      description: Create Master Customer
+      parameters:
+      - description: Create Master Customer
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.CustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Master Customer
+      tags:
+      - Master Customer
+  /api/v1/master/customer/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete Master Customer
+      parameters:
+      - description: Delete Master Customer
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete Master Customer
+      tags:
+      - Master Customer
+  /api/v1/master/customer/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List Master Customer
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : customer.id, customer.name,
+          customer.phone, customer.active, merchant.id, merchant.name, outlet.id,
+          outlet.name, customer.created_at, default is customer.created_at DESC |
+          If you don''t want to use it, fill it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
+      - description: Search by outlet
+        in: query
+        name: outlet_id
+        type: string
+      - description: Search by name using LIKE pattern
+        in: query
+        name: name
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Master Customer
+      tags:
+      - Master Customer
+  /api/v1/master/customer/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Get Update Master Customer
+      parameters:
+      - description: Update Master Customer
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Master Customer
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.CustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update Master Customer
+      tags:
+      - Master Customer
   /api/v1/master/menu-detail-function/create:
     post:
       consumes:
@@ -652,8 +1037,8 @@ paths:
       parameters:
       - description: 'Use ASC or DESC | Available column sort : menudetailfunction.id,
           menudetailfunction.name, menu.id, menu.name, menudetail.id, menudetail.name,
-          menudetailfunction.active, default is menu.name ASC | If you don''t want
-          to use it, fill it blank'
+          menudetailfunction.active, merchant.id, merchant.name, default is menudetailfunction.created_at
+          DESC | If you don''t want to use it, fill it blank'
         in: query
         name: sort
         type: string
@@ -667,6 +1052,10 @@ paths:
         in: query
         name: perpage
         type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
       - description: Search by name using LIKE pattern
         in: query
         name: name
@@ -770,6 +1159,11 @@ paths:
       - multipart/form-data
       description: Create Master Menu Detail
       parameters:
+      - description: Merchant ID (UUID)
+        in: formData
+        name: merchant_id
+        required: true
+        type: string
       - description: Menu ID (UUID)
         in: formData
         name: menu_id
@@ -887,8 +1281,9 @@ paths:
       description: Get List Master Menu Detail
       parameters:
       - description: 'Use ASC or DESC | Available column sort : menudetail.id, menudetail.menu_id,
-          menu.name, menudetail.name, menudetail.link, menudetail.active, default
-          is menu.name ASC | If you don''t want to use it, fill it blank'
+          menu.name, menudetail.name, menudetail.link, menudetail.active, merchant.id,
+          merchant.name, default is menudetail.created_at DESC | If you don''t want
+          to use it, fill it blank'
         in: query
         name: sort
         type: string
@@ -902,6 +1297,10 @@ paths:
         in: query
         name: perpage
         type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
       - description: Search by name using LIKE pattern
         in: query
         name: name
@@ -955,6 +1354,11 @@ paths:
       - description: Update Master Menu Detail
         in: path
         name: id
+        required: true
+        type: string
+      - description: Merchant ID (UUID)
+        in: formData
+        name: merchant_id
         required: true
         type: string
       - description: Menu ID (UUID)
@@ -1126,9 +1530,9 @@ paths:
       - application/json
       description: Get List Master Menu
       parameters:
-      - description: 'Use ASC or DESC | Available column sort : id, name, active,
-          created_at, updated_at, default is created_at DESC | If you don''t want
-          to use it, fill it blank'
+      - description: 'Use ASC or DESC | Available column sort : menu.id, menu.name,
+          menu.active, merchant.id, merchant.name, menu.created_at, default is menu.created_at
+          DESC | If you don''t want to use it, fill it blank'
         in: query
         name: sort
         type: string
@@ -1142,6 +1546,10 @@ paths:
         in: query
         name: perpage
         type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
       - description: Search by name using LIKE pattern
         in: query
         name: name
@@ -1602,8 +2010,9 @@ paths:
       description: Get List Master Outlet
       parameters:
       - description: 'Use ASC or DESC | Available column sort : outlet.id, outlet.name,
-          outlet.phone, outlet.created_at, outlet.active, merchant.id, merchant.name,
-          default is merchant.name ASC | If you don''t want to use it, fill it blank'
+          outlet.phone, outlet.created_at, outlet.active, outlet.is_primary, merchant.id,
+          merchant.name, default is merchant.name ASC | If you don''t want to use
+          it, fill it blank'
         in: query
         name: sort
         type: string
@@ -1617,6 +2026,10 @@ paths:
         in: query
         name: perpage
         type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
       - description: Search by name using LIKE pattern
         in: query
         name: name
@@ -1714,6 +2127,722 @@ paths:
       summary: Get Update Master Outlet
       tags:
       - Master Outlet
+  /api/v1/master/payment-category/create:
+    post:
+      consumes:
+      - application/json
+      description: Create Master Payment Category
+      parameters:
+      - description: Create Master Payment Category
+        in: body
+        name: paymentcategory
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.PaymentCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Master Payment Category
+      tags:
+      - Master Payment Category
+  /api/v1/master/payment-category/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete Master Payment Category
+      parameters:
+      - description: Delete Master Payment Category
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete Master Payment Category
+      tags:
+      - Master Payment Category
+  /api/v1/master/payment-category/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List Master Payment Category
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : paymentcategory.id,
+          paymentcategory.name, paymentcategory.active, paymentcategory.created_at,
+          default is paymentcategory.created_at DESC | If you don''t want to use it,
+          fill it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
+      - description: Search by name using LIKE pattern
+        in: query
+        name: name
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Master Payment Category
+      tags:
+      - Master Payment Category
+  /api/v1/master/payment-category/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Get Update Master Payment Category
+      parameters:
+      - description: Update Master Payment Category
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Master Payment Category
+        in: body
+        name: paymentcategory
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.PaymentCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update Master Payment Category
+      tags:
+      - Master Payment Category
+  /api/v1/master/payment-method/create:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create Master Payment Method
+      parameters:
+      - description: Merchant ID (UUID)
+        in: formData
+        name: merchant_id
+        required: true
+        type: string
+      - description: Payment Category ID
+        in: formData
+        name: payment_category_id
+        required: true
+        type: string
+      - description: Name of the Payment Method | input with lowercase
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Account Number of the Payment Method | input numeric
+        in: formData
+        name: account_number
+        type: string
+      - description: File to be uploaded | Max Size File 1MB
+        in: formData
+        name: logo
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Master Payment Method
+      tags:
+      - Master Payment Method
+  /api/v1/master/payment-method/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete Master Payment Method
+      parameters:
+      - description: Delete Master Payment Method
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete Master Payment Method
+      tags:
+      - Master Payment Method
+  /api/v1/master/payment-method/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List Master Payment Method
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : paymentmethod.id,
+          paymentmethod.name, paymentcategoryid.id, paymentcategoryid.name, paymentmethod.account_number,
+          paymentmethod.active, paymentmethod.created_at, default is paymentmethod.created_at
+          DESC | If you don''t want to use it, fill it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
+      - description: Search by Payment Category ID
+        in: query
+        name: payment_category_id
+        type: string
+      - description: Search by name using LIKE pattern
+        in: query
+        name: name
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Master Payment Method
+      tags:
+      - Master Payment Method
+  /api/v1/master/payment-method/update/{id}:
+    put:
+      consumes:
+      - multipart/form-data
+      description: Get Update Master Payment Method
+      parameters:
+      - description: Update Master Payment Method
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Merchant ID (UUID)
+        in: formData
+        name: merchant_id
+        required: true
+        type: string
+      - description: Payment Method ID
+        in: formData
+        name: payment_category_id
+        required: true
+        type: string
+      - description: Name of the Payment Method | input with lowercase
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Account Number of the Payment Method | input numeric
+        in: formData
+        name: account_number
+        type: string
+      - description: File to be uploaded | Max Size File 1MB
+        in: formData
+        name: logo
+        type: file
+      - description: Status Data
+        in: formData
+        name: active
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update Master Payment Method
+      tags:
+      - Master Payment Method
+  /api/v1/master/product-category/create:
+    post:
+      consumes:
+      - application/json
+      description: Create Master Product Category
+      parameters:
+      - description: Create Master Product Category
+        in: body
+        name: productcategory
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.ProductCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Master Product Category
+      tags:
+      - Master Product Category
+  /api/v1/master/product-category/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete Master Product Category
+      parameters:
+      - description: Delete Master Product Category
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete Master Product Category
+      tags:
+      - Master Product Category
+  /api/v1/master/product-category/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List Master Product Category
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : productcategory.id,
+          productcategory.name, productcategory.active, merchant.id, merchant.name,
+          outlet.id, outlet.name, productcategory.created_at, default is productcategory.created_at
+          DESC | If you don''t want to use it, fill it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
+      - description: Search by outlet
+        in: query
+        name: outlet_id
+        type: string
+      - description: Search by name using LIKE pattern
+        in: query
+        name: name
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Master Product Category
+      tags:
+      - Master Product Category
+  /api/v1/master/product-category/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Get Update Master Product Category
+      parameters:
+      - description: Update Master Product Category
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Master Product Category
+        in: body
+        name: productcategory
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.ProductCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update Master Product Category
+      tags:
+      - Master Product Category
   /api/v1/master/role/create:
     post:
       consumes:
@@ -1819,9 +2948,9 @@ paths:
       - application/json
       description: Get List Master Role
       parameters:
-      - description: 'Use ASC or DESC | Available column sort : id, name, active,
-          created_at, updated_at, default is created_at DESC | If you don''t want
-          to use it, fill it blank'
+      - description: 'Use ASC or DESC | Available column sort : role.id, role.name,
+          role.type, role.active, merchant.id, merchant.name, default is role.created_at
+          DESC | If you don''t want to use it, fill it blank'
         in: query
         name: sort
         type: string
@@ -1835,6 +2964,10 @@ paths:
         in: query
         name: perpage
         type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
       - description: Search by type role
         in: query
         name: type
@@ -1878,6 +3011,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
       summary: Get List Master Role
       tags:
       - Master Role
@@ -1996,7 +3131,7 @@ paths:
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -2039,9 +3174,10 @@ paths:
       - application/json
       description: Get List Master Supplier
       parameters:
-      - description: 'Use ASC or DESC | Available column sort : id, name, active,
-          created_at, updated_at, default is created_at DESC | If you don''t want
-          to use it, fill it blank'
+      - description: 'Use ASC or DESC | Available column sort : supplier.id, supplier.name,
+          supplier.phone, supplier.active, merchant.id, merchant.name, outlet.id,
+          outlet.name, supplier.created_at, default is supplier.created_at DESC |
+          If you don''t want to use it, fill it blank'
         in: query
         name: sort
         type: string
@@ -2055,6 +3191,14 @@ paths:
         in: query
         name: perpage
         type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
+      - description: Search by outlet
+        in: query
+        name: outlet_id
+        type: string
       - description: Search by name using LIKE pattern
         in: query
         name: name
@@ -2062,7 +3206,7 @@ paths:
       - description: Search by ID
         in: query
         name: id
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -2109,7 +3253,7 @@ paths:
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       - description: Update Master Supplier
         in: body
         name: supplier
@@ -2152,6 +3296,682 @@ paths:
       summary: Get Update Master Supplier
       tags:
       - Master Supplier
+  /api/v1/master/uom-type/create:
+    post:
+      consumes:
+      - application/json
+      description: Create Master UOM Type
+      parameters:
+      - description: Create Master UOM Type
+        in: body
+        name: uomtype
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.UnitOfMeasurementTypeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Master UOM Type
+      tags:
+      - Master UOM Type
+  /api/v1/master/uom-type/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete Master UOM Type
+      parameters:
+      - description: Delete Master UOM Type
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete Master UOM Type
+      tags:
+      - Master UOM Type
+  /api/v1/master/uom-type/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List Master UOM Type
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : uomtype.id, uomtype.name,
+          uomtype.active, merchant.id, merchant.name, uomtype.created_at, default
+          is uomtype.created_at DESC | If you don''t want to use it, fill it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
+      - description: Search by name using LIKE pattern
+        in: query
+        name: name
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Master UOM Type
+      tags:
+      - Master UOM Type
+  /api/v1/master/uom-type/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Get Update Master UOM Type
+      parameters:
+      - description: Update Master UOM Type
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Master UOM Type
+        in: body
+        name: uomtype
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.UnitOfMeasurementTypeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update Master UOM Type
+      tags:
+      - Master UOM Type
+  /api/v1/master/uom/create:
+    post:
+      consumes:
+      - application/json
+      description: Create Master UOM
+      parameters:
+      - description: Create Master UOM
+        in: body
+        name: uom
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.UnitOfMeasurementRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Master UOM
+      tags:
+      - Master UOM
+  /api/v1/master/uom/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete Master UOM
+      parameters:
+      - description: Delete Master UOM
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete Master UOM
+      tags:
+      - Master UOM
+  /api/v1/master/uom/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List Master UOM
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : uom.id, uom.name,
+          uom.symbol, uom.conversion_factor, uom.active, merchant.id, merchant.name,
+          uomType.id, uomType.name, uom.created_at, default is uom.created_at DESC
+          | If you don''t want to use it, fill it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
+      - description: Search by UOM Type
+        in: query
+        name: uom_type_id
+        type: string
+      - description: Search by name using LIKE pattern
+        in: query
+        name: name
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Master UOM
+      tags:
+      - Master UOM
+  /api/v1/master/uom/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Get Update Master UOM
+      parameters:
+      - description: Update Master UOM
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Master UOM
+        in: body
+        name: uom
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.UnitOfMeasurementRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update Master UOM
+      tags:
+      - Master UOM
+  /api/v1/master/user-outlet/create:
+    post:
+      consumes:
+      - application/json
+      description: Create User Outlet
+      parameters:
+      - description: Create User Outlet
+        in: body
+        name: useroutlet
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.UserOutletRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create User Outlet
+      tags:
+      - User Outlet
+  /api/v1/master/user-outlet/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete User Outlet
+      parameters:
+      - description: Delete User Outlet
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete User Outlet
+      tags:
+      - User Outlet
+  /api/v1/master/user-outlet/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List User Outlet
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : useroutlet.id, user.id,
+          user.name, outlet.id, outlet.name, useroutlet.active, merchant.id, merchant.name,
+          useroutlet.created_at, default is useroutlet.created_at DESC | If you don''t
+          want to use it, fill it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
+      - description: Search by outlet
+        in: query
+        name: outlet_id
+        type: string
+      - description: Search by user
+        in: query
+        name: user_id
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List User Outlet
+      tags:
+      - User Outlet
+  /api/v1/master/user-outlet/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Get Update User Outlet
+      parameters:
+      - description: Update User Outlet
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update User Outlet
+        in: body
+        name: useroutlet
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.UserOutletRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update User Outlet
+      tags:
+      - User Outlet
 securityDefinitions:
   ApiKeyAuth:
     description: 'User JWT Bearer - Format Input Value : Bearer[ space ][ JWTToken

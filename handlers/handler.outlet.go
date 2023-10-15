@@ -85,6 +85,11 @@ func (h *handlerOutlet) HandlerCreate(ctx *gin.Context) {
 		return
 	}
 
+	if error.Type == "error_create_04" {
+		helpers.APIResponse(ctx, "The main outlet is predetermined", error.Code, nil)
+		return
+	}
+
 	helpers.APIResponse(ctx, "Create new Outlet successfully", http.StatusCreated, nil)
 }
 
@@ -99,9 +104,10 @@ func (h *handlerOutlet) HandlerCreate(ctx *gin.Context) {
 // @Tags		Master Outlet
 // @Accept		json
 // @Produce		json
-// @Param sort query string false "Use ASC or DESC | Available column sort : outlet.id, outlet.name, outlet.phone, outlet.created_at, outlet.active, merchant.id, merchant.name, default is merchant.name ASC | If you don't want to use it, fill it blank"
+// @Param sort query string false "Use ASC or DESC | Available column sort : outlet.id, outlet.name, outlet.phone, outlet.created_at, outlet.active, outlet.is_primary, merchant.id, merchant.name, default is merchant.name ASC | If you don't want to use it, fill it blank"
 // @Param page query int false "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0"
 // @Param perpage query int false "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0"
+// @Param merchant_id query string false "Search by merchant"
 // @Param name query string false "Search by name using LIKE pattern"
 // @Param id query string false "Search by ID"
 // @Success 200 {object} schemes.ResponsesPagination
@@ -150,6 +156,10 @@ func (h *handlerOutlet) HandlerResults(ctx *gin.Context) {
 		}
 		reqPerPage = perPage
 		body.PerPage = perPage
+	}
+	merchantParam := ctx.DefaultQuery("merchant_id", constants.EMPTY_VALUE)
+	if merchantParam != constants.EMPTY_VALUE {
+		body.MerchantID = merchantParam
 	}
 	nameParam := ctx.DefaultQuery("name", constants.EMPTY_VALUE)
 	if nameParam != constants.EMPTY_VALUE {
@@ -279,6 +289,11 @@ func (h *handlerOutlet) HandlerUpdate(ctx *gin.Context) {
 		return
 	}
 
+	if error.Type == "error_update_03" {
+		helpers.APIResponse(ctx, "The main outlet is predetermined", error.Code, nil)
+		return
+	}
+
 	helpers.APIResponse(ctx, fmt.Sprintf("Update Outlet data success for this id %s", id), http.StatusCreated, nil)
 }
 
@@ -338,6 +353,11 @@ func ValidatorOutlet(ctx *gin.Context, input schemes.Outlet, Type string) (inter
 					Tag:     "max",
 					Field:   "Description",
 					Message: "Description maximal 1000 character",
+				},
+				{
+					Tag:     "required",
+					Field:   "IsPrimary",
+					Message: "Primary is required on body",
 				},
 			},
 		}
@@ -417,6 +437,11 @@ func ValidatorOutlet(ctx *gin.Context, input schemes.Outlet, Type string) (inter
 					Tag:     "max",
 					Field:   "Description",
 					Message: "Description maximal 1000 character",
+				},
+				{
+					Tag:     "required",
+					Field:   "IsPrimary",
+					Message: "Primary is required on body",
 				},
 			},
 		}

@@ -23,8 +23,8 @@ func NewRouteUser(db *gorm.DB, router *gin.Engine) {
 	routePrivate.Use(middlewares.AuthRole(db))
 
 	route.GET("/ping", handlerUser.HandlerPing)
-	route.POST("/register", handlerUser.HandlerRegister)
 	route.POST("/login", handlerUser.HandlerLogin)
+	routePrivate.POST("/add-user", handlerUser.HandlerAddUser)
 	routePrivate.GET("/refresh-token", handlerUser.HandlerRefreshToken)
 	routePrivate.PUT("/update", handlerUser.HandlerUpdate)
 	routePrivate.GET("/data-user", handlerUser.HandleDataUser)

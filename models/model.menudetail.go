@@ -6,20 +6,23 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
+	"github.com/nutwreck/admin-pos-service/configs"
 	"github.com/nutwreck/admin-pos-service/constants"
 )
 
 type MenuDetail struct {
-	ID        string    `json:"id" gorm:"primary_key"`
-	Menu      Menu      `json:"menu" gorm:"foreignkey:MenuID"`
-	MenuID    string    `json:"menu_id" gorm:"type:varchar; not null"`
-	Name      string    `json:"name" gorm:"type:varchar; not null"`
-	Link      string    `json:"link" gorm:"type:varchar; not null"`
-	Image     string    `json:"image" gorm:"type:varchar;"`
-	Icon      string    `json:"icon" gorm:"type:varchar;"`
-	Active    *bool     `json:"active" gorm:"type:boolean; not null"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID         string    `json:"id" gorm:"primary_key"`
+	Merchant   Merchant  `json:"merchant" gorm:"foreignkey:MerchantID"`
+	MerchantID string    `json:"merchant_id" gorm:"type:varchar; not null"`
+	Menu       Menu      `json:"menu" gorm:"foreignkey:MenuID"`
+	MenuID     string    `json:"menu_id" gorm:"type:varchar; not null"`
+	Name       string    `json:"name" gorm:"type:varchar; not null"`
+	Link       string    `json:"link" gorm:"type:varchar; not null"`
+	Image      string    `json:"image" gorm:"type:varchar;"`
+	Icon       string    `json:"icon" gorm:"type:varchar;"`
+	Active     *bool     `json:"active" gorm:"type:boolean; not null"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 func (MenuDetail) TableName() string {
@@ -27,13 +30,15 @@ func (MenuDetail) TableName() string {
 }
 
 func (m *MenuDetail) BeforeCreate(db *gorm.DB) error {
-	m.ID = uuid.NewString()
-	m.Active = &constants.TRUE_VALUE
-	m.CreatedAt = time.Now()
+	if !configs.IsSeederRunning {
+		m.ID = uuid.NewString()
+		m.Active = &constants.TRUE_VALUE
+		m.CreatedAt = time.Now().Local()
+	}
 	return nil
 }
 
 func (m *MenuDetail) BeforeUpdate(db *gorm.DB) error {
-	m.UpdatedAt = time.Now()
+	m.UpdatedAt = time.Now().Local()
 	return nil
 }

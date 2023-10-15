@@ -38,26 +38,31 @@ func (h *handlerUser) HandlerPing(ctx *gin.Context) {
 
 /**
 * ======================================
-* Handler Register New Account
+* Handler Add New Account
 *======================================-
  */
 
-// RegisterUser godoc
-// @Summary		Register User
+// AddNewUser godoc
+// @Summary		Add New User
 // @Description	add by json user
 // @Tags		User
 // @Accept		json
 // @Produce		json
-// @Param		user body schemes.UserRequest true "Add User"
+// @Param		user body schemes.UserRequest true "Add New User"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 403 {object} schemes.Responses403Example
 // @Failure 404 {object} schemes.Responses404Example
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
-// @Router /api/v1/auth/register [post]
-func (h *handlerUser) HandlerRegister(ctx *gin.Context) {
-	var body schemes.User
+// @Security	ApiKeyAuth
+// @Router /api/v1/auth/add-user [post]
+func (h *handlerUser) HandlerAddUser(ctx *gin.Context) {
+	var (
+		body     schemes.User
+		bodyRole schemes.Role
+	)
+
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -65,26 +70,48 @@ func (h *handlerUser) HandlerRegister(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorUser(ctx, body, "register")
+	errors, code := ValidatorUser(ctx, body, "add_user")
 
 	if code > 0 {
 		helpers.ErrorResponse(ctx, errors)
 		return
 	}
 
-	_, error := h.user.EntityRegister(&body)
+	bearer := ctx.GetHeader("Authorization")
+	checkMerchant, errToken := helpers.GetDataTokenBearer(bearer)
+	if !errToken {
+		helpers.APIResponse(ctx, "Get data token is not valid", http.StatusBadRequest, nil)
+		return
+	}
 
-	if error.Type == "error_register_01" {
+	//Cek role tipe sys atau user - jika sys (dari admin) => merchant id bebas dari dashboard, jika user (dari user) => harus sesuai merchant id user yang daftarin user lainnya
+	bodyRole.ID = body.RoleID
+	checkRole, errRole := h.user.EntityGetRole(&bodyRole)
+	if errRole.Type == "error_result_01" {
+		helpers.APIResponse(ctx, "Role account is not found", errRole.Code, nil)
+		return
+	}
+
+	if checkRole.Type == constants.ROLE_USER {
+		if body.MerchantID != checkMerchant.MerchantID {
+			helpers.APIResponse(ctx, "Merchant is not valid", http.StatusBadRequest, nil)
+			return
+		}
+	}
+
+	_, error := h.user.EntityAddUser(&body)
+
+	if error.Type == "error_add_user_01" {
 		helpers.APIResponse(ctx, "Email already taken", error.Code, nil)
 		return
 	}
 
-	if error.Type == "error_register_02" {
-		helpers.APIResponse(ctx, "Register new user account failed", error.Code, nil)
+	if error.Type == "error_add_user_02" {
+		helpers.APIResponse(ctx, "Add new user account failed", error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, "Register new user account success", http.StatusOK, nil)
+	helpers.APIResponse(ctx, "Add new user account success", http.StatusOK, nil)
 }
 
 /**
@@ -108,7 +135,14 @@ func (h *handlerUser) HandlerRegister(ctx *gin.Context) {
 // @Failure 500 {object} schemes.Responses500Example
 // @Router /api/v1/auth/login [post]
 func (h *handlerUser) HandlerLogin(ctx *gin.Context) {
-	var body schemes.User
+	var (
+		body             schemes.User
+		bodyRole         schemes.Role
+		bodyMerchant     schemes.Merchant
+		bodyUserOutlet   schemes.UserOutlet
+		resGetOutletUser []schemes.GetOutletUser
+		result           schemes.GetUser
+	)
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -141,7 +175,7 @@ func (h *handlerUser) HandlerLogin(ctx *gin.Context) {
 	}
 
 	accessToken, expiredAt, errorJwt := pkg.Sign(&schemes.JWtMetaRequest{
-		Data:      gin.H{"ucode": res.ID, "email": res.Email, "role": res.RoleID},
+		Data:      gin.H{"ucode": res.ID, "email": res.Email, "role": res.RoleID, "merchant": res.MerchantID},
 		SecretKey: pkg.GodotEnv("JWT_SECRET_KEY"),
 		Options:   schemes.JwtMetaOptions{Audience: pkg.GodotEnv("JWT_AUD"), ExpiredAt: configs.DayExpiredJWT},
 	})
@@ -151,7 +185,72 @@ func (h *handlerUser) HandlerLogin(ctx *gin.Context) {
 		return
 	}
 
-	helpers.APIResponse(ctx, "Login successfully", http.StatusOK, gin.H{"accessToken": accessToken, "expiredAt": expiredAt})
+	// Get Role
+	bodyRole.ID = res.RoleID
+	resGetRole, error := h.user.EntityGetRole(&bodyRole)
+	if error.Type == "error_result_01" {
+		helpers.APIResponse(ctx, "Role account in not found", error.Code, nil)
+		return
+	}
+	if !*resGetRole.Active {
+		helpers.APIResponse(ctx, "Role account is disabled", http.StatusForbidden, nil)
+		return
+	}
+
+	// Get Merchant
+	bodyMerchant.ID = res.MerchantID
+	resGetMerchant, error := h.user.EntityGetMerchant(&bodyMerchant)
+	if error.Type == "error_result_01" {
+		helpers.APIResponse(ctx, "Merchant in not found", error.Code, nil)
+		return
+	}
+	if !*resGetMerchant.Active {
+		helpers.APIResponse(ctx, "Merchant is disabled", http.StatusForbidden, nil)
+		return
+	}
+
+	// Get User Outlet
+	bodyUserOutlet.UserID = res.ID
+	resGetUserOutlet, _ := h.user.EntityGetUserOutlet(&bodyUserOutlet)
+
+	result.Active = *res.Active
+	result.Email = res.Email
+	result.Name = res.Name
+	result.ID = res.ID
+	result.Role = schemes.GetRole{
+		ID:   resGetRole.ID,
+		Name: resGetRole.Name,
+		Type: resGetRole.Type,
+	}
+	result.Merchant = schemes.GetMerchant{
+		ID:          resGetMerchant.ID,
+		Name:        resGetMerchant.Name,
+		Phone:       resGetMerchant.Phone,
+		Address:     resGetMerchant.Address,
+		Logo:        configs.AccessFile + resGetMerchant.Logo,
+		Description: resGetMerchant.Description,
+		CreatedAt:   resGetMerchant.CreatedAt,
+		Active:      resGetMerchant.Active,
+	}
+	if len(*resGetUserOutlet) > 0 {
+		for _, userOutlet := range *resGetUserOutlet {
+			userOutletData := schemes.GetOutletUser{
+				ID:          userOutlet.OutletID,
+				Name:        userOutlet.OutletName,
+				Phone:       userOutlet.OutletPhone,
+				Address:     userOutlet.OutletAddress,
+				Description: userOutlet.OutletDescription,
+				CreatedAt:   userOutlet.OutletCreatedAt,
+				Active:      userOutlet.OutletActive,
+			}
+
+			resGetOutletUser = append(resGetOutletUser, userOutletData)
+		}
+
+		result.Outlet = resGetOutletUser
+	}
+
+	helpers.APIResponse(ctx, "Login successfully", http.StatusOK, gin.H{"accessToken": accessToken, "expiredAt": expiredAt, "user": result})
 }
 
 // RefreshTokenUser godoc
@@ -256,6 +355,7 @@ func (h *handlerUser) HandlerUpdate(ctx *gin.Context) {
 	body.NewPassword = ctx.PostForm("new_password")
 	body.DataPassword = resGetUser.Password
 	body.RoleID = ctx.PostForm("role_id")
+	body.MerchantID = ctx.PostForm("merchant_id")
 	activeStr := ctx.PostForm("active")
 	if activeStr == "true" {
 		activeGet = constants.TRUE_VALUE
@@ -323,9 +423,12 @@ func (h *handlerUser) HandlerUpdate(ctx *gin.Context) {
 // @Router /api/v1/auth/data-user [get]
 func (h *handlerUser) HandleDataUser(ctx *gin.Context) {
 	var (
-		bodyUser schemes.User
-		bodyRole schemes.Role
-		result   schemes.GetUser
+		bodyUser         schemes.User
+		bodyRole         schemes.Role
+		bodyMerchant     schemes.Merchant
+		bodyUserOutlet   schemes.UserOutlet
+		resGetOutletUser []schemes.GetOutletUser
+		result           schemes.GetUser
 	)
 
 	bearer := ctx.GetHeader("Authorization")
@@ -357,6 +460,22 @@ func (h *handlerUser) HandleDataUser(ctx *gin.Context) {
 		return
 	}
 
+	// Get Merchant
+	bodyMerchant.ID = resGetUser.MerchantID
+	resGetMerchant, error := h.user.EntityGetMerchant(&bodyMerchant)
+	if error.Type == "error_result_01" {
+		helpers.APIResponse(ctx, "Merchant in not found", error.Code, nil)
+		return
+	}
+	if !*resGetMerchant.Active {
+		helpers.APIResponse(ctx, "Merchant is disabled", http.StatusForbidden, nil)
+		return
+	}
+
+	// Get User Outlet
+	bodyUserOutlet.UserID = resGetUser.ID
+	resGetUserOutlet, _ := h.user.EntityGetUserOutlet(&bodyUserOutlet)
+
 	result.Active = *resGetUser.Active
 	result.Email = resGetUser.Email
 	result.Name = resGetUser.Name
@@ -365,6 +484,33 @@ func (h *handlerUser) HandleDataUser(ctx *gin.Context) {
 		ID:   resGetRole.ID,
 		Name: resGetRole.Name,
 		Type: resGetRole.Type,
+	}
+	result.Merchant = schemes.GetMerchant{
+		ID:          resGetMerchant.ID,
+		Name:        resGetMerchant.Name,
+		Phone:       resGetMerchant.Phone,
+		Address:     resGetMerchant.Address,
+		Logo:        configs.AccessFile + resGetMerchant.Logo,
+		Description: resGetMerchant.Description,
+		CreatedAt:   resGetMerchant.CreatedAt,
+		Active:      resGetMerchant.Active,
+	}
+	if len(*resGetUserOutlet) > 0 {
+		for _, userOutlet := range *resGetUserOutlet {
+			userOutletData := schemes.GetOutletUser{
+				ID:          userOutlet.OutletID,
+				Name:        userOutlet.OutletName,
+				Phone:       userOutlet.OutletPhone,
+				Address:     userOutlet.OutletAddress,
+				Description: userOutlet.OutletDescription,
+				CreatedAt:   userOutlet.OutletCreatedAt,
+				Active:      userOutlet.OutletActive,
+			}
+
+			resGetOutletUser = append(resGetOutletUser, userOutletData)
+		}
+
+		result.Outlet = resGetOutletUser
 	}
 
 	helpers.APIResponse(ctx, "User data already to use", http.StatusOK, result)
@@ -379,7 +525,7 @@ func (h *handlerUser) HandleDataUser(ctx *gin.Context) {
 func ValidatorUser(ctx *gin.Context, input schemes.User, Type string) (interface{}, int) {
 	var schema gpc.ErrorConfig
 
-	if Type == "register" {
+	if Type == "add_user" {
 		schema = gpc.ErrorConfig{
 			Options: []gpc.ErrorMetaConfig{
 				{
@@ -421,6 +567,16 @@ func ValidatorUser(ctx *gin.Context, input schemes.User, Type string) (interface
 					Tag:     "uuid",
 					Field:   "RoleID",
 					Message: "Role ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "MerchantID",
+					Message: "Merchant ID is required on body",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MerchantID",
+					Message: "Merchant ID must be uuid",
 				},
 			},
 		}
@@ -484,6 +640,16 @@ func ValidatorUpdateUser(ctx *gin.Context, input schemes.UpdateUser) (interface{
 				Tag:     "uuid",
 				Field:   "RoleID",
 				Message: "Role ID must be uuid",
+			},
+			{
+				Tag:     "required",
+				Field:   "MerchantID",
+				Message: "Merchant ID is required on body",
+			},
+			{
+				Tag:     "uuid",
+				Field:   "MerchantID",
+				Message: "Merchant ID must be uuid",
 			},
 		},
 	}

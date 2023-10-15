@@ -99,11 +99,13 @@ func (h *handleSupplier) HandlerCreate(ctx *gin.Context) {
 // @Tags		Master Supplier
 // @Accept		json
 // @Produce		json
-// @Param sort query string false "Use ASC or DESC | Available column sort : id, name, active, created_at, updated_at, default is created_at DESC | If you don't want to use it, fill it blank"
+// @Param sort query string false "Use ASC or DESC | Available column sort : supplier.id, supplier.name, supplier.phone, supplier.active, merchant.id, merchant.name, outlet.id, outlet.name, supplier.created_at, default is supplier.created_at DESC | If you don't want to use it, fill it blank"
 // @Param page query int false "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0"
 // @Param perpage query int false "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0"
+// @Param merchant_id query string false "Search by merchant"
+// @Param outlet_id query string false "Search by outlet"
 // @Param name query string false "Search by name using LIKE pattern"
-// @Param id query int false "Search by ID"
+// @Param id query string false "Search by ID"
 // @Success 200 {object} schemes.ResponsesPagination
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -151,16 +153,21 @@ func (h *handleSupplier) HandlerResults(ctx *gin.Context) {
 		reqPerPage = perPage
 		body.PerPage = perPage
 	}
+	outletParam := ctx.DefaultQuery("outlet_id", constants.EMPTY_VALUE)
+	if outletParam != constants.EMPTY_VALUE {
+		body.OutletID = outletParam
+	}
+	merchantParam := ctx.DefaultQuery("merchant_id", constants.EMPTY_VALUE)
+	if merchantParam != constants.EMPTY_VALUE {
+		body.MerchantID = merchantParam
+	}
 	nameParam := ctx.DefaultQuery("name", constants.EMPTY_VALUE)
 	if nameParam != constants.EMPTY_VALUE {
 		body.Name = nameParam
 	}
 	idParam := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	if idParam != constants.EMPTY_VALUE {
-		idParamConvert, _ := strconv.ParseUint(idParam, 10, 64)
-		body.ID = idParamConvert
-	} else {
-		body.ID = 0
+		body.ID = idParam
 	}
 
 	res, totalData, error := h.supplier.EntityResults(&body)
@@ -190,8 +197,7 @@ func (h *handleSupplier) HandlerResults(ctx *gin.Context) {
 func (h *handleSupplier) HandlerResult(ctx *gin.Context) {
 	var body schemes.Supplier
 	id := ctx.Param("id")
-	idParamConvert, _ := strconv.ParseUint(id, 10, 64)
-	body.ID = idParamConvert
+	body.ID = id
 
 	errors, code := ValidatorSupplier(ctx, body, "result")
 
@@ -221,7 +227,7 @@ func (h *handleSupplier) HandlerResult(ctx *gin.Context) {
 // @Tags		Master Supplier
 // @Accept		json
 // @Produce		json
-// @Param		id path int true "Delete Master Supplier"
+// @Param		id path string true "Delete Master Supplier"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -234,8 +240,7 @@ func (h *handleSupplier) HandlerResult(ctx *gin.Context) {
 func (h *handleSupplier) HandlerDelete(ctx *gin.Context) {
 	var body schemes.Supplier
 	id := ctx.Param("id")
-	idParamConvert, _ := strconv.ParseUint(id, 10, 64)
-	body.ID = idParamConvert
+	body.ID = id
 
 	errors, code := ValidatorSupplier(ctx, body, "delete")
 
@@ -270,7 +275,7 @@ func (h *handleSupplier) HandlerDelete(ctx *gin.Context) {
 // @Tags		Master Supplier
 // @Accept		json
 // @Produce		json
-// @Param		id path int true "Update Master Supplier"
+// @Param		id path string true "Update Master Supplier"
 // @Param		supplier body schemes.SupplierRequest true "Update Master Supplier"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
@@ -287,8 +292,7 @@ func (h *handleSupplier) HandlerUpdate(ctx *gin.Context) {
 		activeGet = false
 	)
 	id := ctx.Param("id")
-	idParamConvert, _ := strconv.ParseUint(id, 10, 64)
-	body.ID = idParamConvert
+	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.Description = ctx.PostForm("description")
 	body.Address = ctx.PostForm("address")
@@ -388,9 +392,19 @@ func ValidatorSupplier(ctx *gin.Context, input schemes.Supplier, Type string) (i
 					Message: "Merchant ID is required on body",
 				},
 				{
+					Tag:     "uuid",
+					Field:   "MerchantID",
+					Message: "Merchant ID must be uuid",
+				},
+				{
 					Tag:     "required",
 					Field:   "OutletID",
 					Message: "Outlet ID is required on body",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "OutletID",
+					Message: "Outlet ID must be uuid",
 				},
 			},
 		}
@@ -404,6 +418,11 @@ func ValidatorSupplier(ctx *gin.Context, input schemes.Supplier, Type string) (i
 					Field:   "ID",
 					Message: "ID is required on param",
 				},
+				{
+					Tag:     "uuid",
+					Field:   "ID",
+					Message: "ID must be uuid",
+				},
 			},
 		}
 	}
@@ -415,6 +434,11 @@ func ValidatorSupplier(ctx *gin.Context, input schemes.Supplier, Type string) (i
 					Tag:     "required",
 					Field:   "ID",
 					Message: "ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "ID",
+					Message: "ID must be uuid",
 				},
 				{
 					Tag:     "required",
@@ -462,9 +486,19 @@ func ValidatorSupplier(ctx *gin.Context, input schemes.Supplier, Type string) (i
 					Message: "Merchant ID is required on body",
 				},
 				{
+					Tag:     "uuid",
+					Field:   "MerchantID",
+					Message: "Merchant ID must be uuid",
+				},
+				{
 					Tag:     "required",
 					Field:   "OutletID",
 					Message: "Outlet ID is required on body",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "OutletID",
+					Message: "Outlet ID must be uuid",
 				},
 			},
 		}

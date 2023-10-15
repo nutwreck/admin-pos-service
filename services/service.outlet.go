@@ -26,6 +26,7 @@ func (s *serviceOutlet) EntityCreate(input *schemes.Outlet) (*models.Outlet, sch
 	outlet.Phone = input.Phone
 	outlet.Address = input.Address
 	outlet.MerchantID = input.MerchantID
+	outlet.IsPrimary = input.IsPrimary
 	outlet.Description = input.Description
 
 	res, err := s.outlet.EntityCreate(&outlet)
@@ -79,6 +80,7 @@ func (s *serviceOutlet) EntityUpdate(input *schemes.Outlet) (*models.Outlet, sch
 	outlet.MerchantID = input.MerchantID
 	outlet.Description = input.Description
 	outlet.Active = input.Active
+	outlet.IsPrimary = input.IsPrimary
 
 	res, err := s.outlet.EntityUpdate(&outlet)
 	return res, err

@@ -98,9 +98,10 @@ func (h *handlerRole) HandlerCreate(ctx *gin.Context) {
 // @Tags		Master Role
 // @Accept		json
 // @Produce		json
-// @Param sort query string false "Use ASC or DESC | Available column sort : id, name, active, created_at, updated_at, default is created_at DESC | If you don't want to use it, fill it blank"
+// @Param sort query string false "Use ASC or DESC | Available column sort : role.id, role.name, role.type, role.active, merchant.id, merchant.name, default is role.created_at DESC | If you don't want to use it, fill it blank"
 // @Param page query int false "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0"
 // @Param perpage query int false "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0"
+// @Param merchant_id query string false "Search by merchant"
 // @Param type query string false "Search by type role"
 // @Param name query string false "Search by name using LIKE pattern"
 // @Param id query string false "Search by ID"
@@ -111,6 +112,7 @@ func (h *handlerRole) HandlerCreate(ctx *gin.Context) {
 // @Failure 404 {object} schemes.Responses404Example
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
+// @Security	ApiKeyAuth
 // @Router /api/v1/master/role/results [get]
 func (h *handlerRole) HandlerResults(ctx *gin.Context) {
 	var (
@@ -149,6 +151,10 @@ func (h *handlerRole) HandlerResults(ctx *gin.Context) {
 		}
 		reqPerPage = perPage
 		body.PerPage = perPage
+	}
+	merchantParam := ctx.DefaultQuery("merchant_id", constants.EMPTY_VALUE)
+	if merchantParam != constants.EMPTY_VALUE {
+		body.MerchantID = merchantParam
 	}
 	typeParam := ctx.DefaultQuery("type", constants.EMPTY_VALUE)
 	if typeParam != constants.EMPTY_VALUE {
@@ -260,6 +266,7 @@ func (h *handlerRole) HandlerUpdate(ctx *gin.Context) {
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.Type = ctx.PostForm("type")
+	body.MerchantID = ctx.PostForm("merchant_id")
 	activeStr := ctx.PostForm("active")
 	if activeStr == "true" {
 		activeGet = constants.TRUE_VALUE
@@ -337,6 +344,16 @@ func ValidatorRole(ctx *gin.Context, input schemes.Role, Type string) (interface
 					Field:   "Type",
 					Message: "Type maximal 100 character",
 				},
+				{
+					Tag:     "required",
+					Field:   "MerchantID",
+					Message: "Merchant ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MerchantID",
+					Message: "Merchant ID must be uuid",
+				},
 			},
 		}
 	}
@@ -400,6 +417,16 @@ func ValidatorRole(ctx *gin.Context, input schemes.Role, Type string) (interface
 					Tag:     "max",
 					Field:   "Type",
 					Message: "Type maximal 100 character",
+				},
+				{
+					Tag:     "required",
+					Field:   "MerchantID",
+					Message: "Merchant ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MerchantID",
+					Message: "Merchant ID must be uuid",
 				},
 			},
 		}

@@ -44,6 +44,8 @@ func (s *serviceSupplier) EntityResults(input *schemes.Supplier) (*[]schemes.Get
 	supplier.Sort = input.Sort
 	supplier.Page = input.Page
 	supplier.PerPage = input.PerPage
+	supplier.MerchantID = input.MerchantID
+	supplier.OutletID = input.OutletID
 	supplier.Name = input.Name
 	supplier.ID = input.ID
 

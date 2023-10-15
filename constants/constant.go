@@ -7,6 +7,9 @@ var (
 
 	EMPTY_VALUE  = ""
 	EMPTY_NUMBER = 0
+
+	ROLE_SYS  = "sys"
+	ROLE_USER = "user"
 )
 
 // ROLE TYPE

@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/nutwreck/admin-pos-service/configs"
 	"github.com/nutwreck/admin-pos-service/constants"
 )
 
@@ -20,10 +21,13 @@ type Product struct {
 	ProductCategoryaSubID uint64             `json:"product_category_sub_id" gorm:"type:int; not null"`
 	Code                  string             `json:"code" gorm:"type:varchar; not null"`
 	Name                  string             `json:"name" gorm:"type:varchar; not null"`
+	Barcode               string             `json:"barcode" gorm:"type:varchar;"`
 	CapitalPrice          float64            `json:"capital_price" gorm:"type:double precision; not null; default=0"`
 	SellingPrice          float64            `json:"selling_price" gorm:"type:double precision; not null; default=0"`
 	Supplier              Supplier           `json:"supplier" gorm:"foreignkey:SupplierID"`
 	SupplierID            uint64             `json:"supplier_id" gorm:"type:int;"`
+	UnitOfMeasurement     UnitOfMeasurement  `json:"unit_of_measurement" gorm:"foreignkey:UnitOfMeasurementID"`
+	UnitOfMeasurementID   string             `json:"unit_of_measurement_id" gorm:"type:varchar; not null"`
 	Active                *bool              `json:"active" gorm:"type:boolean; not null"`
 	CreatedAt             time.Time          `json:"created_at"`
 	UpdatedAt             time.Time          `json:"updated_at"`
@@ -34,12 +38,14 @@ func (Product) TableName() string {
 }
 
 func (m *Product) BeforeCreate(db *gorm.DB) error {
-	m.Active = &constants.TRUE_VALUE
-	m.CreatedAt = time.Now()
+	if !configs.IsSeederRunning {
+		m.Active = &constants.TRUE_VALUE
+		m.CreatedAt = time.Now().Local()
+	}
 	return nil
 }
 
 func (m *Product) BeforeUpdate(db *gorm.DB) error {
-	m.UpdatedAt = time.Now()
+	m.UpdatedAt = time.Now().Local()
 	return nil
 }

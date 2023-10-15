@@ -27,6 +27,7 @@ func NewRepositoryMenuDetailFunction(db *gorm.DB) *repositoryMenuDetailFunction 
 
 func (r *repositoryMenuDetailFunction) EntityCreate(input *schemes.MenuDetailFunction) (*models.MenuDetailFunction, schemes.SchemeDatabaseError) {
 	var menuDetailFunction models.MenuDetailFunction
+	menuDetailFunction.MerchantID = input.MerchantID
 	menuDetailFunction.Name = input.Name
 	menuDetailFunction.MenuID = input.MenuID
 	menuDetailFunction.Link = input.Link
@@ -36,7 +37,7 @@ func (r *repositoryMenuDetailFunction) EntityCreate(input *schemes.MenuDetailFun
 
 	db := r.db.Model(&menuDetailFunction)
 
-	checkName := db.Debug().Where("name = ? AND menu_id = ? AND menu_detail_id = ?", menuDetailFunction.Name, menuDetailFunction.MenuID, menuDetailFunction.MenuDetailID).First(&menuDetailFunction)
+	checkName := db.Debug().Where("merchant_id = ? AND name = ? AND menu_id = ? AND menu_detail_id = ?", menuDetailFunction.MerchantID, menuDetailFunction.Name, menuDetailFunction.MenuID, menuDetailFunction.MenuDetailID).First(&menuDetailFunction)
 
 	if checkName.RowsAffected > 0 {
 		err <- schemes.SchemeDatabaseError{
@@ -73,7 +74,7 @@ func (r *repositoryMenuDetailFunction) EntityResults(input *schemes.MenuDetailFu
 		countData          schemes.CountData
 		args               []interface{}
 		totalData          int64
-		sortData           string = "menu.name ASC"
+		sortData           string = "menudetailfunction.created_at DESC"
 		queryCountData     string = constants.EMPTY_VALUE
 		queryData          string = constants.EMPTY_VALUE
 		queryAdditional    string = constants.EMPTY_VALUE
@@ -107,20 +108,29 @@ func (r *repositoryMenuDetailFunction) EntityResults(input *schemes.MenuDetailFu
 			menu.name AS menu_name,
 			menudetail.id AS menu_detail_id,
 			menudetail.name AS menu_detail_name,
-			menudetailfunction.active
+			menudetailfunction.active,
+			menudetailfunction.created_at,
+			merchant.id AS merchant_id,
+			merchant.name AS merchant_name
 		FROM master.menu_detail_functions AS menudetailfunction
 	`
 
 	queryAdditional = `
 		JOIN master.menus AS menu ON menudetailfunction.menu_id = menu.id AND menu.active = true
 		JOIN master.menu_details AS menudetail ON menudetailfunction.menu_detail_id = menudetail.id AND menudetail.active = true
+		JOIN master.merchants AS merchant ON menudetailfunction.merchant_id = merchant.id AND merchant.active = true
 	`
 
 	queryAdditional += ` WHERE TRUE`
 
+	if input.MerchantID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menudetailfunction.merchant_id = ?`
+		args = append(args, input.MerchantID)
+	}
+
 	if input.Name != constants.EMPTY_VALUE {
 		queryAdditional += ` AND menudetailfunction.name LIKE ?`
-		args = append(args, "%"+strings.ToUpper(input.Name)+"%")
+		args = append(args, "%"+input.Name+"%")
 	}
 
 	if input.ID != constants.EMPTY_VALUE {
@@ -220,6 +230,7 @@ func (r *repositoryMenuDetailFunction) EntityUpdate(input *schemes.MenuDetailFun
 		return &menuDetailFunction, <-err
 	}
 
+	menuDetailFunction.MerchantID = input.MerchantID
 	menuDetailFunction.Name = input.Name
 	menuDetailFunction.Link = input.Link
 	menuDetailFunction.MenuID = input.MenuID

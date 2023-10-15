@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/nutwreck/admin-pos-service/configs"
 	"github.com/nutwreck/admin-pos-service/constants"
 	"github.com/nutwreck/admin-pos-service/models"
 	"github.com/nutwreck/admin-pos-service/schemes"
@@ -30,12 +29,13 @@ func (r *repositoryRole) EntityCreate(input *schemes.Role) (*models.Role, scheme
 	var role models.Role
 	role.Name = input.Name
 	role.Type = input.Type
+	role.MerchantID = input.MerchantID
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
 	db := r.db.Model(&role)
 
-	checkRoleName := db.Debug().Where("name = ? AND type = ?", role.Name, role.Type).First(&role)
+	checkRoleName := db.Debug().Where("merchant_id = ? AND name = ? AND type = ?", role.MerchantID, role.Name, role.Type).First(&role)
 
 	if checkRoleName.RowsAffected > 0 {
 		err <- schemes.SchemeDatabaseError{
@@ -65,11 +65,17 @@ func (r *repositoryRole) EntityCreate(input *schemes.Role) (*models.Role, scheme
 *=================================================
  */
 
-func (r *repositoryRole) EntityResults(input *schemes.Role) (*[]models.Role, int64, schemes.SchemeDatabaseError) {
+func (r *repositoryRole) EntityResults(input *schemes.Role) (*[]schemes.GetAllRole, int64, schemes.SchemeDatabaseError) {
 	var (
-		role      []models.Role
-		totalData int64
-		sort      string = configs.SortByDefault + " " + configs.OrderByDefault
+		role            []models.Role
+		result          []schemes.GetAllRole
+		countData       schemes.CountData
+		args            []interface{}
+		totalData       int64
+		sortData        string = "role.created_at DESC"
+		queryCountData  string = constants.EMPTY_VALUE
+		queryData       string = constants.EMPTY_VALUE
+		queryAdditional string = constants.EMPTY_VALUE
 	)
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
@@ -78,38 +84,85 @@ func (r *repositoryRole) EntityResults(input *schemes.Role) (*[]models.Role, int
 
 	if input.Sort != constants.EMPTY_VALUE {
 		unScape, _ := url.QueryUnescape(input.Sort)
-		sort = strings.Replace(unScape, "'", constants.EMPTY_VALUE, -1)
-	}
-
-	if input.Type != constants.EMPTY_VALUE {
-		db = db.Where("type = ?", input.Type)
-	}
-
-	if input.Name != constants.EMPTY_VALUE {
-		db = db.Where("name LIKE ?", "%"+input.Name+"%")
-	}
-
-	if input.ID != constants.EMPTY_VALUE {
-		db = db.Where("id LIKE ?", "%"+input.ID+"%")
+		sortData = strings.Replace(unScape, "'", constants.EMPTY_VALUE, -1)
 	}
 
 	offset := int((input.Page - 1) * input.PerPage)
 
-	checkRole := db.Debug().Order(sort).Offset(offset).Limit(int(input.PerPage)).Find(&role)
+	//Untuk mengambil jumlah data tanpa limit
+	queryCountData = `
+		SELECT
+			COUNT(role.*) AS count_data
+		FROM master.roles AS role
+	`
 
-	if checkRole.RowsAffected < 1 {
+	//Untuk mengambil detail data
+	queryData = `
+		SELECT
+			role.id,
+			role.name,
+			role.type,
+			role.active,
+			merchant.id AS merchant_id,
+			merchant.name AS merchant_name,
+			role.created_at
+		FROM master.roles AS role
+	`
+
+	queryAdditional = `
+		JOIN master.merchants AS merchant ON role.merchant_id = merchant.id AND merchant.active = true
+	`
+
+	queryAdditional += ` WHERE TRUE`
+
+	if input.MerchantID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND role.merchant_id = ?`
+		args = append(args, input.MerchantID)
+	}
+
+	if input.Name != constants.EMPTY_VALUE {
+		queryAdditional += ` AND role.type LIKE ?`
+		args = append(args, input.Name)
+	}
+
+	if input.Name != constants.EMPTY_VALUE {
+		queryAdditional += ` AND role.name LIKE ?`
+		args = append(args, "%"+input.Name+"%")
+	}
+
+	if input.ID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND role.id = ?`
+		args = append(args, input.ID)
+	}
+
+	//Eksekusi query ambil jumlah data tanpa limit
+	db.Raw(queryCountData+queryAdditional, args...).Scan(&countData)
+
+	queryAdditional += ` ORDER BY ` + sortData
+
+	if input.Page != constants.EMPTY_NUMBER || input.PerPage != constants.EMPTY_NUMBER {
+		queryAdditional += ` LIMIT ?`
+		args = append(args, int(input.PerPage))
+
+		queryAdditional += ` OFFSET ?`
+		args = append(args, offset)
+	}
+
+	getDatas := db.Raw(queryData+queryAdditional, args...).Scan(&result)
+
+	if getDatas.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusNotFound,
 			Type: "error_results_01",
 		}
-		return &role, totalData, <-err
+		return &result, totalData, <-err
 	}
 
 	// Menghitung total data yang diambil
-	db.Model(&models.Menu{}).Count(&totalData)
+	totalData = countData.CountData
 
 	err <- schemes.SchemeDatabaseError{}
-	return &role, totalData, <-err
+	return &result, totalData, <-err
 }
 
 /**
@@ -176,6 +229,7 @@ func (r *repositoryRole) EntityUpdate(input *schemes.Role) (*models.Role, scheme
 
 	role.Name = input.Name
 	role.Type = input.Type
+	role.MerchantID = input.MerchantID
 	role.Active = input.Active
 
 	updateRole := db.Debug().Updates(&role)

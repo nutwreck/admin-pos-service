@@ -79,6 +79,7 @@ func ConvertToken(tokenString string) (*schemes.JWTConvert, error) {
 		email := jwtData["email"].(string)
 		id := jwtData["ucode"].(string)
 		role := jwtData["role"].(string)
+		merchant := jwtData["merchant"].(string)
 
 		// Format Unix timestamp to time.Time
 		// expirationTime := time.Unix(int64(expiration), 0)
@@ -96,6 +97,7 @@ func ConvertToken(tokenString string) (*schemes.JWTConvert, error) {
 		result.ID = id
 		result.Email = email
 		result.Role = role
+		result.Merchant = merchant
 
 		return &result, nil
 	} else {

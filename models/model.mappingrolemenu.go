@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
+	"github.com/nutwreck/admin-pos-service/configs"
 	"github.com/nutwreck/admin-pos-service/constants"
 )
 
@@ -25,13 +26,15 @@ type MappingRoleMenu struct {
 }
 
 func (m *MappingRoleMenu) BeforeCreate(db *gorm.DB) error {
-	m.ID = uuid.NewString()
-	m.Active = &constants.TRUE_VALUE
-	m.CreatedAt = time.Now()
+	if !configs.IsSeederRunning {
+		m.ID = uuid.NewString()
+		m.Active = &constants.TRUE_VALUE
+		m.CreatedAt = time.Now().Local()
+	}
 	return nil
 }
 
 func (m *MappingRoleMenu) BeforeUpdate(db *gorm.DB) error {
-	m.UpdatedAt = time.Now()
+	m.UpdatedAt = time.Now().Local()
 	return nil
 }

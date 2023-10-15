@@ -21,15 +21,16 @@ func NewRepositoryUser(db *gorm.DB) *repositoryUser {
 
 /**
 * ==========================================
-* Repository Register Auth Teritory
+* Repository Add New User Auth Teritory
 *===========================================
  */
 
-func (r *repositoryUser) EntityRegister(input *schemes.User) (*models.User, schemes.SchemeDatabaseError) {
+func (r *repositoryUser) EntityAddUser(input *schemes.User) (*models.User, schemes.SchemeDatabaseError) {
 	var user models.User
 	user.Name = input.Name
 	user.Email = input.Email
 	user.Password = input.Password
+	user.MerchantID = input.MerchantID
 	user.RoleID = input.RoleID
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
@@ -41,7 +42,7 @@ func (r *repositoryUser) EntityRegister(input *schemes.User) (*models.User, sche
 	if checkEmailExist.RowsAffected > 0 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusConflict,
-			Type: "error_register_01",
+			Type: "error_add_user_01",
 		}
 		return &user, <-err
 	}
@@ -51,7 +52,7 @@ func (r *repositoryUser) EntityRegister(input *schemes.User) (*models.User, sche
 	if addNewUser.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusForbidden,
-			Type: "error_register_02",
+			Type: "error_add_user_02",
 		}
 		return &user, <-err
 	}
@@ -177,6 +178,7 @@ func (r *repositoryUser) EntityUpdate(input *schemes.UpdateUser) (*models.User, 
 
 	user.Name = input.Name
 	user.RoleID = input.RoleID
+	user.MerchantID = input.MerchantID
 	user.Active = input.Active
 	if changePassword != constants.EMPTY_VALUE {
 		user.Password = changePassword
@@ -230,4 +232,91 @@ func (r *repositoryUser) EntityGetRole(input *schemes.Role) (*models.Role, schem
 
 	err <- schemes.SchemeDatabaseError{}
 	return &role, <-err
+}
+
+/**
+* =================================================
+* Repository Result Merchant By ID Teritory
+*==================================================
+ */
+func (r *repositoryUser) EntityGetMerchant(input *schemes.Merchant) (*models.Merchant, schemes.SchemeDatabaseError) {
+	var merchant models.Merchant
+	merchant.ID = input.ID
+
+	err := make(chan schemes.SchemeDatabaseError, 1)
+
+	db := r.db.Model(&merchant)
+
+	checkMerchant := db.Debug().First(&merchant)
+
+	if checkMerchant.RowsAffected < 1 {
+		err <- schemes.SchemeDatabaseError{
+			Code: http.StatusNotFound,
+			Type: "error_result_01",
+		}
+		return &merchant, <-err
+	}
+
+	err <- schemes.SchemeDatabaseError{}
+	return &merchant, <-err
+}
+
+/**
+* =================================================
+* Repository Result User Outlet Teritory
+*==================================================
+ */
+func (r *repositoryUser) EntityGetUserOutlet(input *schemes.UserOutlet) (*[]schemes.GetUserOutlet, schemes.SchemeDatabaseError) {
+	var (
+		userOutlet      models.UserOutlet
+		result          []schemes.GetUserOutlet
+		args            []interface{}
+		queryData       string = constants.EMPTY_VALUE
+		queryAdditional string = constants.EMPTY_VALUE
+	)
+	userOutlet.UserID = input.UserID
+
+	err := make(chan schemes.SchemeDatabaseError, 1)
+
+	db := r.db.Model(&userOutlet)
+
+	queryData = `
+		SELECT
+			user_outlet.id,
+			user_outlet.user_id,
+			users.name AS user_name,
+			user_outlet.outlet_id,
+			outlet.name AS outlet_name,
+			outlet.phone AS outlet_phone,
+			outlet.address AS outlet_address,
+			outlet.description AS outlet_description,
+			outlet.active AS outlet_active,
+			outlet.created_at AS outlet_created_at
+		FROM master.user_outlets AS user_outlet
+	`
+
+	queryAdditional = `
+		JOIN master.users ON user_outlet.user_id = users.id AND users.active = true
+		JOIN master.outlets AS outlet ON user_outlet.outlet_id = outlet.id AND outlet.active = true
+	`
+
+	queryAdditional += ` WHERE TRUE`
+
+	if input.UserID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND user_outlet.user_id = ?`
+		args = append(args, input.UserID)
+	}
+
+	getDatas := db.Raw(queryData+queryAdditional, args...).Scan(&result)
+
+	if getDatas.RowsAffected < 1 {
+		err <- schemes.SchemeDatabaseError{
+			Code: http.StatusNotFound,
+			Type: "error_results_01",
+		}
+		return &result, <-err
+	}
+
+	err <- schemes.SchemeDatabaseError{}
+	return &result, <-err
 }

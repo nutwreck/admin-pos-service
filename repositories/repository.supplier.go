@@ -76,7 +76,7 @@ func (r *repositorySupplier) EntityResults(input *schemes.Supplier) (*[]schemes.
 		countData       schemes.CountData
 		args            []interface{}
 		totalData       int64
-		sortData        string = "merchant.name ASC"
+		sortData        string = "supplier.created_at DESC"
 		queryCountData  string = constants.EMPTY_VALUE
 		queryData       string = constants.EMPTY_VALUE
 		queryAdditional string = constants.EMPTY_VALUE
@@ -112,7 +112,8 @@ func (r *repositorySupplier) EntityResults(input *schemes.Supplier) (*[]schemes.
 			merchant.id AS merchant_id,
 			merchant.name AS merchant_name,
 			outlet.id AS outlet_id,
-			outlet.name AS outlet_name
+			outlet.name AS outlet_name,
+			supplier.created_at
 		FROM master.suppliers AS supplier
 	`
 
@@ -123,12 +124,22 @@ func (r *repositorySupplier) EntityResults(input *schemes.Supplier) (*[]schemes.
 
 	queryAdditional += ` WHERE TRUE`
 
-	if input.Name != constants.EMPTY_VALUE {
-		queryAdditional += ` AND supplier.name LIKE ?`
-		args = append(args, "%"+strings.ToUpper(input.Name)+"%")
+	if input.MerchantID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND supplier.merchant_id = ?`
+		args = append(args, input.MerchantID)
 	}
 
-	if input.ID != uint64(constants.EMPTY_NUMBER) {
+	if input.OutletID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND supplier.outlet_id = ?`
+		args = append(args, input.OutletID)
+	}
+
+	if input.Name != constants.EMPTY_VALUE {
+		queryAdditional += ` AND supplier.name LIKE ?`
+		args = append(args, "%"+input.Name+"%")
+	}
+
+	if input.ID != constants.EMPTY_VALUE {
 		queryAdditional += ` AND supplier.id = ?`
 		args = append(args, input.ID)
 	}
@@ -165,7 +176,7 @@ func (r *repositorySupplier) EntityResults(input *schemes.Supplier) (*[]schemes.
 
 /**
 * ==========================================
-* Repository Result Merchant By ID Teritory
+* Repository Result Supplier By ID Teritory
 *===========================================
  */
 
@@ -193,7 +204,7 @@ func (r *repositorySupplier) EntityResult(input *schemes.Supplier) (*models.Supp
 
 /**
 * ==========================================
-* Repository Delete Merchant By ID Teritory
+* Repository Delete Supplier By ID Teritory
 *===========================================
  */
 
@@ -236,7 +247,7 @@ func (r *repositorySupplier) EntityDelete(input *schemes.Supplier) (*models.Supp
 
 /**
 * ==========================================
-* Repository Update Merchant By ID Teritory
+* Repository Update Supplier By ID Teritory
 *===========================================
  */
 

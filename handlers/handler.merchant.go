@@ -416,6 +416,15 @@ func (h *handlerMerchant) HandlerUpdate(ctx *gin.Context) {
 	//Cek data sebelumnya
 	getDataPrevious, error := h.merchant.EntityResult(&body)
 	if error.Type == "error_result_01" {
+		if fileLogo != nil {
+			deleteFile := helpers.DeleteFileFromStorageClient(encryptedImageFileName)
+			if deleteFile != nil {
+				fmt.Println("DELETE LOGO ERROR ==> " + deleteFile.Error())
+				helpers.APIResponse(ctx, "Delete image failed", http.StatusInternalServerError, nil)
+				return
+			}
+		}
+
 		helpers.APIResponse(ctx, "Merchant data not found", error.Code, nil)
 		return
 	}
