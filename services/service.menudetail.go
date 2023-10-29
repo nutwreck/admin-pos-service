@@ -20,16 +20,25 @@ func NewServiceMenuDetail(menuDetail entities.EntityMenuDetail) *serviceMenuDeta
 *===============================================
  */
 
-func (s *serviceMenuDetail) EntityCreate(input *schemes.MenuDetail) (*models.MenuDetail, schemes.SchemeDatabaseError) {
-	var menuDetail schemes.MenuDetail
-	menuDetail.MerchantID = input.MerchantID
-	menuDetail.Name = input.Name
-	menuDetail.MenuID = input.MenuID
-	menuDetail.Link = input.Link
-	menuDetail.Image = input.Image
-	menuDetail.Icon = input.Icon
+func (s *serviceMenuDetail) EntityCreate(inputs *[]schemes.MenuDetail) (*models.MenuDetail, schemes.SchemeDatabaseError) {
+	var createdMenuDetails []schemes.MenuDetail
 
-	res, err := s.menuDetail.EntityCreate(&menuDetail)
+	// Loop through each input in the batch
+	for _, input := range *inputs {
+		var menuDetail schemes.MenuDetail
+
+		menuDetail.MerchantID = input.MerchantID
+		menuDetail.Name = input.Name
+		menuDetail.MenuID = input.MenuID
+		menuDetail.Link = input.Link
+		menuDetail.Image = input.Image
+		menuDetail.Icon = input.Icon
+
+		// Collect the created MenuDetail objects
+		createdMenuDetails = append(createdMenuDetails, menuDetail)
+	}
+
+	res, err := s.menuDetail.EntityCreate(&createdMenuDetails)
 	return res, err
 }
 

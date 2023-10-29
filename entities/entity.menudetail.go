@@ -6,7 +6,7 @@ import (
 )
 
 type EntityMenuDetail interface {
-	EntityCreate(input *schemes.MenuDetail) (*models.MenuDetail, schemes.SchemeDatabaseError)
+	EntityCreate(input *[]schemes.MenuDetail) (*models.MenuDetail, schemes.SchemeDatabaseError)
 	EntityResults(input *schemes.MenuDetail) (*[]schemes.GetMenuDetail, int64, schemes.SchemeDatabaseError)
 	EntityResult(input *schemes.MenuDetail) (*models.MenuDetail, schemes.SchemeDatabaseError)
 	EntityDelete(input *schemes.MenuDetail) (*models.MenuDetail, schemes.SchemeDatabaseError)

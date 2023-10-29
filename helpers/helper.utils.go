@@ -2,8 +2,15 @@ package helpers
 
 import (
 	"crypto/rand"
+	"encoding/base64"
 	"encoding/hex"
+	"fmt"
+	"io/ioutil"
 	"mime"
+	"mime/multipart"
+	"net/http"
+	"net/textproto"
+	"os"
 	"path/filepath"
 	"time"
 )
@@ -48,4 +55,78 @@ func ValidationMIMEFile(fileName string, validationData []string) bool {
 	} else {
 		return true
 	}
+}
+
+func GenerateFileName() string {
+	// Generate a unique filename based on the current timestamp
+	currentTime := time.Now()
+	fileName := currentTime.Format("20060102_150405") // Format: YYYYMMDD_HHMMSS
+	return fileName
+}
+
+func CustomizeExtension(extension string) string {
+	// Customize the extension if needed
+	if extension == ".jpe" {
+		return ".jpeg"
+	}
+	return extension
+}
+
+func DetermineFileExtension(contentType string) string {
+	// Determine the file extension based on the content type
+	extension, err := mime.ExtensionsByType(contentType)
+	if err != nil || len(extension) == 0 {
+		// Default to ".bin" if unable to determine extension
+		return ".bin"
+	}
+
+	customExtension := CustomizeExtension(extension[0])
+
+	return customExtension
+}
+
+func Base64ToFile(base64String string) (*multipart.FileHeader, []byte, error) {
+	// Check if the base64 string is empty
+	if base64String == "" {
+		return nil, nil, nil // Return nil when base64 string is empty
+	}
+
+	// Decode the base64 string
+	decodedBytes, err := base64.StdEncoding.DecodeString(base64String)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error decoding base64: %v", err)
+	}
+
+	// Detect the content type
+	contentType := http.DetectContentType(decodedBytes)
+
+	// Generate a unique filename based on the current timestamp and content type
+	fileName := GenerateFileName() + DetermineFileExtension(contentType)
+
+	// Write the decoded content to a temporary file
+	tempFile, err := ioutil.TempFile("", fileName)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error creating temporary file: %v", err)
+	}
+	defer os.Remove(tempFile.Name()) // Clean up the temporary file when done
+
+	_, err = tempFile.Write(decodedBytes)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error writing to temporary file: %v", err)
+	}
+
+	// Seek back to the beginning of the file
+	_, err = tempFile.Seek(0, 0)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error seeking to the beginning of the file: %v", err)
+	}
+
+	// Create a *multipart.FileHeader using the temporary file
+	fileHeader := &multipart.FileHeader{
+		Filename: fileName,
+		Size:     int64(len(decodedBytes)),
+		Header:   make(textproto.MIMEHeader),
+	}
+
+	return fileHeader, decodedBytes, nil
 }

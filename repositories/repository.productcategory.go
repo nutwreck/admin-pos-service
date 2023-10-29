@@ -169,7 +169,7 @@ func (r *repositoryProductCategory) EntityResults(input *schemes.ProductCategory
 
 /**
 * ==============================================================
-* Repository Delete Master UOM TyProduct Category By ID Teritory
+* Repository Delete Master Product Category By ID Teritory
 *===============================================================
  */
 
@@ -207,7 +207,7 @@ func (r *repositoryProductCategory) EntityDelete(input *schemes.ProductCategory)
 
 /**
 * =============================================================
-* Repository Update Master UOM TyProduct CategoryBy ID Teritory
+* Repository Update Master Product CategoryBy ID Teritory
 *==============================================================
  */
 

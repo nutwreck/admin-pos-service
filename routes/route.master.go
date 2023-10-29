@@ -31,6 +31,7 @@ func NewRouteMaster(db *gorm.DB, router *gin.Engine) {
 	router.GET("/api/v1/master/menu/ping", handlerMenu.HandlerPing)
 	route.POST("/menu/create", handlerMenu.HandlerCreate)
 	route.GET("/menu/results", handlerMenu.HandlerResults)
+	route.GET("/menu/results-relation", handlerMenu.HandlerResultRelations)
 	route.DELETE("/menu/delete/:id", handlerMenu.HandlerDelete)
 	route.PUT("/menu/update/:id", handlerMenu.HandlerUpdate)
 
@@ -153,4 +154,24 @@ func NewRouteMaster(db *gorm.DB, router *gin.Engine) {
 	route.GET("/product-category/results", handlerProductCategory.HandlerResults)
 	route.DELETE("/product-category/delete/:id", handlerProductCategory.HandlerDelete)
 	route.PUT("/product-category/update/:id", handlerProductCategory.HandlerUpdate)
+
+	// Master Sales
+	repositorySales := repositories.NewRepositorySales(db)
+	serviceSales := services.NewServiceSales(repositorySales)
+	handlerSales := handlers.NewHandlerSales(serviceSales)
+	router.GET("/api/v1/master/sales/ping", handlerSales.HandlerPing)
+	route.POST("/sales/create", handlerSales.HandlerCreate)
+	route.GET("/sales/results", handlerSales.HandlerResults)
+	route.DELETE("/sales/delete/:id", handlerSales.HandlerDelete)
+	route.PUT("/sales/update/:id", handlerSales.HandlerUpdate)
+
+	// Master Product Category Sub
+	repositoryProductCategorySub := repositories.NewRepositoryProductCategorySub(db)
+	serviceProductCategorySub := services.NewServiceProductCategorySub(repositoryProductCategorySub)
+	handlerProductCategorySub := handlers.NewHandlerProductCategorySub(serviceProductCategorySub)
+	router.GET("/api/v1/master/product-category-sub/ping", handlerProductCategorySub.HandlerPing)
+	route.POST("/product-category-sub/create", handlerProductCategorySub.HandlerCreate)
+	route.GET("/product-category-sub/results", handlerProductCategorySub.HandlerResults)
+	route.DELETE("/product-category-sub/delete/:id", handlerProductCategorySub.HandlerDelete)
+	route.PUT("/product-category-sub/update/:id", handlerProductCategorySub.HandlerUpdate)
 }

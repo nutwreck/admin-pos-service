@@ -5,18 +5,19 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/google/uuid"
 	"github.com/nutwreck/admin-pos-service/configs"
 	"github.com/nutwreck/admin-pos-service/constants"
 )
 
 type ProductCategorySub struct {
-	ID                uint64          `json:"id" gorm:"primary_key;autoIncrement"`
+	ID                string          `json:"id" gorm:"primary_key"`
 	Merchant          Merchant        `json:"merchant" gorm:"foreignkey:MerchantID"`
 	MerchantID        string          `json:"merchant_id" gorm:"type:varchar; not null"`
 	Outlet            Outlet          `json:"outlet" gorm:"foreignkey:OutletID"`
 	OutletID          string          `json:"outlet_id" gorm:"type:varchar; not null"`
 	ProductCategory   ProductCategory `json:"product_category" gorm:"foreignkey:ProductCategoryID"`
-	ProductCategoryID uint64          `json:"product_category_id" gorm:"type:int; not null"`
+	ProductCategoryID string          `json:"product_category_id" gorm:"type:varchar; not null"`
 	Name              string          `json:"name" gorm:"type:varchar; not null"`
 	Active            *bool           `json:"active" gorm:"type:boolean; not null"`
 	CreatedAt         time.Time       `json:"created_at"`
@@ -29,6 +30,7 @@ func (ProductCategorySub) TableName() string {
 
 func (m *ProductCategorySub) BeforeCreate(db *gorm.DB) error {
 	if !configs.IsSeederRunning {
+		m.ID = uuid.NewString()
 		m.Active = &constants.TRUE_VALUE
 		m.CreatedAt = time.Now().Local()
 	}

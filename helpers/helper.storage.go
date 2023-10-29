@@ -3,6 +3,7 @@ package helpers
 import (
 	"fmt"
 	"mime/multipart"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -53,6 +54,32 @@ func UploadFileToStorageClient(fileContent *multipart.FileHeader, fileName strin
 	params := &s3.PutObjectInput{
 		Bucket: aws.String(configs.BucketName),
 		Body:   file,
+		Key:    aws.String(fileName),
+		ACL:    aws.String(acl), // Atur izin sesuai kebutuhan Anda
+	}
+
+	// Melakukan unggah file
+	_, err = s3Client.PutObject(params)
+	if err != nil {
+		fmt.Println("Error unggah file => " + err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func UploadFileBase64ToStorageClient(content []byte, fileName string, acl string) error {
+	// Inisialisasi klien S3 dari helper
+	s3Client, err := NewStorageClient()
+	if err != nil {
+		fmt.Println("Error NewStorageClient => " + err.Error())
+		return err
+	}
+
+	// Mengatur parameter untuk operasi unggah
+	params := &s3.PutObjectInput{
+		Bucket: aws.String(configs.BucketName),
+		Body:   aws.ReadSeekCloser(strings.NewReader(string(content))),
 		Key:    aws.String(fileName),
 		ACL:    aws.String(acl), // Atur izin sesuai kebutuhan Anda
 	}

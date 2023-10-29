@@ -112,6 +112,8 @@ func setupDatabase() *gorm.DB {
 		&models.UnitOfMeasurement{},
 		&models.Customer{},
 		&models.ProductCategory{},
+		&models.Sales{},
+		&models.ProductCategorySub{},
 	)
 
 	// Seeder data
