@@ -25,40 +25,52 @@ func NewRepositoryMenuDetailFunction(db *gorm.DB) *repositoryMenuDetailFunction 
 *===========================================================
  */
 
-func (r *repositoryMenuDetailFunction) EntityCreate(input *schemes.MenuDetailFunction) (*models.MenuDetailFunction, schemes.SchemeDatabaseError) {
-	var menuDetailFunction models.MenuDetailFunction
-	menuDetailFunction.MerchantID = input.MerchantID
-	menuDetailFunction.Name = input.Name
-	menuDetailFunction.MenuID = input.MenuID
-	menuDetailFunction.Link = input.Link
-	menuDetailFunction.MenuDetailID = input.MenuDetailID
-
+func (r *repositoryMenuDetailFunction) EntityCreate(input *[]schemes.MenuDetailFunction) (*models.MenuDetailFunction, schemes.SchemeDatabaseError) {
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
-	db := r.db.Model(&menuDetailFunction)
+	// Mulai transaksi
+	tx := r.db.Begin()
 
-	checkName := db.Debug().Where("merchant_id = ? AND name = ? AND menu_id = ? AND menu_detail_id = ?", menuDetailFunction.MerchantID, menuDetailFunction.Name, menuDetailFunction.MenuID, menuDetailFunction.MenuDetailID).First(&menuDetailFunction)
+	for _, input := range *input {
+		var menuDetailFunction models.MenuDetailFunction
+		menuDetailFunction.MerchantID = input.MerchantID
+		menuDetailFunction.Name = input.Name
+		menuDetailFunction.MenuID = input.MenuID
+		menuDetailFunction.Link = input.Link
+		menuDetailFunction.MenuDetailID = input.MenuDetailID
 
-	if checkName.RowsAffected > 0 {
-		err <- schemes.SchemeDatabaseError{
-			Code: http.StatusConflict,
-			Type: "error_create_01",
+		db := tx.Model(&menuDetailFunction)
+
+		checkName := db.Debug().Where("merchant_id = ? AND name = ? AND menu_id = ? AND menu_detail_id = ?", menuDetailFunction.MerchantID, menuDetailFunction.Name, menuDetailFunction.MenuID, menuDetailFunction.MenuDetailID).First(&menuDetailFunction)
+
+		if checkName.RowsAffected > 0 {
+			// Rollback transaksi jika ada kesalahan
+			tx.Rollback()
+			err <- schemes.SchemeDatabaseError{
+				Code: http.StatusConflict,
+				Type: "error_create_01",
+			}
+			return nil, <-err
 		}
-		return &menuDetailFunction, <-err
+
+		add := db.Debug().Create(&menuDetailFunction)
+
+		if add.RowsAffected < 1 {
+			// Rollback transaksi jika ada kesalahan
+			tx.Rollback()
+			err <- schemes.SchemeDatabaseError{
+				Code: http.StatusForbidden,
+				Type: "error_create_02",
+			}
+			return nil, <-err
+		}
 	}
 
-	add := db.Debug().Create(&menuDetailFunction).Commit()
-
-	if add.RowsAffected < 1 {
-		err <- schemes.SchemeDatabaseError{
-			Code: http.StatusForbidden,
-			Type: "error_create_02",
-		}
-		return &menuDetailFunction, <-err
-	}
+	// Commit transaksi jika semuanya berhasil
+	tx.Commit()
 
 	err <- schemes.SchemeDatabaseError{}
-	return &menuDetailFunction, <-err
+	return nil, <-err
 }
 
 /**

@@ -7,45 +7,46 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	gpc "github.com/restuwahyu13/go-playground-converter"
+
 	"github.com/nutwreck/admin-pos-service/configs"
 	"github.com/nutwreck/admin-pos-service/constants"
 	"github.com/nutwreck/admin-pos-service/entities"
 	"github.com/nutwreck/admin-pos-service/helpers"
 	"github.com/nutwreck/admin-pos-service/pkg"
 	"github.com/nutwreck/admin-pos-service/schemes"
-	gpc "github.com/restuwahyu13/go-playground-converter"
 )
 
-type handleMenu struct {
-	menu entities.EntityMenu
+type handleSales struct {
+	sales entities.EntitySales
 }
 
-func NewHandlerMenu(menu entities.EntityMenu) *handleMenu {
-	return &handleMenu{menu: menu}
-}
-
-/**
-* =============================================
-* Handler Ping Status Master Menu Teritory
-*==============================================
- */
-
-func (h *handleMenu) HandlerPing(ctx *gin.Context) {
-	helpers.APIResponse(ctx, "Ping Master Menu", http.StatusOK, nil)
+func NewHandlerSales(sales entities.EntitySales) *handleSales {
+	return &handleSales{sales: sales}
 }
 
 /**
-* ============================================
-* Handler Create New Master Menu Teritory
-*=============================================
+* ======================================
+* Handler Ping Status Sales Teritory
+*=======================================
  */
-// CreateMasterMenu godoc
-// @Summary		Create Master Menu
-// @Description	Create Master Menu
-// @Tags		Master Menu
+
+func (h *handleSales) HandlerPing(ctx *gin.Context) {
+	helpers.APIResponse(ctx, "Ping Sales", http.StatusOK, nil)
+}
+
+/**
+* =====================================
+* Handler Create New Sales Teritory
+*======================================
+ */
+// CreateMasterSales godoc
+// @Summary		Create Master Sales
+// @Description	Create Master Sales
+// @Tags		Master Sales
 // @Accept		json
 // @Produce		json
-// @Param		menu body schemes.MenuRequest true "Create Master Menu"
+// @Param		sales body schemes.SalesRequest true "Create Master Sales"
 // @Success 200 {object} schemes.Responses
 // @Success 201 {object} schemes.Responses201Example
 // @Failure 400 {object} schemes.Responses400Example
@@ -55,9 +56,9 @@ func (h *handleMenu) HandlerPing(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu/create [post]
-func (h *handleMenu) HandlerCreate(ctx *gin.Context) {
-	var body schemes.Menu
+// @Router /api/v1/master/sales/create [post]
+func (h *handleSales) HandlerCreate(ctx *gin.Context) {
+	var body schemes.Sales
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -65,43 +66,44 @@ func (h *handleMenu) HandlerCreate(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorMenu(ctx, body, "create")
+	errors, code := ValidatorSales(ctx, body, "create")
 
 	if code > 0 {
 		helpers.ErrorResponse(ctx, errors)
 		return
 	}
 
-	_, error := h.menu.EntityCreate(&body)
+	_, error := h.sales.EntityCreate(&body)
 
 	if error.Type == "error_create_01" {
-		helpers.APIResponse(ctx, "Master Menu name already exist", error.Code, nil)
+		helpers.APIResponse(ctx, "Sales phone number already taken", error.Code, nil)
 		return
 	}
 
 	if error.Type == "error_create_02" {
-		helpers.APIResponse(ctx, "Create new Master Menu failed", error.Code, nil)
+		helpers.APIResponse(ctx, "Create new Sales failed", error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, "Create new Master Menu successfully", http.StatusCreated, nil)
+	helpers.APIResponse(ctx, "Create new Sales successfully", http.StatusCreated, nil)
 }
 
 /**
-* =============================================
-* Handler Results All Master Menu Teritory
-*==============================================
+* ======================================
+* Handler Results All Sales Teritory
+*=======================================
  */
-// GetListMasterMenu godoc
-// @Summary		Get List Master Menu
-// @Description	Get List Master Menu
-// @Tags		Master Menu
+// GetListMasterSales godoc
+// @Summary		Get List Master Sales
+// @Description	Get List Master Sales
+// @Tags		Master Sales
 // @Accept		json
 // @Produce		json
-// @Param sort query string false "Use ASC or DESC | Available column sort : menu.id, menu.name, menu.active, merchant.id, merchant.name, menu.created_at, default is menu.created_at DESC | If you don't want to use it, fill it blank"
+// @Param sort query string false "Use ASC or DESC | Available column sort : sales.id, sales.name, sales.phone, sales.active, merchant.id, merchant.name, outlet.id, outlet.name, sales.created_at, default is sales.created_at DESC | If you don't want to use it, fill it blank"
 // @Param page query int false "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0"
 // @Param perpage query int false "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0"
 // @Param merchant_id query string false "Search by merchant"
+// @Param outlet_id query string false "Search by outlet"
 // @Param name query string false "Search by name using LIKE pattern"
 // @Param id query string false "Search by ID"
 // @Success 200 {object} schemes.ResponsesPagination
@@ -112,10 +114,10 @@ func (h *handleMenu) HandlerCreate(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu/results [get]
-func (h *handleMenu) HandlerResults(ctx *gin.Context) {
+// @Router /api/v1/master/sales/results [get]
+func (h *handleSales) HandlerResults(ctx *gin.Context) {
 	var (
-		body          schemes.Menu
+		body          schemes.Sales
 		reqPage       = configs.FirstPage
 		reqPerPage    = configs.TotalPerPage
 		pages         int
@@ -151,6 +153,10 @@ func (h *handleMenu) HandlerResults(ctx *gin.Context) {
 		reqPerPage = perPage
 		body.PerPage = perPage
 	}
+	outletParam := ctx.DefaultQuery("outlet_id", constants.EMPTY_VALUE)
+	if outletParam != constants.EMPTY_VALUE {
+		body.OutletID = outletParam
+	}
 	merchantParam := ctx.DefaultQuery("merchant_id", constants.EMPTY_VALUE)
 	if merchantParam != constants.EMPTY_VALUE {
 		body.MerchantID = merchantParam
@@ -164,10 +170,10 @@ func (h *handleMenu) HandlerResults(ctx *gin.Context) {
 		body.ID = idParam
 	}
 
-	res, totalData, error := h.menu.EntityResults(&body)
+	res, totalData, error := h.sales.EntityResults(&body)
 
 	if error.Type == "error_results_01" {
-		helpers.APIResponsePagination(ctx, "Master Menu data not found", error.Code, nil, pages, perPages, totalPages, totalDatas)
+		helpers.APIResponsePagination(ctx, "Sales data not found", error.Code, nil, pages, perPages, totalPages, totalDatas)
 		return
 	}
 
@@ -179,129 +185,49 @@ func (h *handleMenu) HandlerResults(ctx *gin.Context) {
 	totalPages = int(math.Ceil(totalPagesDiv))
 	totalDatas = int(totalData)
 
-	helpers.APIResponsePagination(ctx, "Master Menu data already to use", http.StatusOK, res, pages, perPages, totalPages, totalDatas)
+	helpers.APIResponsePagination(ctx, "Sales data already to use", http.StatusOK, res, pages, perPages, totalPages, totalDatas)
 }
 
 /**
-* =================================================
-* Handler Results All Master Menu Relation Teritory
-*==================================================
+* ======================================
+* Handler Result Sales By ID Teritory
+*=======================================
  */
-// GetListMasterMenuRelation godoc
-// @Summary		Get List Master Menu Relation
-// @Description	Get List Master Menu Relation
-// @Tags		Master Menu
-// @Accept		json
-// @Produce		json
-// @Param sort query string false "Use ASC or DESC | Available column sort : menu.id, menu.name, merchant.id, merchant.name, default is menu.name ASC | If you don't want to use it, fill it blank"
-// @Param merchant_id query string true "Search by merchant"
-// @Param name query string false "Search by menu name using LIKE pattern"
-// @Param id query string false "Search by menu ID"
-// @Success 200 {object} schemes.ResponsesPagination
-// @Failure 400 {object} schemes.Responses400Example
-// @Failure 401 {object} schemes.Responses401Example
-// @Failure 403 {object} schemes.Responses403Example
-// @Failure 404 {object} schemes.Responses404Example
-// @Failure 409 {object} schemes.Responses409Example
-// @Failure 500 {object} schemes.Responses500Example
-// @Security	ApiKeyAuth
-// @Router /api/v1/master/menu/results-relation [get]
-func (h *handleMenu) HandlerResultRelations(ctx *gin.Context) {
-	var (
-		body schemes.Menu
-	)
 
-	sortParam := ctx.DefaultQuery("sort", constants.EMPTY_VALUE)
-	if sortParam != constants.EMPTY_VALUE {
-		body.Sort = sortParam
-	}
-	merchantParam := ctx.DefaultQuery("merchant_id", constants.EMPTY_VALUE)
-	if merchantParam != constants.EMPTY_VALUE {
-		body.MerchantID = merchantParam
-	} else {
-		helpers.APIResponse(ctx, "Merchant ID is required on param", http.StatusBadRequest, nil)
-		return
-	}
-	nameParam := ctx.DefaultQuery("name", constants.EMPTY_VALUE)
-	if nameParam != constants.EMPTY_VALUE {
-		body.Name = nameParam
-	}
-	idParam := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
-	if idParam != constants.EMPTY_VALUE {
-		body.ID = idParam
-	}
-
-	res, error := h.menu.EntityResultRelations(&body)
-
-	if error.Type == "error_results_01" {
-		helpers.APIResponse(ctx, "Master Menu data not found", error.Code, nil)
-		return
-	}
-
-	helpers.APIResponse(ctx, "Master Menu data already to use", http.StatusOK, res)
-}
-
-/**
-* ==============================================
-* Handler Delete Master Menu By ID Teritory
-*===============================================
- */
-// GetDeleteMasterMenu godoc
-// @Summary		Get Delete Master Menu
-// @Description	Get Delete Master Menu
-// @Tags		Master Menu
-// @Accept		json
-// @Produce		json
-// @Param		id path string true "Delete Master Menu"
-// @Success 200 {object} schemes.Responses
-// @Failure 400 {object} schemes.Responses400Example
-// @Failure 401 {object} schemes.Responses401Example
-// @Failure 403 {object} schemes.Responses403Example
-// @Failure 404 {object} schemes.Responses404Example
-// @Failure 409 {object} schemes.Responses409Example
-// @Failure 500 {object} schemes.Responses500Example
-// @Security	ApiKeyAuth
-// @Router /api/v1/master/menu/delete/{id} [delete]
-func (h *handleMenu) HandlerDelete(ctx *gin.Context) {
-	var body schemes.Menu
+func (h *handleSales) HandlerResult(ctx *gin.Context) {
+	var body schemes.Sales
 	id := ctx.Param("id")
 	body.ID = id
 
-	errors, code := ValidatorMenu(ctx, body, "delete")
+	errors, code := ValidatorSales(ctx, body, "result")
 
 	if code > 0 {
 		helpers.ErrorResponse(ctx, errors)
 		return
 	}
 
-	res, error := h.menu.EntityDelete(&body)
+	res, error := h.sales.EntityResult(&body)
 
-	if error.Type == "error_delete_01" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Master Menu data not found for this id %s ", id), error.Code, nil)
+	if error.Type == "error_result_01" {
+		helpers.APIResponse(ctx, fmt.Sprintf("Sales data not found for this id %s ", id), error.Code, nil)
 		return
 	}
 
-	if error.Type == "error_delete_02" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Delete Master Menu data for this id %v failed", id), error.Code, nil)
-		return
-	}
-
-	helpers.APIResponse(ctx, fmt.Sprintf("Delete Master Menu data for this id %s success", id), http.StatusOK, res)
+	helpers.APIResponse(ctx, "Sales data already to use", http.StatusOK, res)
 }
 
 /**
-* ==============================================
-* Handler Update Master Menu By ID Teritory
-*===============================================
+* ======================================
+* Handler Delete Sales By ID Teritory
+*=======================================
  */
-// GetUpdateMasterMenu godoc
-// @Summary		Get Update Master Menu
-// @Description	Get Update Master Menu
-// @Tags		Master Menu
+// GetDeleteMasterSales godoc
+// @Summary		Get Delete Master Sales
+// @Description	Get Delete Master Sales
+// @Tags		Master Sales
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Update Master Menu"
-// @Param		menu body schemes.MenuRequest true "Update Master Menu"
+// @Param		id path string true "Delete Master Sales"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -310,16 +236,69 @@ func (h *handleMenu) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu/update/{id} [put]
-func (h *handleMenu) HandlerUpdate(ctx *gin.Context) {
+// @Router /api/v1/master/sales/delete/{id} [delete]
+func (h *handleSales) HandlerDelete(ctx *gin.Context) {
+	var body schemes.Sales
+	id := ctx.Param("id")
+	body.ID = id
+
+	errors, code := ValidatorSales(ctx, body, "delete")
+
+	if code > 0 {
+		helpers.ErrorResponse(ctx, errors)
+		return
+	}
+
+	res, error := h.sales.EntityDelete(&body)
+
+	if error.Type == "error_delete_01" {
+		helpers.APIResponse(ctx, fmt.Sprintf("Sales data not found for this id %s ", id), error.Code, nil)
+		return
+	}
+
+	if error.Type == "error_delete_02" {
+		helpers.APIResponse(ctx, fmt.Sprintf("Delete Sales data for this id %v failed", id), error.Code, nil)
+		return
+	}
+
+	helpers.APIResponse(ctx, fmt.Sprintf("Delete Sales data for this id %s success", id), http.StatusOK, res)
+}
+
+/**
+* ======================================
+* Handler Update Sales By ID Teritory
+*=======================================
+ */
+// GetUpdateMasterSales godoc
+// @Summary		Get Update Master Sales
+// @Description	Get Update Master Sales
+// @Tags		Master Sales
+// @Accept		json
+// @Produce		json
+// @Param		id path string true "Update Master Sales"
+// @Param		sales body schemes.SalesRequest true "Update Master Sales"
+// @Success 200 {object} schemes.Responses
+// @Failure 400 {object} schemes.Responses400Example
+// @Failure 401 {object} schemes.Responses401Example
+// @Failure 403 {object} schemes.Responses403Example
+// @Failure 404 {object} schemes.Responses404Example
+// @Failure 409 {object} schemes.Responses409Example
+// @Failure 500 {object} schemes.Responses500Example
+// @Security	ApiKeyAuth
+// @Router /api/v1/master/sales/update/{id} [put]
+func (h *handleSales) HandlerUpdate(ctx *gin.Context) {
 	var (
-		body      schemes.Menu
+		body      schemes.Sales
 		activeGet = false
 	)
 	id := ctx.Param("id")
 	body.ID = id
 	body.Name = ctx.PostForm("name")
+	body.Description = ctx.PostForm("description")
+	body.Address = ctx.PostForm("address")
+	body.Phone = ctx.PostForm("phone")
 	body.MerchantID = ctx.PostForm("merchant_id")
+	body.OutletID = ctx.PostForm("outlet_id")
 	activeStr := ctx.PostForm("active")
 	if activeStr == "true" {
 		activeGet = constants.TRUE_VALUE
@@ -333,35 +312,35 @@ func (h *handleMenu) HandlerUpdate(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorMenu(ctx, body, "update")
+	errors, code := ValidatorSales(ctx, body, "update")
 
 	if code > 0 {
 		helpers.ErrorResponse(ctx, errors)
 		return
 	}
 
-	_, error := h.menu.EntityUpdate(&body)
+	_, error := h.sales.EntityUpdate(&body)
 
 	if error.Type == "error_update_01" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Master Menu data not found for this id %s ", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Sales data not found for this id %s ", id), error.Code, nil)
 		return
 	}
 
 	if error.Type == "error_update_02" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Update Master Menu data failed for this id %s", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Update Sales data failed for this id %s", id), error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, fmt.Sprintf("Update Master Menu data success for this id %s", id), http.StatusOK, nil)
+	helpers.APIResponse(ctx, fmt.Sprintf("Update Sales data success for this id %s", id), http.StatusCreated, nil)
 }
 
 /**
-* ==============================================
-*  All Validator User Input For Master Menu
-*===============================================
+* ======================================
+*  All Validator User Input For Sales
+*=======================================
  */
 
-func ValidatorMenu(ctx *gin.Context, input schemes.Menu, Type string) (interface{}, int) {
+func ValidatorSales(ctx *gin.Context, input schemes.Sales, Type string) (interface{}, int) {
 	var schema gpc.ErrorConfig
 
 	if Type == "create" {
@@ -378,19 +357,54 @@ func ValidatorMenu(ctx *gin.Context, input schemes.Menu, Type string) (interface
 					Message: "Name must be lowercase",
 				},
 				{
+					Tag:     "required",
+					Field:   "Phone",
+					Message: "Phone is required on body",
+				},
+				{
+					Tag:     "numeric",
+					Field:   "Phone",
+					Message: "Phone must be number",
+				},
+				{
+					Tag:     "gte",
+					Field:   "Phone",
+					Message: "Phone number must be 12 character",
+				},
+				{
+					Tag:     "required",
+					Field:   "Address",
+					Message: "Address is required on body",
+				},
+				{
 					Tag:     "max",
-					Field:   "Name",
-					Message: "Name maximal 200 character",
+					Field:   "Address",
+					Message: "Address maximal 1000 character",
+				},
+				{
+					Tag:     "max",
+					Field:   "Description",
+					Message: "Description maximal 1000 character",
 				},
 				{
 					Tag:     "required",
 					Field:   "MerchantID",
-					Message: "Merchant ID is required on param",
+					Message: "Merchant ID is required on body",
 				},
 				{
 					Tag:     "uuid",
 					Field:   "MerchantID",
 					Message: "Merchant ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "OutletID",
+					Message: "Outlet ID is required on body",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "OutletID",
+					Message: "Outlet ID must be uuid",
 				},
 			},
 		}
@@ -437,19 +451,54 @@ func ValidatorMenu(ctx *gin.Context, input schemes.Menu, Type string) (interface
 					Message: "Name must be lowercase",
 				},
 				{
+					Tag:     "required",
+					Field:   "Phone",
+					Message: "Phone is required on body",
+				},
+				{
+					Tag:     "numeric",
+					Field:   "Phone",
+					Message: "Phone must be number",
+				},
+				{
+					Tag:     "gte",
+					Field:   "Phone",
+					Message: "Phone number must be 12 character",
+				},
+				{
+					Tag:     "required",
+					Field:   "Address",
+					Message: "Address is required on body",
+				},
+				{
 					Tag:     "max",
-					Field:   "Name",
-					Message: "Name maximal 200 character",
+					Field:   "Address",
+					Message: "Address maximal 1000 character",
+				},
+				{
+					Tag:     "max",
+					Field:   "Description",
+					Message: "Description maximal 1000 character",
 				},
 				{
 					Tag:     "required",
 					Field:   "MerchantID",
-					Message: "Merchant ID is required on param",
+					Message: "Merchant ID is required on body",
 				},
 				{
 					Tag:     "uuid",
 					Field:   "MerchantID",
 					Message: "Merchant ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "OutletID",
+					Message: "Outlet ID is required on body",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "OutletID",
+					Message: "Outlet ID must be uuid",
 				},
 			},
 		}

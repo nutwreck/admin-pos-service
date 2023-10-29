@@ -1,10 +1,12 @@
 package repositories
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"github.com/nutwreck/admin-pos-service/configs"
 	"github.com/nutwreck/admin-pos-service/constants"
 	"github.com/nutwreck/admin-pos-service/models"
 	"github.com/nutwreck/admin-pos-service/schemes"
@@ -156,6 +158,161 @@ func (r *repositoryMenu) EntityResults(input *schemes.Menu) (*[]schemes.GetMenu,
 
 	err <- schemes.SchemeDatabaseError{}
 	return &result, totalData, <-err
+}
+
+/**
+* ====================================================
+* Repository Results All Master Menu Relation Teritory
+*=====================================================
+ */
+
+func (r *repositoryMenu) EntityResultRelations(input *schemes.Menu) (*[]schemes.GetMenuRelation, schemes.SchemeDatabaseError) {
+	var (
+		menu            []models.Menu
+		resultRaw       []schemes.GetMenuRelationRaw
+		result          []schemes.GetMenuRelation
+		args            []interface{}
+		sortData        string = "menu.name ASC"
+		queryData       string = constants.EMPTY_VALUE
+		queryAdditional string = constants.EMPTY_VALUE
+	)
+
+	err := make(chan schemes.SchemeDatabaseError, 1)
+
+	db := r.db.Model(&menu)
+
+	if input.Sort != constants.EMPTY_VALUE {
+		unScape, _ := url.QueryUnescape(input.Sort)
+		sortData = strings.Replace(unScape, "'", constants.EMPTY_VALUE, -1)
+	}
+
+	//Untuk mengambil detail data
+	queryData = `
+		SELECT
+			menu.id as menu_id,
+			menu."name" as menu_name,
+			menu.active as menu_active,
+			menudetail.id as menu_detail_id,
+			menudetail."name" as menu_detail_name,
+			menudetail.link  as menu_detail_link,
+			CASE
+				WHEN menudetail.image != '' THEN CONCAT('` + configs.AccessFile + `',menudetail.image)
+				ELSE ''
+			END AS menu_detail_image,
+			CASE
+				WHEN menudetail.icon != '' THEN CONCAT('` + configs.AccessFile + `',menudetail.icon)
+				ELSE ''
+			END AS menu_detail_icon,
+			menudetail.active as menu_detail_active,
+			menudetailfunction.id as menu_detail_function_id,
+			menudetailfunction."name" as menu_detail_function_name,
+			menudetailfunction.link as menu_detail_function_link,
+			menudetailfunction.active as menu_detail_function_active
+		FROM master.menus menu 
+	`
+
+	queryAdditional = `
+		LEFT JOIN master.menu_details menudetail on menu.id = menudetail.menu_id 
+		LEFT JOIN master.menu_detail_functions menudetailfunction on menudetail.id = menudetailfunction.menu_detail_id 
+		JOIN master.merchants merchant on menu.merchant_id = merchant.id
+	`
+
+	queryAdditional += ` WHERE TRUE`
+
+	if input.MerchantID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menu.merchant_id = ?`
+		args = append(args, input.MerchantID)
+	}
+
+	if input.Name != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menu.name LIKE ?`
+		args = append(args, "%"+input.Name+"%")
+	}
+
+	if input.ID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menu.id = ?`
+		args = append(args, input.ID)
+	}
+
+	queryAdditional += ` ORDER BY ` + sortData
+
+	getDatas := db.Raw(queryData+queryAdditional, args...).Scan(&resultRaw)
+
+	//Mapping Data
+	if len(resultRaw) > 0 {
+		groupedData := make(map[string]schemes.GetMenuRelation)
+		for _, item := range resultRaw {
+			key := fmt.Sprintf("%s_%s", item.MenuID, item.MenuDetailID)
+			if _, exists := groupedData[key]; !exists {
+				groupedData[key] = schemes.GetMenuRelation{
+					ID:     item.MenuID,
+					Name:   item.MenuName,
+					Active: item.MenuActive,
+				}
+			}
+
+			if item.MenuDetailID == constants.EMPTY_VALUE && item.MenuDetailName == constants.EMPTY_VALUE && item.MenuDetailLink == constants.EMPTY_VALUE && item.MenuDetailImage == constants.EMPTY_VALUE && item.MenuDetailIcon == constants.EMPTY_VALUE && item.MenuDetailActive == nil {
+				// All fields are empty, set ListDetail to nil
+				continue
+			}
+
+			groupedItem := schemes.ListMenuDetail{
+				ID:                 item.MenuDetailID,
+				Name:               item.MenuDetailName,
+				Link:               item.MenuDetailLink,
+				Image:              item.MenuDetailImage,
+				Icon:               item.MenuDetailIcon,
+				Active:             item.MenuDetailActive,
+				ListDetailFunction: nil, // Initialize with an empty array
+			}
+
+			if item.MenuDetailFunctionID != constants.EMPTY_VALUE || item.MenuDetailFunctionName != constants.EMPTY_VALUE || item.MenuDetailFunctionLink != constants.EMPTY_VALUE || item.MenuDetailFunctionActive != nil {
+				groupedItem.ListDetailFunction = append(groupedItem.ListDetailFunction, schemes.ListMenuDetailFunction{
+					ID:     item.MenuDetailFunctionID,
+					Name:   item.MenuDetailFunctionName,
+					Link:   item.MenuDetailFunctionLink,
+					Active: item.MenuDetailFunctionActive,
+				})
+			}
+
+			// Check if ListMenuDetail already exists
+			var listDetailExists bool
+			for i, existingItem := range groupedData[key].ListDetail {
+				if existingItem.ID == item.MenuDetailID {
+					// ListMenuDetail already exists, append ListMenuDetailFunction
+					listDetailExists = true
+					groupedData[key].ListDetail[i].ListDetailFunction = append(existingItem.ListDetailFunction, groupedItem.ListDetailFunction...)
+					break
+				}
+			}
+
+			// If ListMenuDetail doesn't exist, add it
+			if !listDetailExists {
+				// Use a temporary variable to modify the struct
+				temp := groupedData[key]
+				temp.ListDetail = append(temp.ListDetail, groupedItem)
+
+				// Assign the modified struct back to the map
+				groupedData[key] = temp
+			}
+		}
+
+		// Convert the map to a slice of GetMenuRelation
+		for _, value := range groupedData {
+			result = append(result, value)
+		}
+	}
+
+	if getDatas.RowsAffected < 1 {
+		err <- schemes.SchemeDatabaseError{
+			Code: http.StatusNotFound,
+			Type: "error_results_01",
+		}
+		return &result, <-err
+	}
+
+	err <- schemes.SchemeDatabaseError{}
+	return &result, <-err
 }
 
 /**

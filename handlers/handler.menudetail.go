@@ -43,14 +43,9 @@ func (h *handleMenuDetail) HandlerPing(ctx *gin.Context) {
 // @Summary		Create Master Menu Detail
 // @Description	Create Master Menu Detail
 // @Tags		Master Menu Detail
-// @Accept		mpfd
+// @Accept		json
 // @Produce		json
-// @Param 		merchant_id formData string true "Merchant ID (UUID)"
-// @Param 		menu_id formData string true "Menu ID (UUID)"
-// @Param 		name formData string true "Name of the Menu Detail"
-// @Param 		link formData string true "Link of the Menu Detail"
-// @Param 		image formData file false "File to be uploaded | Max Size File 1MB"
-// @Param 		icon formData file false "File to be uploaded | Max Size File 1MB"
+// @Param		menudetail body []schemes.MenuDetailRequest true "Create Master Menu Detail"
 // @Success 200 {object} schemes.Responses
 // @Success 201 {object} schemes.Responses201Example
 // @Failure 400 {object} schemes.Responses400Example
@@ -63,144 +58,201 @@ func (h *handleMenuDetail) HandlerPing(ctx *gin.Context) {
 // @Router /api/v1/master/menu-detail/create [post]
 func (h *handleMenuDetail) HandlerCreate(ctx *gin.Context) {
 	var (
-		body                   schemes.MenuDetail
-		encryptedImageFileName string
-		encryptedIconFileName  string
-		mimeTypeData           = configs.AllowedImageMimeTypes
+		body         []schemes.MenuDetail
+		datas        []schemes.MenuDetail
+		mimeTypeData = configs.AllowedImageMimeTypes
 	)
 
-	fileImage, _ := ctx.FormFile("image")
-	fileIcon, _ := ctx.FormFile("icon")
-	body.MerchantID = ctx.PostForm("merchant_id")
-	body.Name = ctx.PostForm("name")
-	body.MenuID = ctx.PostForm("menu_id")
-	body.Link = ctx.PostForm("link")
-	if fileImage != nil {
-		//Validasi data
-		validationMIME := helpers.ValidationMIMEFile(fileImage.Filename, mimeTypeData)
-		if !validationMIME {
-			errorsWithoutKeys := []schemes.ResultMsgErrorValidator{
-				{
-					Message: "Tipe file yang diupload bukan image",
-					Value:   fileImage.Filename,
-					Param:   "Image",
-					Tag:     "file type",
-				},
-			}
-			err := schemes.ErrorResponse{
-				StatusCode: http.StatusBadRequest,
-				Error:      errorsWithoutKeys,
-			}
-			ctx.AbortWithStatusJSON(err.StatusCode, err)
-			return
-		}
-
-		if fileImage.Size > configs.MaxFileSize1MB {
-			errorsWithoutKeys := []schemes.ResultMsgErrorValidator{
-				{
-					Message: "Ukuran file terlalu besar (maksimum 1MB)",
-					Value:   fileImage.Filename,
-					Param:   "Image",
-					Tag:     "file size",
-				},
-			}
-			err := schemes.ErrorResponse{
-				StatusCode: http.StatusBadRequest,
-				Error:      errorsWithoutKeys,
-			}
-			ctx.AbortWithStatusJSON(err.StatusCode, err)
-			return
-		}
-	}
-	if fileIcon != nil {
-		//Validasi data
-		validationMIME := helpers.ValidationMIMEFile(fileIcon.Filename, mimeTypeData)
-		if !validationMIME {
-			errorsWithoutKeys := []schemes.ResultMsgErrorValidator{
-				{
-					Message: "Tipe file yang diupload bukan image",
-					Value:   fileIcon.Filename,
-					Param:   "Icon",
-					Tag:     "file type",
-				},
-			}
-			err := schemes.ErrorResponse{
-				StatusCode: http.StatusBadRequest,
-				Error:      errorsWithoutKeys,
-			}
-			ctx.AbortWithStatusJSON(err.StatusCode, err)
-			return
-		}
-
-		if fileIcon.Size > configs.MaxFileSize1MB {
-			errorsWithoutKeys := []schemes.ResultMsgErrorValidator{
-				{
-					Message: "Ukuran file terlalu besar (maksimum 1MB)",
-					Value:   fileIcon.Filename,
-					Param:   "Icon",
-					Tag:     "file size",
-				},
-			}
-			err := schemes.ErrorResponse{
-				StatusCode: http.StatusBadRequest,
-				Error:      errorsWithoutKeys,
-			}
-			ctx.AbortWithStatusJSON(err.StatusCode, err)
-			return
-		}
-	}
-	if fileImage != nil {
-		//Body data
-		encryptedImageFileName = helpers.EncryptFileName(fileImage.Filename)
-		body.Image = encryptedImageFileName
-
-		//Upload file
-		uploadFile := helpers.UploadFileToStorageClient(fileImage, encryptedImageFileName, configs.ACLPublicRead)
-		if uploadFile != nil {
-			fmt.Println("UPLOAD IMAGE ERROR ==> " + uploadFile.Error())
-			helpers.APIResponse(ctx, "Upload image failed", http.StatusInternalServerError, nil)
-			return
-		}
-	}
-	if fileIcon != nil {
-		//Body data
-		encryptedIconFileName = helpers.EncryptFileName(fileIcon.Filename)
-		body.Icon = encryptedIconFileName
-
-		//Upload file
-		uploadFile := helpers.UploadFileToStorageClient(fileIcon, encryptedIconFileName, configs.ACLPublicRead)
-		if uploadFile != nil {
-			fmt.Println("UPLOAD ICO ERROR ==> " + uploadFile.Error())
-			helpers.APIResponse(ctx, "Upload icon failed", http.StatusInternalServerError, nil)
-			return
-		}
-	}
-
-	errors, code := ValidatorMenuDetail(ctx, body, "create")
-
-	if code > 0 {
-		helpers.ErrorResponse(ctx, errors)
+	err := ctx.ShouldBindJSON(&body)
+	if err != nil {
+		helpers.APIResponse(ctx, "Parse json data from body failed", http.StatusBadRequest, nil)
 		return
 	}
 
-	_, error := h.menuDetail.EntityCreate(&body)
+	for _, input := range body {
+		errors, code := ValidatorMenuDetail(ctx, input, "create")
+		if code > 0 {
+			helpers.ErrorResponse(ctx, errors)
+			return
+		}
+	}
 
-	if error.Type == "error_create_01" || error.Type == "error_create_02" {
-		// Delete file jika proses simpan gagal
+	//Check File Upload
+	for _, files := range body {
+		fileImage, _, err := helpers.Base64ToFile(files.Image)
+		if err != nil {
+			errorsWithoutKeys := []schemes.ResultMsgErrorValidator{
+				{
+					Message: err.Error(),
+					Value:   fileImage.Filename,
+					Param:   "Image",
+					Tag:     "file validation",
+				},
+			}
+			err := schemes.ErrorResponse{
+				StatusCode: http.StatusBadRequest,
+				Error:      errorsWithoutKeys,
+			}
+			ctx.AbortWithStatusJSON(err.StatusCode, err)
+			return
+		}
 		if fileImage != nil {
-			deleteFile := helpers.DeleteFileFromStorageClient(encryptedImageFileName)
-			if deleteFile != nil {
-				fmt.Println("DELETE IMAGE ERROR ==> " + deleteFile.Error())
-				helpers.APIResponse(ctx, "Delete image failed", http.StatusInternalServerError, nil)
+			//Validasi data
+			validationMIME := helpers.ValidationMIMEFile(fileImage.Filename, mimeTypeData)
+			if !validationMIME {
+				errorsWithoutKeys := []schemes.ResultMsgErrorValidator{
+					{
+						Message: "Tipe file yang diupload bukan image",
+						Value:   fileImage.Filename,
+						Param:   "Image",
+						Tag:     "file type",
+					},
+				}
+				err := schemes.ErrorResponse{
+					StatusCode: http.StatusBadRequest,
+					Error:      errorsWithoutKeys,
+				}
+				ctx.AbortWithStatusJSON(err.StatusCode, err)
+				return
+			}
+
+			if fileImage.Size > configs.MaxFileSize1MB {
+				errorsWithoutKeys := []schemes.ResultMsgErrorValidator{
+					{
+						Message: "Ukuran file terlalu besar (maksimum 1MB)",
+						Value:   fileImage.Filename,
+						Param:   "Image",
+						Tag:     "file size",
+					},
+				}
+				err := schemes.ErrorResponse{
+					StatusCode: http.StatusBadRequest,
+					Error:      errorsWithoutKeys,
+				}
+				ctx.AbortWithStatusJSON(err.StatusCode, err)
+				return
+			}
+		}
+
+		fileIcon, _, err := helpers.Base64ToFile(files.Icon)
+		if err != nil {
+			errorsWithoutKeys := []schemes.ResultMsgErrorValidator{
+				{
+					Message: err.Error(),
+					Value:   fileIcon.Filename,
+					Param:   "Icon",
+					Tag:     "file validation",
+				},
+			}
+			err := schemes.ErrorResponse{
+				StatusCode: http.StatusBadRequest,
+				Error:      errorsWithoutKeys,
+			}
+			ctx.AbortWithStatusJSON(err.StatusCode, err)
+			return
+		}
+		if fileIcon != nil {
+			//Validasi data
+			validationMIME := helpers.ValidationMIMEFile(fileIcon.Filename, mimeTypeData)
+			if !validationMIME {
+				errorsWithoutKeys := []schemes.ResultMsgErrorValidator{
+					{
+						Message: "Tipe file yang diupload bukan image",
+						Value:   fileIcon.Filename,
+						Param:   "Icon",
+						Tag:     "file type",
+					},
+				}
+				err := schemes.ErrorResponse{
+					StatusCode: http.StatusBadRequest,
+					Error:      errorsWithoutKeys,
+				}
+				ctx.AbortWithStatusJSON(err.StatusCode, err)
+				return
+			}
+
+			if fileIcon.Size > configs.MaxFileSize1MB {
+				errorsWithoutKeys := []schemes.ResultMsgErrorValidator{
+					{
+						Message: "Ukuran file terlalu besar (maksimum 1MB)",
+						Value:   fileIcon.Filename,
+						Param:   "Icon",
+						Tag:     "file size",
+					},
+				}
+				err := schemes.ErrorResponse{
+					StatusCode: http.StatusBadRequest,
+					Error:      errorsWithoutKeys,
+				}
+				ctx.AbortWithStatusJSON(err.StatusCode, err)
+				return
+			}
+		}
+	}
+
+	for _, req := range body {
+		var (
+			menuDetails            schemes.MenuDetail
+			encryptedImageFileName string
+			encryptedIconFileName  string
+		)
+
+		fileImage, decodedFileImage, _ := helpers.Base64ToFile(req.Image)
+		fileIcon, decodedFileIcon, _ := helpers.Base64ToFile(req.Icon)
+		menuDetails.MerchantID = req.MerchantID
+		menuDetails.Name = req.Name
+		menuDetails.MenuID = req.MenuID
+		menuDetails.Link = req.Link
+		if fileImage != nil {
+			//Body data
+			encryptedImageFileName = helpers.EncryptFileName(fileImage.Filename)
+			menuDetails.Image = encryptedImageFileName
+
+			//Upload file
+			uploadFile := helpers.UploadFileBase64ToStorageClient(decodedFileImage, encryptedImageFileName, configs.ACLPublicRead)
+			if uploadFile != nil {
+				fmt.Println("UPLOAD IMAGE ERROR ==> " + uploadFile.Error())
+				helpers.APIResponse(ctx, "Upload image failed", http.StatusInternalServerError, nil)
 				return
 			}
 		}
 		if fileIcon != nil {
-			deleteFile := helpers.DeleteFileFromStorageClient(encryptedIconFileName)
-			if deleteFile != nil {
-				fmt.Println("DELETE ICO ERROR ==> " + deleteFile.Error())
-				helpers.APIResponse(ctx, "Delete icon failed", http.StatusInternalServerError, nil)
+			//Body data
+			encryptedIconFileName = helpers.EncryptFileName(fileIcon.Filename)
+			menuDetails.Icon = encryptedIconFileName
+
+			//Upload file
+			uploadFile := helpers.UploadFileBase64ToStorageClient(decodedFileIcon, encryptedIconFileName, configs.ACLPublicRead)
+			if uploadFile != nil {
+				fmt.Println("UPLOAD ICO ERROR ==> " + uploadFile.Error())
+				helpers.APIResponse(ctx, "Upload icon failed", http.StatusInternalServerError, nil)
 				return
+			}
+		}
+
+		datas = append(datas, menuDetails)
+	}
+
+	_, error := h.menuDetail.EntityCreate(&datas)
+
+	if error.Type == "error_create_01" || error.Type == "error_create_02" {
+		// Delete file jika proses simpan gagal
+		for _, del := range datas {
+			if del.Image != constants.EMPTY_VALUE {
+				deleteFile := helpers.DeleteFileFromStorageClient(del.Image)
+				if deleteFile != nil {
+					fmt.Println("DELETE IMAGE ERROR ==> " + deleteFile.Error())
+					helpers.APIResponse(ctx, "Delete image failed", http.StatusInternalServerError, nil)
+					return
+				}
+			}
+			if del.Icon != constants.EMPTY_VALUE {
+				deleteFile := helpers.DeleteFileFromStorageClient(del.Icon)
+				if deleteFile != nil {
+					fmt.Println("DELETE ICO ERROR ==> " + deleteFile.Error())
+					helpers.APIResponse(ctx, "Delete icon failed", http.StatusInternalServerError, nil)
+					return
+				}
 			}
 		}
 	}

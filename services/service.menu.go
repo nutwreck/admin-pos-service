@@ -49,6 +49,22 @@ func (s *serviceMenu) EntityResults(input *schemes.Menu) (*[]schemes.GetMenu, in
 }
 
 /**
+* =================================================
+* Service Results All Master Menu Relation Teritory
+*==================================================
+ */
+
+func (s *serviceMenu) EntityResultRelations(input *schemes.Menu) (*[]schemes.GetMenuRelation, schemes.SchemeDatabaseError) {
+	var menu schemes.Menu
+	menu.MerchantID = input.MerchantID
+	menu.Name = input.Name
+	menu.ID = input.ID
+
+	res, err := s.menu.EntityResultRelations(&menu)
+	return res, err
+}
+
+/**
 * ==============================================
 * Service Delete Master Menu By ID Teritory
 *===============================================

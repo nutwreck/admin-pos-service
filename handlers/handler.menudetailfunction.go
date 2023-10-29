@@ -45,7 +45,7 @@ func (h *handleMenuDetailFunction) HandlerPing(ctx *gin.Context) {
 // @Tags		Master Menu Detail Function
 // @Accept		json
 // @Produce		json
-// @Param		menu body schemes.MenuDetailFunctionRequest true "Create Master Menu Detail Function"
+// @Param		menudetailfunction body []schemes.MenuDetailFunctionRequest true "Create Master Menu Detail Function"
 // @Success 200 {object} schemes.Responses
 // @Success 201 {object} schemes.Responses201Example
 // @Failure 400 {object} schemes.Responses400Example
@@ -57,7 +57,8 @@ func (h *handleMenuDetailFunction) HandlerPing(ctx *gin.Context) {
 // @Security	ApiKeyAuth
 // @Router /api/v1/master/menu-detail-function/create [post]
 func (h *handleMenuDetailFunction) HandlerCreate(ctx *gin.Context) {
-	var body schemes.MenuDetailFunction
+	var body []schemes.MenuDetailFunction
+	var datas []schemes.MenuDetailFunction
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -65,14 +66,26 @@ func (h *handleMenuDetailFunction) HandlerCreate(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorMenuDetailFunction(ctx, body, "create")
-
-	if code > 0 {
-		helpers.ErrorResponse(ctx, errors)
-		return
+	for _, input := range body {
+		errors, code := ValidatorMenuDetailFunction(ctx, input, "create")
+		if code > 0 {
+			helpers.ErrorResponse(ctx, errors)
+			return
+		}
 	}
 
-	_, error := h.menuDetailFunction.EntityCreate(&body)
+	for _, req := range body {
+		var menuDetailFunctions schemes.MenuDetailFunction
+		menuDetailFunctions.MerchantID = req.MerchantID
+		menuDetailFunctions.Name = req.Name
+		menuDetailFunctions.MenuID = req.MenuID
+		menuDetailFunctions.MenuDetailID = req.MenuDetailID
+		menuDetailFunctions.Link = req.Link
+
+		datas = append(datas, menuDetailFunctions)
+	}
+
+	_, error := h.menuDetailFunction.EntityCreate(&datas)
 
 	if error.Type == "error_create_01" {
 		helpers.APIResponse(ctx, "Master Menu Detail Function name already exist", error.Code, nil)
@@ -242,7 +255,7 @@ func (h *handleMenuDetailFunction) HandlerDelete(ctx *gin.Context) {
 // @Accept		json
 // @Produce		json
 // @Param		id path string true "Update Master Menu Detail Function"
-// @Param		menu body schemes.MenuDetailFunctionRequest true "Update Master Menu Detail Function"
+// @Param		menudetailfunction body schemes.MenuDetailFunctionRequest true "Update Master Menu Detail Function"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example

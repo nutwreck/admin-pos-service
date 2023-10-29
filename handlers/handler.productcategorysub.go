@@ -16,36 +16,36 @@ import (
 	gpc "github.com/restuwahyu13/go-playground-converter"
 )
 
-type handleMenu struct {
-	menu entities.EntityMenu
+type handleProductCategorySub struct {
+	productcategorysub entities.EntityProductCategorySub
 }
 
-func NewHandlerMenu(menu entities.EntityMenu) *handleMenu {
-	return &handleMenu{menu: menu}
-}
-
-/**
-* =============================================
-* Handler Ping Status Master Menu Teritory
-*==============================================
- */
-
-func (h *handleMenu) HandlerPing(ctx *gin.Context) {
-	helpers.APIResponse(ctx, "Ping Master Menu", http.StatusOK, nil)
+func NewHandlerProductCategorySub(productcategorysub entities.EntityProductCategorySub) *handleProductCategorySub {
+	return &handleProductCategorySub{productcategorysub: productcategorysub}
 }
 
 /**
-* ============================================
-* Handler Create New Master Menu Teritory
-*=============================================
+* =========================================================
+* Handler Ping Status Master Product Category Sub Teritory
+*==========================================================
  */
-// CreateMasterMenu godoc
-// @Summary		Create Master Menu
-// @Description	Create Master Menu
-// @Tags		Master Menu
+
+func (h *handleProductCategorySub) HandlerPing(ctx *gin.Context) {
+	helpers.APIResponse(ctx, "Ping Master Product Category Sub", http.StatusOK, nil)
+}
+
+/**
+* ========================================================
+* Handler Create New Master Product Category Sub Teritory
+*=========================================================
+ */
+// CreateMasterProductCategorySub godoc
+// @Summary		Create Master Product Category Sub
+// @Description	Create Master Product Category Sub
+// @Tags		Master Product Category Sub
 // @Accept		json
 // @Produce		json
-// @Param		menu body schemes.MenuRequest true "Create Master Menu"
+// @Param		productcategorysub body schemes.ProductCategorySubRequest true "Create Master Product Category Sub"
 // @Success 200 {object} schemes.Responses
 // @Success 201 {object} schemes.Responses201Example
 // @Failure 400 {object} schemes.Responses400Example
@@ -55,9 +55,9 @@ func (h *handleMenu) HandlerPing(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu/create [post]
-func (h *handleMenu) HandlerCreate(ctx *gin.Context) {
-	var body schemes.Menu
+// @Router /api/v1/master/product-category-sub/create [post]
+func (h *handleProductCategorySub) HandlerCreate(ctx *gin.Context) {
+	var body schemes.ProductCategorySub
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -65,43 +65,45 @@ func (h *handleMenu) HandlerCreate(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorMenu(ctx, body, "create")
+	errors, code := ValidatorProductCategorySub(ctx, body, "create")
 
 	if code > 0 {
 		helpers.ErrorResponse(ctx, errors)
 		return
 	}
 
-	_, error := h.menu.EntityCreate(&body)
+	_, error := h.productcategorysub.EntityCreate(&body)
 
 	if error.Type == "error_create_01" {
-		helpers.APIResponse(ctx, "Master Menu name already exist", error.Code, nil)
+		helpers.APIResponse(ctx, "Master Product Category Sub name already exist", error.Code, nil)
 		return
 	}
 
 	if error.Type == "error_create_02" {
-		helpers.APIResponse(ctx, "Create new Master Menu failed", error.Code, nil)
+		helpers.APIResponse(ctx, "Create new Master Product Category Sub failed", error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, "Create new Master Menu successfully", http.StatusCreated, nil)
+	helpers.APIResponse(ctx, "Create new Master Product Category Sub successfully", http.StatusCreated, nil)
 }
 
 /**
-* =============================================
-* Handler Results All Master Menu Teritory
-*==============================================
+* ========================================================
+* Handler Results All Master Product Category Sub Teritory
+*=========================================================
  */
-// GetListMasterMenu godoc
-// @Summary		Get List Master Menu
-// @Description	Get List Master Menu
-// @Tags		Master Menu
+// GetListMasterProductCategorySub godoc
+// @Summary		Get List Master Product Category Sub
+// @Description	Get List Master Product Category Sub
+// @Tags		Master Product Category Sub
 // @Accept		json
 // @Produce		json
-// @Param sort query string false "Use ASC or DESC | Available column sort : menu.id, menu.name, menu.active, merchant.id, merchant.name, menu.created_at, default is menu.created_at DESC | If you don't want to use it, fill it blank"
+// @Param sort query string false "Use ASC or DESC | Available column sort : productcategorysub.id, productcategorysub.name, productcategorysub.active, merchant.id, merchant.name, outlet.id, outlet.name, productcategory.id, productcategory.name, productcategorysub.created_at, default is productcategorysub.created_at DESC | If you don't want to use it, fill it blank"
 // @Param page query int false "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0"
 // @Param perpage query int false "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0"
 // @Param merchant_id query string false "Search by merchant"
+// @Param outlet_id query string false "Search by outlet"
+// @Param product_category_id query string false "Search by product category"
 // @Param name query string false "Search by name using LIKE pattern"
 // @Param id query string false "Search by ID"
 // @Success 200 {object} schemes.ResponsesPagination
@@ -112,10 +114,10 @@ func (h *handleMenu) HandlerCreate(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu/results [get]
-func (h *handleMenu) HandlerResults(ctx *gin.Context) {
+// @Router /api/v1/master/product-category-sub/results [get]
+func (h *handleProductCategorySub) HandlerResults(ctx *gin.Context) {
 	var (
-		body          schemes.Menu
+		body          schemes.ProductCategorySub
 		reqPage       = configs.FirstPage
 		reqPerPage    = configs.TotalPerPage
 		pages         int
@@ -155,6 +157,14 @@ func (h *handleMenu) HandlerResults(ctx *gin.Context) {
 	if merchantParam != constants.EMPTY_VALUE {
 		body.MerchantID = merchantParam
 	}
+	outletParam := ctx.DefaultQuery("outlet_id", constants.EMPTY_VALUE)
+	if outletParam != constants.EMPTY_VALUE {
+		body.OutletID = outletParam
+	}
+	productCategoryParam := ctx.DefaultQuery("product_category_id", constants.EMPTY_VALUE)
+	if productCategoryParam != constants.EMPTY_VALUE {
+		body.ProductCategoryID = productCategoryParam
+	}
 	nameParam := ctx.DefaultQuery("name", constants.EMPTY_VALUE)
 	if nameParam != constants.EMPTY_VALUE {
 		body.Name = nameParam
@@ -164,10 +174,10 @@ func (h *handleMenu) HandlerResults(ctx *gin.Context) {
 		body.ID = idParam
 	}
 
-	res, totalData, error := h.menu.EntityResults(&body)
+	res, totalData, error := h.productcategorysub.EntityResults(&body)
 
 	if error.Type == "error_results_01" {
-		helpers.APIResponsePagination(ctx, "Master Menu data not found", error.Code, nil, pages, perPages, totalPages, totalDatas)
+		helpers.APIResponsePagination(ctx, "Master Product Category Sub data not found", error.Code, nil, pages, perPages, totalPages, totalDatas)
 		return
 	}
 
@@ -179,80 +189,21 @@ func (h *handleMenu) HandlerResults(ctx *gin.Context) {
 	totalPages = int(math.Ceil(totalPagesDiv))
 	totalDatas = int(totalData)
 
-	helpers.APIResponsePagination(ctx, "Master Menu data already to use", http.StatusOK, res, pages, perPages, totalPages, totalDatas)
+	helpers.APIResponsePagination(ctx, "Master Product Category Sub data already to use", http.StatusOK, res, pages, perPages, totalPages, totalDatas)
 }
 
 /**
-* =================================================
-* Handler Results All Master Menu Relation Teritory
-*==================================================
+* =========================================================
+* Handler Delete Master Product Category Sub By ID Teritory
+*==========================================================
  */
-// GetListMasterMenuRelation godoc
-// @Summary		Get List Master Menu Relation
-// @Description	Get List Master Menu Relation
-// @Tags		Master Menu
+// GetDeleteMasterProductCategorySub godoc
+// @Summary		Get Delete Master Product Category Sub
+// @Description	Get Delete Master Product Category Sub
+// @Tags		Master Product Category Sub
 // @Accept		json
 // @Produce		json
-// @Param sort query string false "Use ASC or DESC | Available column sort : menu.id, menu.name, merchant.id, merchant.name, default is menu.name ASC | If you don't want to use it, fill it blank"
-// @Param merchant_id query string true "Search by merchant"
-// @Param name query string false "Search by menu name using LIKE pattern"
-// @Param id query string false "Search by menu ID"
-// @Success 200 {object} schemes.ResponsesPagination
-// @Failure 400 {object} schemes.Responses400Example
-// @Failure 401 {object} schemes.Responses401Example
-// @Failure 403 {object} schemes.Responses403Example
-// @Failure 404 {object} schemes.Responses404Example
-// @Failure 409 {object} schemes.Responses409Example
-// @Failure 500 {object} schemes.Responses500Example
-// @Security	ApiKeyAuth
-// @Router /api/v1/master/menu/results-relation [get]
-func (h *handleMenu) HandlerResultRelations(ctx *gin.Context) {
-	var (
-		body schemes.Menu
-	)
-
-	sortParam := ctx.DefaultQuery("sort", constants.EMPTY_VALUE)
-	if sortParam != constants.EMPTY_VALUE {
-		body.Sort = sortParam
-	}
-	merchantParam := ctx.DefaultQuery("merchant_id", constants.EMPTY_VALUE)
-	if merchantParam != constants.EMPTY_VALUE {
-		body.MerchantID = merchantParam
-	} else {
-		helpers.APIResponse(ctx, "Merchant ID is required on param", http.StatusBadRequest, nil)
-		return
-	}
-	nameParam := ctx.DefaultQuery("name", constants.EMPTY_VALUE)
-	if nameParam != constants.EMPTY_VALUE {
-		body.Name = nameParam
-	}
-	idParam := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
-	if idParam != constants.EMPTY_VALUE {
-		body.ID = idParam
-	}
-
-	res, error := h.menu.EntityResultRelations(&body)
-
-	if error.Type == "error_results_01" {
-		helpers.APIResponse(ctx, "Master Menu data not found", error.Code, nil)
-		return
-	}
-
-	helpers.APIResponse(ctx, "Master Menu data already to use", http.StatusOK, res)
-}
-
-/**
-* ==============================================
-* Handler Delete Master Menu By ID Teritory
-*===============================================
- */
-// GetDeleteMasterMenu godoc
-// @Summary		Get Delete Master Menu
-// @Description	Get Delete Master Menu
-// @Tags		Master Menu
-// @Accept		json
-// @Produce		json
-// @Param		id path string true "Delete Master Menu"
+// @Param		id path string true "Delete Master Product Category Sub"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -261,47 +212,47 @@ func (h *handleMenu) HandlerResultRelations(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu/delete/{id} [delete]
-func (h *handleMenu) HandlerDelete(ctx *gin.Context) {
-	var body schemes.Menu
+// @Router /api/v1/master/product-category-sub/delete/{id} [delete]
+func (h *handleProductCategorySub) HandlerDelete(ctx *gin.Context) {
+	var body schemes.ProductCategorySub
 	id := ctx.Param("id")
 	body.ID = id
 
-	errors, code := ValidatorMenu(ctx, body, "delete")
+	errors, code := ValidatorProductCategorySub(ctx, body, "delete")
 
 	if code > 0 {
 		helpers.ErrorResponse(ctx, errors)
 		return
 	}
 
-	res, error := h.menu.EntityDelete(&body)
+	res, error := h.productcategorysub.EntityDelete(&body)
 
 	if error.Type == "error_delete_01" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Master Menu data not found for this id %s ", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Master Product Category Sub data not found for this id %s ", id), error.Code, nil)
 		return
 	}
 
 	if error.Type == "error_delete_02" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Delete Master Menu data for this id %v failed", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Delete Master Product Category Sub data for this id %v failed", id), error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, fmt.Sprintf("Delete Master Menu data for this id %s success", id), http.StatusOK, res)
+	helpers.APIResponse(ctx, fmt.Sprintf("Delete Master Product Category Sub data for this id %s success", id), http.StatusOK, res)
 }
 
 /**
-* ==============================================
-* Handler Update Master Menu By ID Teritory
-*===============================================
+* ==========================================================
+* Handler Update Master Product Category Sub By ID Teritory
+*===========================================================
  */
-// GetUpdateMasterMenu godoc
-// @Summary		Get Update Master Menu
-// @Description	Get Update Master Menu
-// @Tags		Master Menu
+// GetUpdateMasterProductCategorySub godoc
+// @Summary		Get Update Master Product Category Sub
+// @Description	Get Update Master Product Category Sub
+// @Tags		Master Product Category Sub
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Update Master Menu"
-// @Param		menu body schemes.MenuRequest true "Update Master Menu"
+// @Param		id path string true "Update Master Product Category Sub"
+// @Param		productcategorysub body schemes.ProductCategorySubRequest true "Update Master Product Category Sub"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -310,16 +261,18 @@ func (h *handleMenu) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu/update/{id} [put]
-func (h *handleMenu) HandlerUpdate(ctx *gin.Context) {
+// @Router /api/v1/master/product-category-sub/update/{id} [put]
+func (h *handleProductCategorySub) HandlerUpdate(ctx *gin.Context) {
 	var (
-		body      schemes.Menu
+		body      schemes.ProductCategorySub
 		activeGet = false
 	)
 	id := ctx.Param("id")
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.MerchantID = ctx.PostForm("merchant_id")
+	body.OutletID = ctx.PostForm("outlet_id")
+	body.ProductCategoryID = ctx.PostForm("product_category_id")
 	activeStr := ctx.PostForm("active")
 	if activeStr == "true" {
 		activeGet = constants.TRUE_VALUE
@@ -333,35 +286,35 @@ func (h *handleMenu) HandlerUpdate(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorMenu(ctx, body, "update")
+	errors, code := ValidatorProductCategorySub(ctx, body, "update")
 
 	if code > 0 {
 		helpers.ErrorResponse(ctx, errors)
 		return
 	}
 
-	_, error := h.menu.EntityUpdate(&body)
+	_, error := h.productcategorysub.EntityUpdate(&body)
 
 	if error.Type == "error_update_01" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Master Menu data not found for this id %s ", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Master Product Category Sub data not found for this id %s ", id), error.Code, nil)
 		return
 	}
 
 	if error.Type == "error_update_02" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Update Master Menu data failed for this id %s", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Update Master Product Category Sub data failed for this id %s", id), error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, fmt.Sprintf("Update Master Menu data success for this id %s", id), http.StatusOK, nil)
+	helpers.APIResponse(ctx, fmt.Sprintf("Update Master Product Category Sub data success for this id %s", id), http.StatusOK, nil)
 }
 
 /**
-* ==============================================
-*  All Validator User Input For Master Menu
-*===============================================
+* ==========================================================
+*  All Validator User Input For Master Product Category Sub
+*===========================================================
  */
 
-func ValidatorMenu(ctx *gin.Context, input schemes.Menu, Type string) (interface{}, int) {
+func ValidatorProductCategorySub(ctx *gin.Context, input schemes.ProductCategorySub, Type string) (interface{}, int) {
 	var schema gpc.ErrorConfig
 
 	if Type == "create" {
@@ -391,6 +344,26 @@ func ValidatorMenu(ctx *gin.Context, input schemes.Menu, Type string) (interface
 					Tag:     "uuid",
 					Field:   "MerchantID",
 					Message: "Merchant ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "OutletID",
+					Message: "Outlet ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "OutletID",
+					Message: "Outlet ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "ProductCategoryID",
+					Message: "Product Category ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "ProductCategoryID",
+					Message: "Product Category ID must be uuid",
 				},
 			},
 		}
@@ -450,6 +423,26 @@ func ValidatorMenu(ctx *gin.Context, input schemes.Menu, Type string) (interface
 					Tag:     "uuid",
 					Field:   "MerchantID",
 					Message: "Merchant ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "OutletID",
+					Message: "Outlet ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "OutletID",
+					Message: "Outlet ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "ProductCategoryID",
+					Message: "Product Category ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "ProductCategoryID",
+					Message: "Product Category ID must be uuid",
 				},
 			},
 		}
