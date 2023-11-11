@@ -486,7 +486,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/customer/delete/{id}": {
+        "/api/v1/master/customer/delete": {
             "delete": {
                 "security": [
                     {
@@ -509,7 +509,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Customer",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -667,7 +667,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/customer/update/{id}": {
+        "/api/v1/master/customer/update": {
             "put": {
                 "security": [
                     {
@@ -690,7 +690,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Customer",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -833,7 +833,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/menu-detail-function/delete/{id}": {
+        "/api/v1/master/menu-detail-function/delete": {
             "delete": {
                 "security": [
                     {
@@ -856,7 +856,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Menu Detail Function",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1008,7 +1008,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/menu-detail-function/update/{id}": {
+        "/api/v1/master/menu-detail-function/update": {
             "put": {
                 "security": [
                     {
@@ -1031,7 +1031,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Menu Detail Function",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -1174,7 +1174,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/menu-detail/delete/{id}": {
+        "/api/v1/master/menu-detail/delete": {
             "delete": {
                 "security": [
                     {
@@ -1197,7 +1197,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Menu Detail",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1349,7 +1349,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/menu-detail/update/{id}": {
+        "/api/v1/master/menu-detail/update": {
             "put": {
                 "security": [
                     {
@@ -1372,7 +1372,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Menu Detail",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -1550,7 +1550,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/menu/delete/{id}": {
+        "/api/v1/master/menu/delete": {
             "delete": {
                 "security": [
                     {
@@ -1573,7 +1573,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Menu",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1816,7 +1816,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/menu/update/{id}": {
+        "/api/v1/master/menu/update": {
             "put": {
                 "security": [
                     {
@@ -1839,7 +1839,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Menu",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -2002,7 +2002,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/merchant/delete/{id}": {
+        "/api/v1/master/merchant/delete": {
             "delete": {
                 "security": [
                     {
@@ -2025,7 +2025,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Merchant",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -2171,7 +2171,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/merchant/update/{id}": {
+        "/api/v1/master/merchant/update": {
             "put": {
                 "security": [
                     {
@@ -2194,7 +2194,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Merchant",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -2366,7 +2366,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/outlet/delete/{id}": {
+        "/api/v1/master/outlet/delete": {
             "delete": {
                 "security": [
                     {
@@ -2389,7 +2389,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Outlet",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -2541,7 +2541,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/outlet/update/{id}": {
+        "/api/v1/master/outlet/update": {
             "put": {
                 "security": [
                     {
@@ -2564,7 +2564,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Outlet",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -2704,7 +2704,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/payment-category/delete/{id}": {
+        "/api/v1/master/payment-category/delete": {
             "delete": {
                 "security": [
                     {
@@ -2727,7 +2727,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Payment Category",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -2879,7 +2879,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/payment-category/update/{id}": {
+        "/api/v1/master/payment-category/update": {
             "put": {
                 "security": [
                     {
@@ -2902,7 +2902,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Payment Category",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -3066,7 +3066,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/payment-method/delete/{id}": {
+        "/api/v1/master/payment-method/delete": {
             "delete": {
                 "security": [
                     {
@@ -3089,7 +3089,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Payment Method",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -3247,7 +3247,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/payment-method/update/{id}": {
+        "/api/v1/master/payment-method/update": {
             "put": {
                 "security": [
                     {
@@ -3270,7 +3270,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Payment Method",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -3441,7 +3441,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/product-category-sub/delete/{id}": {
+        "/api/v1/master/product-category-sub/delete": {
             "delete": {
                 "security": [
                     {
@@ -3464,7 +3464,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Product Category Sub",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -3628,7 +3628,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/product-category-sub/update/{id}": {
+        "/api/v1/master/product-category-sub/update": {
             "put": {
                 "security": [
                     {
@@ -3651,7 +3651,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Product Category Sub",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -3791,7 +3791,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/product-category/delete/{id}": {
+        "/api/v1/master/product-category/delete": {
             "delete": {
                 "security": [
                     {
@@ -3814,7 +3814,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Product Category",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -3972,7 +3972,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/product-category/update/{id}": {
+        "/api/v1/master/product-category/update": {
             "put": {
                 "security": [
                     {
@@ -3995,7 +3995,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Product Category",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -4135,7 +4135,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/role/delete/{id}": {
+        "/api/v1/master/role/delete": {
             "delete": {
                 "security": [
                     {
@@ -4158,7 +4158,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Role",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -4316,7 +4316,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/role/update/{id}": {
+        "/api/v1/master/role/update": {
             "put": {
                 "security": [
                     {
@@ -4339,7 +4339,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Role",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -4479,7 +4479,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/sales/delete/{id}": {
+        "/api/v1/master/sales/delete": {
             "delete": {
                 "security": [
                     {
@@ -4502,7 +4502,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Sales",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -4660,7 +4660,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/sales/update/{id}": {
+        "/api/v1/master/sales/update": {
             "put": {
                 "security": [
                     {
@@ -4683,7 +4683,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Sales",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -4823,7 +4823,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/supplier/delete/{id}": {
+        "/api/v1/master/supplier/delete": {
             "delete": {
                 "security": [
                     {
@@ -4846,7 +4846,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master Supplier",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -5004,7 +5004,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/supplier/update/{id}": {
+        "/api/v1/master/supplier/update": {
             "put": {
                 "security": [
                     {
@@ -5027,7 +5027,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master Supplier",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -5167,7 +5167,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/uom-type/delete/{id}": {
+        "/api/v1/master/uom-type/delete": {
             "delete": {
                 "security": [
                     {
@@ -5190,7 +5190,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master UOM Type",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -5342,7 +5342,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/uom-type/update/{id}": {
+        "/api/v1/master/uom-type/update": {
             "put": {
                 "security": [
                     {
@@ -5365,7 +5365,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master UOM Type",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -5505,7 +5505,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/uom/delete/{id}": {
+        "/api/v1/master/uom/delete": {
             "delete": {
                 "security": [
                     {
@@ -5528,7 +5528,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete Master UOM",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -5686,7 +5686,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/uom/update/{id}": {
+        "/api/v1/master/uom/update": {
             "put": {
                 "security": [
                     {
@@ -5709,7 +5709,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update Master UOM",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -5849,7 +5849,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/user-outlet/delete/{id}": {
+        "/api/v1/master/user-outlet/delete": {
             "delete": {
                 "security": [
                     {
@@ -5872,7 +5872,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Delete User Outlet",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -6030,7 +6030,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/master/user-outlet/update/{id}": {
+        "/api/v1/master/user-outlet/update": {
             "put": {
                 "security": [
                     {
@@ -6053,7 +6053,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Update User Outlet",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {

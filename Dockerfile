@@ -18,10 +18,11 @@ COPY . ./
 
 FROM builder
 WORKDIR /app
-RUN apt-get update \
-  && apt-get install -y \
-  make
-COPY --from=builder . ./app
-RUN make gobuild
+# RUN apt-get update \
+#   && apt-get install -y \
+#   make
+# COPY --from=builder . ./app
+# RUN make gobuild
+RUN go build -o main .
 EXPOSE 8881
 CMD ["./main"]

@@ -198,7 +198,7 @@ func (h *handlerRole) HandlerResults(ctx *gin.Context) {
 // @Tags		Master Role
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete Master Role"
+// @Param		id query string true "Delete Master Role"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -207,10 +207,10 @@ func (h *handlerRole) HandlerResults(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/role/delete/{id} [delete]
+// @Router /api/v1/master/role/delete [delete]
 func (h *handlerRole) HandlerDelete(ctx *gin.Context) {
 	var body schemes.Role
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
 	errors, code := ValidatorRole(ctx, body, "delete")
@@ -246,7 +246,7 @@ func (h *handlerRole) HandlerDelete(ctx *gin.Context) {
 // @Tags		Master Role
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Update Master Role"
+// @Param		id query string true "Update Master Role"
 // @Param		role body schemes.RoleRequest true "Update Master Role"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
@@ -256,13 +256,13 @@ func (h *handlerRole) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/role/update/{id} [put]
+// @Router /api/v1/master/role/update [put]
 func (h *handlerRole) HandlerUpdate(ctx *gin.Context) {
 	var (
 		body      schemes.Role
 		activeGet = false
 	)
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.Type = ctx.PostForm("type")

@@ -193,7 +193,7 @@ func (h *handlePaymentCategory) HandlerResults(ctx *gin.Context) {
 // @Tags		Master Payment Category
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete Master Payment Category"
+// @Param		id query string true "Delete Master Payment Category"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -202,10 +202,10 @@ func (h *handlePaymentCategory) HandlerResults(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/payment-category/delete/{id} [delete]
+// @Router /api/v1/master/payment-category/delete [delete]
 func (h *handlePaymentCategory) HandlerDelete(ctx *gin.Context) {
 	var body schemes.PaymentCategory
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
 	errors, code := ValidatorPaymentCategory(ctx, body, "delete")
@@ -241,7 +241,7 @@ func (h *handlePaymentCategory) HandlerDelete(ctx *gin.Context) {
 // @Tags		Master Payment Category
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Update Master Payment Category"
+// @Param		id query string true "Update Master Payment Category"
 // @Param		paymentcategory body schemes.PaymentCategoryRequest true "Update Master Payment Category"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
@@ -251,13 +251,13 @@ func (h *handlePaymentCategory) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/payment-category/update/{id} [put]
+// @Router /api/v1/master/payment-category/update [put]
 func (h *handlePaymentCategory) HandlerUpdate(ctx *gin.Context) {
 	var (
 		body      schemes.PaymentCategory
 		activeGet = false
 	)
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.MerchantID = ctx.PostForm("merchant_id")

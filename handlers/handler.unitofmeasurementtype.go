@@ -193,7 +193,7 @@ func (h *handleUnitOfMeasurementType) HandlerResults(ctx *gin.Context) {
 // @Tags		Master UOM Type
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete Master UOM Type"
+// @Param		id query string true "Delete Master UOM Type"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -202,10 +202,10 @@ func (h *handleUnitOfMeasurementType) HandlerResults(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/uom-type/delete/{id} [delete]
+// @Router /api/v1/master/uom-type/delete [delete]
 func (h *handleUnitOfMeasurementType) HandlerDelete(ctx *gin.Context) {
 	var body schemes.UnitOfMeasurementType
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
 	errors, code := ValidatorUnitOfMeasurementType(ctx, body, "delete")
@@ -241,7 +241,7 @@ func (h *handleUnitOfMeasurementType) HandlerDelete(ctx *gin.Context) {
 // @Tags		Master UOM Type
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Update Master UOM Type"
+// @Param		id query string true "Update Master UOM Type"
 // @Param		uomtype body schemes.UnitOfMeasurementTypeRequest true "Update Master UOM Type"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
@@ -251,13 +251,13 @@ func (h *handleUnitOfMeasurementType) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/uom-type/update/{id} [put]
+// @Router /api/v1/master/uom-type/update [put]
 func (h *handleUnitOfMeasurementType) HandlerUpdate(ctx *gin.Context) {
 	var (
 		body      schemes.UnitOfMeasurementType
 		activeGet = false
 	)
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.MerchantID = ctx.PostForm("merchant_id")

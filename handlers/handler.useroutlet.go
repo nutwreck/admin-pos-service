@@ -198,7 +198,7 @@ func (h *handlerUserOutlet) HandlerResults(ctx *gin.Context) {
 // @Tags		User Outlet
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete User Outlet"
+// @Param		id query string true "Delete User Outlet"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -207,10 +207,10 @@ func (h *handlerUserOutlet) HandlerResults(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/user-outlet/delete/{id} [delete]
+// @Router /api/v1/master/user-outlet/delete [delete]
 func (h *handlerUserOutlet) HandlerDelete(ctx *gin.Context) {
 	var body schemes.UserOutlet
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
 	errors, code := ValidatorUserOutlet(ctx, body, "delete")
@@ -246,7 +246,7 @@ func (h *handlerUserOutlet) HandlerDelete(ctx *gin.Context) {
 // @Tags		User Outlet
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Update User Outlet"
+// @Param		id query string true "Update User Outlet"
 // @Param		useroutlet body schemes.UserOutletRequest true "Update User Outlet"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
@@ -256,13 +256,13 @@ func (h *handlerUserOutlet) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/user-outlet/update/{id} [put]
+// @Router /api/v1/master/user-outlet/update [put]
 func (h *handlerUserOutlet) HandlerUpdate(ctx *gin.Context) {
 	var (
 		body      schemes.UserOutlet
 		activeGet = false
 	)
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.UserID = ctx.PostForm("user_id")
 	body.OutletID = ctx.PostForm("outlet_id")

@@ -844,14 +844,14 @@ paths:
       summary: Create Master Customer
       tags:
       - Master Customer
-  /api/v1/master/customer/delete/{id}:
+  /api/v1/master/customer/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Customer
       parameters:
       - description: Delete Master Customer
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -966,14 +966,14 @@ paths:
       summary: Get List Master Customer
       tags:
       - Master Customer
-  /api/v1/master/customer/update/{id}:
+  /api/v1/master/customer/update:
     put:
       consumes:
       - application/json
       description: Get Update Master Customer
       parameters:
       - description: Update Master Customer
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -1073,14 +1073,14 @@ paths:
       summary: Create Master Menu Detail Function
       tags:
       - Master Menu Detail Function
-  /api/v1/master/menu-detail-function/delete/{id}:
+  /api/v1/master/menu-detail-function/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Menu Detail Function
       parameters:
       - description: Delete Master Menu Detail Function
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -1191,14 +1191,14 @@ paths:
       summary: Get List Master Menu Detail Function
       tags:
       - Master Menu Detail Function
-  /api/v1/master/menu-detail-function/update/{id}:
+  /api/v1/master/menu-detail-function/update:
     put:
       consumes:
       - application/json
       description: Get Update Master Menu Detail Function
       parameters:
       - description: Update Master Menu Detail Function
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -1298,14 +1298,14 @@ paths:
       summary: Create Master Menu Detail
       tags:
       - Master Menu Detail
-  /api/v1/master/menu-detail/delete/{id}:
+  /api/v1/master/menu-detail/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Menu Detail
       parameters:
       - description: Delete Master Menu Detail
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -1416,14 +1416,14 @@ paths:
       summary: Get List Master Menu Detail
       tags:
       - Master Menu Detail
-  /api/v1/master/menu-detail/update/{id}:
+  /api/v1/master/menu-detail/update:
     put:
       consumes:
       - multipart/form-data
       description: Get Update Master Menu Detail
       parameters:
       - description: Update Master Menu Detail
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -1548,14 +1548,14 @@ paths:
       summary: Create Master Menu
       tags:
       - Master Menu
-  /api/v1/master/menu/delete/{id}:
+  /api/v1/master/menu/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Menu
       parameters:
       - description: Delete Master Menu
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -1726,14 +1726,14 @@ paths:
       summary: Get List Master Menu Relation
       tags:
       - Master Menu
-  /api/v1/master/menu/update/{id}:
+  /api/v1/master/menu/update:
     put:
       consumes:
       - application/json
       description: Get Update Master Menu
       parameters:
       - description: Update Master Menu
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -1847,14 +1847,14 @@ paths:
       summary: Create Master Merchant
       tags:
       - Master Merchant
-  /api/v1/master/merchant/delete/{id}:
+  /api/v1/master/merchant/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Merchant
       parameters:
       - description: Delete Master Merchant
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -1960,14 +1960,14 @@ paths:
       summary: Get List Master Merchant
       tags:
       - Master Merchant
-  /api/v1/master/merchant/update/{id}:
+  /api/v1/master/merchant/update:
     put:
       consumes:
       - multipart/form-data
       description: Get Update Master Merchant
       parameters:
       - description: Update Master Merchant
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -2088,14 +2088,14 @@ paths:
       summary: Create Master Outlet
       tags:
       - Master Outlet
-  /api/v1/master/outlet/delete/{id}:
+  /api/v1/master/outlet/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Outlet
       parameters:
       - description: Delete Master Outlet
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -2206,14 +2206,14 @@ paths:
       summary: Get List Master Outlet
       tags:
       - Master Outlet
-  /api/v1/master/outlet/update/{id}:
+  /api/v1/master/outlet/update:
     put:
       consumes:
       - application/json
       description: Get Update Master Outlet
       parameters:
       - description: Update Master Outlet
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -2311,14 +2311,14 @@ paths:
       summary: Create Master Payment Category
       tags:
       - Master Payment Category
-  /api/v1/master/payment-category/delete/{id}:
+  /api/v1/master/payment-category/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Payment Category
       parameters:
       - description: Delete Master Payment Category
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -2429,14 +2429,14 @@ paths:
       summary: Get List Master Payment Category
       tags:
       - Master Payment Category
-  /api/v1/master/payment-category/update/{id}:
+  /api/v1/master/payment-category/update:
     put:
       consumes:
       - application/json
       description: Get Update Master Payment Category
       parameters:
       - description: Update Master Payment Category
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -2551,14 +2551,14 @@ paths:
       summary: Create Master Payment Method
       tags:
       - Master Payment Method
-  /api/v1/master/payment-method/delete/{id}:
+  /api/v1/master/payment-method/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Payment Method
       parameters:
       - description: Delete Master Payment Method
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -2673,14 +2673,14 @@ paths:
       summary: Get List Master Payment Method
       tags:
       - Master Payment Method
-  /api/v1/master/payment-method/update/{id}:
+  /api/v1/master/payment-method/update:
     put:
       consumes:
       - multipart/form-data
       description: Get Update Master Payment Method
       parameters:
       - description: Update Master Payment Method
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -2800,14 +2800,14 @@ paths:
       summary: Create Master Product Category Sub
       tags:
       - Master Product Category Sub
-  /api/v1/master/product-category-sub/delete/{id}:
+  /api/v1/master/product-category-sub/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Product Category Sub
       parameters:
       - description: Delete Master Product Category Sub
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -2927,14 +2927,14 @@ paths:
       summary: Get List Master Product Category Sub
       tags:
       - Master Product Category Sub
-  /api/v1/master/product-category-sub/update/{id}:
+  /api/v1/master/product-category-sub/update:
     put:
       consumes:
       - application/json
       description: Get Update Master Product Category Sub
       parameters:
       - description: Update Master Product Category Sub
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -3032,14 +3032,14 @@ paths:
       summary: Create Master Product Category
       tags:
       - Master Product Category
-  /api/v1/master/product-category/delete/{id}:
+  /api/v1/master/product-category/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Product Category
       parameters:
       - description: Delete Master Product Category
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -3154,14 +3154,14 @@ paths:
       summary: Get List Master Product Category
       tags:
       - Master Product Category
-  /api/v1/master/product-category/update/{id}:
+  /api/v1/master/product-category/update:
     put:
       consumes:
       - application/json
       description: Get Update Master Product Category
       parameters:
       - description: Update Master Product Category
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -3259,14 +3259,14 @@ paths:
       summary: Create Master Role
       tags:
       - Master Role
-  /api/v1/master/role/delete/{id}:
+  /api/v1/master/role/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Role
       parameters:
       - description: Delete Master Role
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -3380,14 +3380,14 @@ paths:
       summary: Get List Master Role
       tags:
       - Master Role
-  /api/v1/master/role/update/{id}:
+  /api/v1/master/role/update:
     put:
       consumes:
       - application/json
       description: Get Update Master Role
       parameters:
       - description: Update Master Role
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -3485,14 +3485,14 @@ paths:
       summary: Create Master Sales
       tags:
       - Master Sales
-  /api/v1/master/sales/delete/{id}:
+  /api/v1/master/sales/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Sales
       parameters:
       - description: Delete Master Sales
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -3607,14 +3607,14 @@ paths:
       summary: Get List Master Sales
       tags:
       - Master Sales
-  /api/v1/master/sales/update/{id}:
+  /api/v1/master/sales/update:
     put:
       consumes:
       - application/json
       description: Get Update Master Sales
       parameters:
       - description: Update Master Sales
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -3712,14 +3712,14 @@ paths:
       summary: Create Master Supplier
       tags:
       - Master Supplier
-  /api/v1/master/supplier/delete/{id}:
+  /api/v1/master/supplier/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master Supplier
       parameters:
       - description: Delete Master Supplier
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -3834,14 +3834,14 @@ paths:
       summary: Get List Master Supplier
       tags:
       - Master Supplier
-  /api/v1/master/supplier/update/{id}:
+  /api/v1/master/supplier/update:
     put:
       consumes:
       - application/json
       description: Get Update Master Supplier
       parameters:
       - description: Update Master Supplier
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -3939,14 +3939,14 @@ paths:
       summary: Create Master UOM Type
       tags:
       - Master UOM Type
-  /api/v1/master/uom-type/delete/{id}:
+  /api/v1/master/uom-type/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master UOM Type
       parameters:
       - description: Delete Master UOM Type
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -4056,14 +4056,14 @@ paths:
       summary: Get List Master UOM Type
       tags:
       - Master UOM Type
-  /api/v1/master/uom-type/update/{id}:
+  /api/v1/master/uom-type/update:
     put:
       consumes:
       - application/json
       description: Get Update Master UOM Type
       parameters:
       - description: Update Master UOM Type
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -4161,14 +4161,14 @@ paths:
       summary: Create Master UOM
       tags:
       - Master UOM
-  /api/v1/master/uom/delete/{id}:
+  /api/v1/master/uom/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete Master UOM
       parameters:
       - description: Delete Master UOM
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -4283,14 +4283,14 @@ paths:
       summary: Get List Master UOM
       tags:
       - Master UOM
-  /api/v1/master/uom/update/{id}:
+  /api/v1/master/uom/update:
     put:
       consumes:
       - application/json
       description: Get Update Master UOM
       parameters:
       - description: Update Master UOM
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -4388,14 +4388,14 @@ paths:
       summary: Create User Outlet
       tags:
       - User Outlet
-  /api/v1/master/user-outlet/delete/{id}:
+  /api/v1/master/user-outlet/delete:
     delete:
       consumes:
       - application/json
       description: Get Delete User Outlet
       parameters:
       - description: Delete User Outlet
-        in: path
+        in: query
         name: id
         required: true
         type: string
@@ -4510,14 +4510,14 @@ paths:
       summary: Get List User Outlet
       tags:
       - User Outlet
-  /api/v1/master/user-outlet/update/{id}:
+  /api/v1/master/user-outlet/update:
     put:
       consumes:
       - application/json
       description: Get Update User Outlet
       parameters:
       - description: Update User Outlet
-        in: path
+        in: query
         name: id
         required: true
         type: string

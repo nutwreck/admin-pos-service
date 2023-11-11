@@ -376,7 +376,7 @@ func (h *handleMenuDetail) HandlerResults(ctx *gin.Context) {
 // @Tags		Master Menu Detail
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete Master Menu Detail"
+// @Param		id query string true "Delete Master Menu Detail"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -385,10 +385,10 @@ func (h *handleMenuDetail) HandlerResults(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu-detail/delete/{id} [delete]
+// @Router /api/v1/master/menu-detail/delete [delete]
 func (h *handleMenuDetail) HandlerDelete(ctx *gin.Context) {
 	var body schemes.MenuDetail
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
 	errors, code := ValidatorMenuDetail(ctx, body, "delete")
@@ -449,7 +449,7 @@ func (h *handleMenuDetail) HandlerDelete(ctx *gin.Context) {
 // @Tags		Master Menu Detail
 // @Accept		mpfd
 // @Produce		json
-// @Param		id path string true "Update Master Menu Detail"
+// @Param		id query string true "Update Master Menu Detail"
 // @Param 		merchant_id formData string true "Merchant ID (UUID)"
 // @Param 		menu_id formData string true "Menu ID (UUID)"
 // @Param 		name formData string true "Name of the Menu Detail"
@@ -465,7 +465,7 @@ func (h *handleMenuDetail) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu-detail/update/{id} [put]
+// @Router /api/v1/master/menu-detail/update [put]
 func (h *handleMenuDetail) HandlerUpdate(ctx *gin.Context) {
 	var (
 		body                   schemes.MenuDetail
@@ -477,7 +477,7 @@ func (h *handleMenuDetail) HandlerUpdate(ctx *gin.Context) {
 
 	fileImage, _ := ctx.FormFile("image")
 	fileIcon, _ := ctx.FormFile("icon")
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.MerchantID = ctx.PostForm("merchant_id")

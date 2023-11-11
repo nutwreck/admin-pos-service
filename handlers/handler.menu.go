@@ -252,7 +252,7 @@ func (h *handleMenu) HandlerResultRelations(ctx *gin.Context) {
 // @Tags		Master Menu
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete Master Menu"
+// @Param		id query string true "Delete Master Menu"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -261,10 +261,10 @@ func (h *handleMenu) HandlerResultRelations(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu/delete/{id} [delete]
+// @Router /api/v1/master/menu/delete [delete]
 func (h *handleMenu) HandlerDelete(ctx *gin.Context) {
 	var body schemes.Menu
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
 	errors, code := ValidatorMenu(ctx, body, "delete")
@@ -300,7 +300,7 @@ func (h *handleMenu) HandlerDelete(ctx *gin.Context) {
 // @Tags		Master Menu
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Update Master Menu"
+// @Param		id query string true "Update Master Menu"
 // @Param		menu body schemes.MenuRequest true "Update Master Menu"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
@@ -310,13 +310,13 @@ func (h *handleMenu) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu/update/{id} [put]
+// @Router /api/v1/master/menu/update [put]
 func (h *handleMenu) HandlerUpdate(ctx *gin.Context) {
 	var (
 		body      schemes.Menu
 		activeGet = false
 	)
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.MerchantID = ctx.PostForm("merchant_id")

@@ -254,7 +254,7 @@ func (h *handlerMerchant) HandlerResults(ctx *gin.Context) {
 // @Tags		Master Merchant
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete Master Merchant"
+// @Param		id query string true "Delete Master Merchant"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -263,10 +263,10 @@ func (h *handlerMerchant) HandlerResults(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/merchant/delete/{id} [delete]
+// @Router /api/v1/master/merchant/delete [delete]
 func (h *handlerMerchant) HandlerDelete(ctx *gin.Context) {
 	var body schemes.Merchant
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
 	errors, code := ValidatorMerchant(ctx, body, "delete")
@@ -319,7 +319,7 @@ func (h *handlerMerchant) HandlerDelete(ctx *gin.Context) {
 // @Tags		Master Merchant
 // @Accept		mpfd
 // @Produce		json
-// @Param		id path string true "Update Master Merchant"
+// @Param		id query string true "Update Master Merchant"
 // @Param 		name formData string true "Name of the Merchant | input with lowercase"
 // @Param 		phone formData string true "Phone of the Merchant | input numeric"
 // @Param 		address formData string true "Address of the Merchant"
@@ -334,7 +334,7 @@ func (h *handlerMerchant) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/merchant/update/{id} [put]
+// @Router /api/v1/master/merchant/update [put]
 func (h *handlerMerchant) HandlerUpdate(ctx *gin.Context) {
 	var (
 		body                   schemes.Merchant
@@ -344,7 +344,7 @@ func (h *handlerMerchant) HandlerUpdate(ctx *gin.Context) {
 	)
 
 	fileLogo, _ := ctx.FormFile("logo")
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.Description = ctx.PostForm("description")
