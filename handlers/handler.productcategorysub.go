@@ -203,7 +203,7 @@ func (h *handleProductCategorySub) HandlerResults(ctx *gin.Context) {
 // @Tags		Master Product Category Sub
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete Master Product Category Sub"
+// @Param		id query string true "Delete Master Product Category Sub"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -212,10 +212,10 @@ func (h *handleProductCategorySub) HandlerResults(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/product-category-sub/delete/{id} [delete]
+// @Router /api/v1/master/product-category-sub/delete [delete]
 func (h *handleProductCategorySub) HandlerDelete(ctx *gin.Context) {
 	var body schemes.ProductCategorySub
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
 	errors, code := ValidatorProductCategorySub(ctx, body, "delete")
@@ -251,7 +251,7 @@ func (h *handleProductCategorySub) HandlerDelete(ctx *gin.Context) {
 // @Tags		Master Product Category Sub
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Update Master Product Category Sub"
+// @Param		id query string true "Update Master Product Category Sub"
 // @Param		productcategorysub body schemes.ProductCategorySubRequest true "Update Master Product Category Sub"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
@@ -261,13 +261,13 @@ func (h *handleProductCategorySub) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/product-category-sub/update/{id} [put]
+// @Router /api/v1/master/product-category-sub/update [put]
 func (h *handleProductCategorySub) HandlerUpdate(ctx *gin.Context) {
 	var (
 		body      schemes.ProductCategorySub
 		activeGet = false
 	)
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.MerchantID = ctx.PostForm("merchant_id")

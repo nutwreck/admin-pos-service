@@ -269,7 +269,7 @@ func (h *handlerPaymentMethod) HandlerResults(ctx *gin.Context) {
 // @Tags		Master Payment Method
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete Master Payment Method"
+// @Param		id query string true "Delete Master Payment Method"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -278,10 +278,10 @@ func (h *handlerPaymentMethod) HandlerResults(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/payment-method/delete/{id} [delete]
+// @Router /api/v1/master/payment-method/delete [delete]
 func (h *handlerPaymentMethod) HandlerDelete(ctx *gin.Context) {
 	var body schemes.PaymentMethod
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
 	errors, code := ValidatorPaymentMethod(ctx, body, "delete")
@@ -334,7 +334,7 @@ func (h *handlerPaymentMethod) HandlerDelete(ctx *gin.Context) {
 // @Tags		Master Payment Method
 // @Accept		mpfd
 // @Produce		json
-// @Param		id path string true "Update Master Payment Method"
+// @Param		id query string true "Update Master Payment Method"
 // @Param 		merchant_id formData string true "Merchant ID (UUID)"
 // @Param 		payment_category_id formData string true "Payment Method ID"
 // @Param 		name formData string true "Name of the Payment Method | input with lowercase"
@@ -349,7 +349,7 @@ func (h *handlerPaymentMethod) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/payment-method/update/{id} [put]
+// @Router /api/v1/master/payment-method/update [put]
 func (h *handlerPaymentMethod) HandlerUpdate(ctx *gin.Context) {
 	var (
 		body                   schemes.PaymentMethod
@@ -359,7 +359,7 @@ func (h *handlerPaymentMethod) HandlerUpdate(ctx *gin.Context) {
 	)
 
 	fileLogo, _ := ctx.FormFile("logo")
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.MerchantID = ctx.PostForm("merchant_id")

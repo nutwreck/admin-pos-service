@@ -227,7 +227,7 @@ func (h *handleSales) HandlerResult(ctx *gin.Context) {
 // @Tags		Master Sales
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete Master Sales"
+// @Param		id query string true "Delete Master Sales"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -236,10 +236,10 @@ func (h *handleSales) HandlerResult(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/sales/delete/{id} [delete]
+// @Router /api/v1/master/sales/delete [delete]
 func (h *handleSales) HandlerDelete(ctx *gin.Context) {
 	var body schemes.Sales
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
 	errors, code := ValidatorSales(ctx, body, "delete")
@@ -275,7 +275,7 @@ func (h *handleSales) HandlerDelete(ctx *gin.Context) {
 // @Tags		Master Sales
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Update Master Sales"
+// @Param		id query string true "Update Master Sales"
 // @Param		sales body schemes.SalesRequest true "Update Master Sales"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
@@ -285,13 +285,13 @@ func (h *handleSales) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/sales/update/{id} [put]
+// @Router /api/v1/master/sales/update [put]
 func (h *handleSales) HandlerUpdate(ctx *gin.Context) {
 	var (
 		body      schemes.Sales
 		activeGet = false
 	)
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.Description = ctx.PostForm("description")

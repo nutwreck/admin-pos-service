@@ -206,7 +206,7 @@ func (h *handleMenuDetailFunction) HandlerResults(ctx *gin.Context) {
 // @Tags		Master Menu Detail Function
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete Master Menu Detail Function"
+// @Param		id query string true "Delete Master Menu Detail Function"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -215,10 +215,10 @@ func (h *handleMenuDetailFunction) HandlerResults(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu-detail-function/delete/{id} [delete]
+// @Router /api/v1/master/menu-detail-function/delete [delete]
 func (h *handleMenuDetailFunction) HandlerDelete(ctx *gin.Context) {
 	var body schemes.MenuDetailFunction
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
 	errors, code := ValidatorMenuDetailFunction(ctx, body, "delete")
@@ -254,7 +254,7 @@ func (h *handleMenuDetailFunction) HandlerDelete(ctx *gin.Context) {
 // @Tags		Master Menu Detail Function
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Update Master Menu Detail Function"
+// @Param		id query string true "Update Master Menu Detail Function"
 // @Param		menudetailfunction body schemes.MenuDetailFunctionRequest true "Update Master Menu Detail Function"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
@@ -264,13 +264,13 @@ func (h *handleMenuDetailFunction) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/menu-detail-function/update/{id} [put]
+// @Router /api/v1/master/menu-detail-function/update [put]
 func (h *handleMenuDetailFunction) HandlerUpdate(ctx *gin.Context) {
 	var (
 		body      schemes.MenuDetailFunction
 		activeGet = false
 	)
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.MerchantID = ctx.PostForm("merchant_id")

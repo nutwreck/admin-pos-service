@@ -198,7 +198,7 @@ func (h *handleUnitOfMeasurement) HandlerResults(ctx *gin.Context) {
 // @Tags		Master UOM
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Delete Master UOM"
+// @Param		id query string true "Delete Master UOM"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -207,10 +207,10 @@ func (h *handleUnitOfMeasurement) HandlerResults(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/uom/delete/{id} [delete]
+// @Router /api/v1/master/uom/delete [delete]
 func (h *handleUnitOfMeasurement) HandlerDelete(ctx *gin.Context) {
 	var body schemes.UnitOfMeasurement
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
 	errors, code := ValidatorUnitOfMeasurement(ctx, body, "delete")
@@ -246,7 +246,7 @@ func (h *handleUnitOfMeasurement) HandlerDelete(ctx *gin.Context) {
 // @Tags		Master UOM
 // @Accept		json
 // @Produce		json
-// @Param		id path string true "Update Master UOM"
+// @Param		id query string true "Update Master UOM"
 // @Param		uom body schemes.UnitOfMeasurementRequest true "Update Master UOM"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
@@ -256,13 +256,13 @@ func (h *handleUnitOfMeasurement) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/uom/update/{id} [put]
+// @Router /api/v1/master/uom/update [put]
 func (h *handleUnitOfMeasurement) HandlerUpdate(ctx *gin.Context) {
 	var (
 		body      schemes.UnitOfMeasurement
 		activeGet = false
 	)
-	id := ctx.Param("id")
+	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.MerchantID = ctx.PostForm("merchant_id")
