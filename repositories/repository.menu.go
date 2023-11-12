@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"sort"
 	"strings"
 
 	"github.com/nutwreck/admin-pos-service/configs"
@@ -172,7 +173,7 @@ func (r *repositoryMenu) EntityResultRelations(input *schemes.Menu) (*[]schemes.
 		resultRaw       []schemes.GetMenuRelationRaw
 		result          []schemes.GetMenuRelation
 		args            []interface{}
-		sortData        string = "menu.name ASC"
+		sortData        string = "ASC"
 		queryData       string = constants.EMPTY_VALUE
 		queryAdditional string = constants.EMPTY_VALUE
 	)
@@ -234,7 +235,7 @@ func (r *repositoryMenu) EntityResultRelations(input *schemes.Menu) (*[]schemes.
 		args = append(args, input.ID)
 	}
 
-	queryAdditional += ` ORDER BY ` + sortData
+	//queryAdditional += ` ORDER BY ` + sortData
 
 	getDatas := db.Raw(queryData+queryAdditional, args...).Scan(&resultRaw)
 
@@ -300,6 +301,17 @@ func (r *repositoryMenu) EntityResultRelations(input *schemes.Menu) (*[]schemes.
 		// Convert the map to a slice of GetMenuRelation
 		for _, value := range groupedData {
 			result = append(result, value)
+		}
+
+		// Sort the result based on label_group (Name)
+		if strings.ToUpper(sortData) == "ASC" {
+			sort.Slice(result, func(i, j int) bool {
+				return result[i].Name < result[j].Name
+			})
+		} else if strings.ToUpper(sortData) == "DESC" {
+			sort.Slice(result, func(i, j int) bool {
+				return result[i].Name > result[j].Name
+			})
 		}
 	}
 

@@ -193,7 +193,7 @@ func (h *handleMenu) HandlerResults(ctx *gin.Context) {
 // @Tags		Master Menu
 // @Accept		json
 // @Produce		json
-// @Param sort query string false "Use ASC or DESC | Available column sort : menu.id, menu.name, merchant.id, merchant.name, default is menu.name ASC | If you don't want to use it, fill it blank"
+// @Param sort query string false "Available Sorting Menu Name | Use ASC or DESC, default is ASC | If you don't want to use it, fill it blank"
 // @Param merchant_id query string true "Search by merchant"
 // @Param name query string false "Search by menu name using LIKE pattern"
 // @Param id query string false "Search by menu ID"
