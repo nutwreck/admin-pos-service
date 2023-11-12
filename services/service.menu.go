@@ -56,6 +56,7 @@ func (s *serviceMenu) EntityResults(input *schemes.Menu) (*[]schemes.GetMenu, in
 
 func (s *serviceMenu) EntityResultRelations(input *schemes.Menu) (*[]schemes.GetMenuRelation, schemes.SchemeDatabaseError) {
 	var menu schemes.Menu
+	menu.Sort = input.Sort
 	menu.MerchantID = input.MerchantID
 	menu.Name = input.Name
 	menu.ID = input.ID

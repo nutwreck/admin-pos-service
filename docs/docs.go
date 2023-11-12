@@ -1746,7 +1746,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Use ASC or DESC | Available column sort : menu.id, menu.name, merchant.id, merchant.name, default is menu.name ASC | If you don't want to use it, fill it blank",
+                        "description": "Available Sorting Menu Name | Use ASC or DESC, default is ASC | If you don't want to use it, fill it blank",
                         "name": "sort",
                         "in": "query"
                     },
