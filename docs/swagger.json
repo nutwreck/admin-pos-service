@@ -4045,6 +4045,456 @@
                 }
             }
         },
+        "/api/v1/master/product/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create Master Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Master Product"
+                ],
+                "summary": "Create Master Product",
+                "parameters": [
+                    {
+                        "description": "Create Master Product",
+                        "name": "product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemes.ProductRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses201Example"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/product/delete": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get Delete Master Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Master Product"
+                ],
+                "summary": "Get Delete Master Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Delete Master Product",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/product/results": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get List Master Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Master Product"
+                ],
+                "summary": "Get List Master Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Use ASC or DESC | Available column sort : product.id, product.merchant_id, merchant.name, product.outlet_id, outlet.name AS outlet_name, product.product_category_id, product_category.name, product.product_category_sub_id, product_category_sub.name, product.code, product.name, product.barcode, product.capital_price, product.selling_price, product.supplier_id, supplier.name, product.unit_of_measurement_id, unit_of_measurement.name, product.active, default is product.created_at DESC | If you don't want to use it, fill it blank",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0",
+                        "name": "perpage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by merchant",
+                        "name": "merchant_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by outlet",
+                        "name": "outlet_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by code",
+                        "name": "code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by Product Category",
+                        "name": "product_category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by Product Category Sub",
+                        "name": "product_category_sub_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by Unit Of Measurement",
+                        "name": "unit_of_measurement_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by name using LIKE pattern",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.ResponsesPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/product/update": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get Update Master Product",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Master Product"
+                ],
+                "summary": "Get Update Master Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Update Master Product",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Merchant ID (UUID)",
+                        "name": "merchant_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Outlet ID (UUID)",
+                        "name": "outlet_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Product Category ID (UUID)",
+                        "name": "product_category_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Product Category Sub ID (UUID)",
+                        "name": "product_category_sub_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Code of the Product",
+                        "name": "code",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Name of the Product",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Barcode of the Product",
+                        "name": "barcode",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Capital Price of the Product",
+                        "name": "capital_price",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Selling Price of the Product",
+                        "name": "selling_price",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Supplier ID (UUID)",
+                        "name": "supplier_id",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "UOM ID (UUID)",
+                        "name": "unit_of_measurement_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "File to be uploaded | Max Size File 1MB",
+                        "name": "image",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Status Data",
+                        "name": "active",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/master/role/create": {
             "post": {
                 "security": [
@@ -6396,6 +6846,76 @@
                 "product_category_id": {
                     "type": "string",
                     "example": "9e769a02-0214-4277-90d0-bdf7f7b7c064"
+                }
+            }
+        },
+        "schemes.ProductRequest": {
+            "type": "object",
+            "required": [
+                "capital_price",
+                "code",
+                "merchant_id",
+                "name",
+                "outlet_id",
+                "product_category_id",
+                "product_category_sub_id",
+                "selling_price",
+                "unit_of_measurement_id"
+            ],
+            "properties": {
+                "active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "barcode": {
+                    "type": "string",
+                    "example": ""
+                },
+                "capital_price": {
+                    "type": "number",
+                    "example": 4500
+                },
+                "code": {
+                    "type": "string",
+                    "example": "AQU12"
+                },
+                "image": {
+                    "type": "string",
+                    "example": ""
+                },
+                "merchant_id": {
+                    "type": "string",
+                    "example": "81c0b615-d575-4d30-a81a-6b8db70fd4e0"
+                },
+                "name": {
+                    "description": "Input with Lowercase",
+                    "type": "string",
+                    "maxLength": 200,
+                    "example": "aqua"
+                },
+                "outlet_id": {
+                    "type": "string",
+                    "example": "4e769a02-0214-4277-90d0-bdf7f7b7c064"
+                },
+                "product_category_id": {
+                    "type": "string",
+                    "example": "8938d34c-f853-44c3-86f4-ca499c82c4f3"
+                },
+                "product_category_sub_id": {
+                    "type": "string",
+                    "example": "8938d34c-f853-44c3-86f4-ca499c82c4f3"
+                },
+                "selling_price": {
+                    "type": "number",
+                    "example": 5500
+                },
+                "supplier_id": {
+                    "type": "string",
+                    "example": "1320754f-613d-43d5-beb8-3e275c5e02ed"
+                },
+                "unit_of_measurement_id": {
+                    "type": "string",
+                    "example": "b8531dc1-d71e-499a-a6c3-ad10ada7c8d1"
                 }
             }
         },

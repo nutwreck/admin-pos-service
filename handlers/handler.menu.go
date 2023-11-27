@@ -208,37 +208,116 @@ func (h *handleMenu) HandlerResults(ctx *gin.Context) {
 // @Router /api/v1/master/menu/results-relation [get]
 func (h *handleMenu) HandlerResultRelations(ctx *gin.Context) {
 	var (
-		body schemes.Menu
+		bodyMenu               schemes.Menu
+		bodyMenuDetail         schemes.MenuDetail
+		bodyMenuDetailFunction schemes.MenuDetailFunction
+		result                 []schemes.GetMenuRelation
 	)
 
 	sortParam := ctx.DefaultQuery("sort", constants.EMPTY_VALUE)
 	if sortParam != constants.EMPTY_VALUE {
-		body.Sort = sortParam
+		bodyMenu.Sort = sortParam
 	}
 	merchantParam := ctx.DefaultQuery("merchant_id", constants.EMPTY_VALUE)
 	if merchantParam != constants.EMPTY_VALUE {
-		body.MerchantID = merchantParam
+		bodyMenu.MerchantID = merchantParam
 	} else {
 		helpers.APIResponse(ctx, "Merchant ID is required on param", http.StatusBadRequest, nil)
 		return
 	}
 	nameParam := ctx.DefaultQuery("name", constants.EMPTY_VALUE)
 	if nameParam != constants.EMPTY_VALUE {
-		body.Name = nameParam
+		bodyMenu.Name = nameParam
 	}
 	idParam := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	if idParam != constants.EMPTY_VALUE {
-		body.ID = idParam
+		bodyMenu.ID = idParam
 	}
 
-	res, error := h.menu.EntityResultRelations(&body)
+	//res, error := h.menu.EntityResultRelations(&body)
+	res, error := h.menu.EntityGetMenu(&bodyMenu)
 
 	if error.Type == "error_results_01" {
 		helpers.APIResponse(ctx, "Master Menu data not found", error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, "Master Menu data already to use", http.StatusOK, res)
+	if len(*res) > 0 {
+		for _, item := range *res {
+			var listDetail []schemes.ListMenuDetail
+			var ListDetailFunction []schemes.ListMenuDetailFunction
+
+			//Get Menu Detail
+			if sortParam != constants.EMPTY_VALUE {
+				bodyMenuDetail.Sort = sortParam
+			}
+			if item.MerchantID != constants.EMPTY_VALUE {
+				bodyMenuDetail.MerchantID = item.MerchantID
+			}
+			if item.ID != constants.EMPTY_VALUE {
+				bodyMenuDetail.MenuID = item.ID
+			}
+			resDetail, errorDetail := h.menu.EntityGetMenuDetail(&bodyMenuDetail)
+			if errorDetail.Type == "error_results_01" {
+				listDetail = nil
+			} else {
+				if len(*resDetail) > 0 {
+					for _, itemDetail := range *resDetail {
+						// Get Menu Detail Function
+						if sortParam != constants.EMPTY_VALUE {
+							bodyMenuDetailFunction.Sort = sortParam
+						}
+						if itemDetail.MerchantID != constants.EMPTY_VALUE {
+							bodyMenuDetailFunction.MerchantID = itemDetail.MerchantID
+						}
+						if itemDetail.MenuID != constants.EMPTY_VALUE {
+							bodyMenuDetailFunction.MenuID = itemDetail.MenuID
+						}
+						if itemDetail.ID != constants.EMPTY_VALUE {
+							bodyMenuDetailFunction.MenuDetailID = itemDetail.ID
+						}
+						resFunction, errorFunction := h.menu.EntityGetMenuDetailFunction(&bodyMenuDetailFunction)
+						if errorFunction.Type == "error_results_01" {
+							ListDetailFunction = nil
+						} else {
+							if len(*resFunction) > 0 {
+								for _, itemFunction := range *resFunction {
+									addlistFunction := schemes.ListMenuDetailFunction{
+										ID:     itemFunction.ID,
+										Name:   itemFunction.Name,
+										Link:   itemFunction.Link,
+										Active: itemFunction.Active,
+									}
+									ListDetailFunction = append(ListDetailFunction, addlistFunction)
+								}
+							}
+						}
+
+						addlistDetail := schemes.ListMenuDetail{
+							ID:                 itemDetail.ID,
+							Name:               itemDetail.Name,
+							Link:               itemDetail.Link,
+							Image:              itemDetail.Image,
+							Icon:               itemDetail.Icon,
+							Active:             itemDetail.Active,
+							ListDetailFunction: ListDetailFunction,
+						}
+						listDetail = append(listDetail, addlistDetail)
+					}
+				}
+			}
+
+			addResult := schemes.GetMenuRelation{
+				ID:         item.ID,
+				Name:       item.Name,
+				Active:     item.Active,
+				ListDetail: listDetail,
+			}
+			result = append(result, addResult)
+		}
+	}
+
+	helpers.APIResponse(ctx, "Master Menu data already to use", http.StatusOK, result)
 }
 
 /**

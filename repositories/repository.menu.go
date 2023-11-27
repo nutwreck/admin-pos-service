@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"sort"
@@ -167,6 +166,219 @@ func (r *repositoryMenu) EntityResults(input *schemes.Menu) (*[]schemes.GetMenu,
 *=====================================================
  */
 
+func (r *repositoryMenu) EntityGetMenu(input *schemes.Menu) (*[]schemes.GetMenu, schemes.SchemeDatabaseError) {
+	var (
+		menu            []models.Menu
+		result          []schemes.GetMenu
+		args            []interface{}
+		sortData        string = "ASC"
+		queryData       string = constants.EMPTY_VALUE
+		queryAdditional string = constants.EMPTY_VALUE
+	)
+
+	err := make(chan schemes.SchemeDatabaseError, 1)
+
+	db := r.db.Model(&menu)
+
+	if input.Sort != constants.EMPTY_VALUE {
+		unScape, _ := url.QueryUnescape(input.Sort)
+		sortData = strings.Replace(unScape, "'", constants.EMPTY_VALUE, -1)
+	}
+
+	//Untuk mengambil detail data
+	queryData = `
+		SELECT
+			menu.id,
+			menu.name,
+			menu.active
+		FROM master.menus menu 
+	`
+
+	queryAdditional = `
+		JOIN master.merchants merchant on menu.merchant_id = merchant.id
+	`
+
+	queryAdditional += ` WHERE TRUE`
+
+	if input.MerchantID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menu.merchant_id = ?`
+		args = append(args, input.MerchantID)
+	}
+
+	if input.Name != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menu.name LIKE ?`
+		args = append(args, "%"+input.Name+"%")
+	}
+
+	if input.ID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menu.id = ?`
+		args = append(args, input.ID)
+	}
+
+	queryAdditional += ` ORDER BY menu."name" ` + sortData
+
+	getDatas := db.Raw(queryData+queryAdditional, args...).Scan(&result)
+
+	if getDatas.RowsAffected < 1 {
+		err <- schemes.SchemeDatabaseError{
+			Code: http.StatusNotFound,
+			Type: "error_results_01",
+		}
+		return &result, <-err
+	}
+
+	err <- schemes.SchemeDatabaseError{}
+	return &result, <-err
+}
+
+func (r *repositoryMenu) EntityGetMenuDetail(input *schemes.MenuDetail) (*[]schemes.GetMenuDetail, schemes.SchemeDatabaseError) {
+	var (
+		menudetail      []models.MenuDetail
+		result          []schemes.GetMenuDetail
+		args            []interface{}
+		sortData        string = "ASC"
+		queryData       string = constants.EMPTY_VALUE
+		queryAdditional string = constants.EMPTY_VALUE
+	)
+
+	err := make(chan schemes.SchemeDatabaseError, 1)
+
+	db := r.db.Model(&menudetail)
+
+	if input.Sort != constants.EMPTY_VALUE {
+		unScape, _ := url.QueryUnescape(input.Sort)
+		sortData = strings.Replace(unScape, "'", constants.EMPTY_VALUE, -1)
+	}
+
+	//Untuk mengambil detail data
+	queryData = `
+		SELECT
+			menudetail.id,
+			merchant.id as merchant_id,
+			merchant.name as merchant_name,
+			menu.id as menu_id,
+			menu.name as menu_name,
+			menudetail.name,
+			menudetail.link,
+			CASE
+				WHEN menudetail.image != '' THEN CONCAT('` + configs.AccessFile + `',menudetail.image)
+				ELSE ''
+			END AS image,
+			CASE
+				WHEN menudetail.icon != '' THEN CONCAT('` + configs.AccessFile + `',menudetail.icon)
+				ELSE ''
+			END AS icon,
+			menudetail.active
+		FROM master.menu_details menudetail
+	`
+
+	queryAdditional = `
+		JOIN master.menus menu on menudetail.menu_id = menu.id
+		JOIN master.merchants merchant on menudetail.merchant_id = merchant.id
+	`
+
+	queryAdditional += ` WHERE TRUE`
+
+	if input.MerchantID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menudetail.merchant_id = ?`
+		args = append(args, input.MerchantID)
+	}
+
+	if input.MenuID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menudetail.menu_id = ?`
+		args = append(args, input.MenuID)
+	}
+
+	queryAdditional += ` ORDER BY menudetail.name ` + sortData
+
+	getDatas := db.Raw(queryData+queryAdditional, args...).Scan(&result)
+
+	if getDatas.RowsAffected < 1 {
+		err <- schemes.SchemeDatabaseError{
+			Code: http.StatusNotFound,
+			Type: "error_results_01",
+		}
+		return &result, <-err
+	}
+
+	err <- schemes.SchemeDatabaseError{}
+	return &result, <-err
+}
+
+func (r *repositoryMenu) EntityGetMenuDetailFunction(input *schemes.MenuDetailFunction) (*[]schemes.GetMenuDetailFunction, schemes.SchemeDatabaseError) {
+	var (
+		menudetailfunction []models.MenuDetailFunction
+		result             []schemes.GetMenuDetailFunction
+		args               []interface{}
+		sortData           string = "ASC"
+		queryData          string = constants.EMPTY_VALUE
+		queryAdditional    string = constants.EMPTY_VALUE
+	)
+
+	err := make(chan schemes.SchemeDatabaseError, 1)
+
+	db := r.db.Model(&menudetailfunction)
+
+	if input.Sort != constants.EMPTY_VALUE {
+		unScape, _ := url.QueryUnescape(input.Sort)
+		sortData = strings.Replace(unScape, "'", constants.EMPTY_VALUE, -1)
+	}
+
+	//Untuk mengambil detail data
+	queryData = `
+		SELECT
+			merchant.id as merchant_id,
+			merchant.name as merchant_name,
+			menu.id as menu_id,
+			menu.name as menu_name,
+			menudetail.id as menu_detail_id,
+			menudetail.name as menu_detail_name,
+			menudetailfunction.id,
+			menudetailfunction.name,
+			menudetailfunction.link,
+			menudetailfunction.active
+		FROM master.menu_detail_functions menudetailfunction
+	`
+
+	queryAdditional = `
+		JOIN master.menus menu on menudetailfunction.menu_id = menu.id
+		JOIN master.menu_details menudetail on menudetailfunction.menu_detail_id = menudetail.id 
+		JOIN master.merchants merchant on menudetailfunction.merchant_id = merchant.id
+	`
+
+	queryAdditional += ` WHERE TRUE`
+
+	if input.MerchantID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menudetailfunction.merchant_id = ?`
+		args = append(args, input.MerchantID)
+	}
+
+	if input.MenuDetailID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menudetailfunction.menu_detail_id = ?`
+		args = append(args, input.MenuDetailID)
+	}
+
+	if input.MenuID != constants.EMPTY_VALUE {
+		queryAdditional += ` AND menudetailfunction.menu_id = ?`
+		args = append(args, input.MenuID)
+	}
+
+	queryAdditional += ` ORDER BY menudetailfunction.name ` + sortData
+
+	getDatas := db.Raw(queryData+queryAdditional, args...).Scan(&result)
+
+	if getDatas.RowsAffected < 1 {
+		err <- schemes.SchemeDatabaseError{
+			Code: http.StatusNotFound,
+			Type: "error_results_01",
+		}
+		return &result, <-err
+	}
+
+	err <- schemes.SchemeDatabaseError{}
+	return &result, <-err
+}
+
 func (r *repositoryMenu) EntityResultRelations(input *schemes.Menu) (*[]schemes.GetMenuRelation, schemes.SchemeDatabaseError) {
 	var (
 		menu            []models.Menu
@@ -241,9 +453,13 @@ func (r *repositoryMenu) EntityResultRelations(input *schemes.Menu) (*[]schemes.
 
 	//Mapping Data
 	if len(resultRaw) > 0 {
-		groupedData := make(map[string]schemes.GetMenuRelation)
+		groupedData := make(map[schemes.GroupMenuKey]schemes.GetMenuRelation)
 		for _, item := range resultRaw {
-			key := fmt.Sprintf("%s_%s", item.MenuID, item.MenuDetailID)
+			key := schemes.GroupMenuKey{
+				MenuID:   item.MenuID,
+				MenuName: item.MenuName,
+			}
+
 			if _, exists := groupedData[key]; !exists {
 				groupedData[key] = schemes.GetMenuRelation{
 					ID:     item.MenuID,
@@ -276,26 +492,10 @@ func (r *repositoryMenu) EntityResultRelations(input *schemes.Menu) (*[]schemes.
 				})
 			}
 
-			// Check if ListMenuDetail already exists
-			var listDetailExists bool
-			for i, existingItem := range groupedData[key].ListDetail {
-				if existingItem.ID == item.MenuDetailID {
-					// ListMenuDetail already exists, append ListMenuDetailFunction
-					listDetailExists = true
-					groupedData[key].ListDetail[i].ListDetailFunction = append(existingItem.ListDetailFunction, groupedItem.ListDetailFunction...)
-					break
-				}
-			}
-
-			// If ListMenuDetail doesn't exist, add it
-			if !listDetailExists {
-				// Use a temporary variable to modify the struct
-				temp := groupedData[key]
-				temp.ListDetail = append(temp.ListDetail, groupedItem)
-
-				// Assign the modified struct back to the map
-				groupedData[key] = temp
-			}
+			temp := groupedData[key]
+			temp.ListDetail = append(temp.ListDetail, groupedItem)
+			// Assign the modified struct back to the map
+			groupedData[key] = temp
 		}
 
 		// Convert the map to a slice of GetMenuRelation
