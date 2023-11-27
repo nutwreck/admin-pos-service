@@ -174,4 +174,14 @@ func NewRouteMaster(db *gorm.DB, router *gin.Engine) {
 	route.GET("/product-category-sub/results", handlerProductCategorySub.HandlerResults)
 	route.DELETE("/product-category-sub/delete", handlerProductCategorySub.HandlerDelete)
 	route.PUT("/product-category-sub/update", handlerProductCategorySub.HandlerUpdate)
+
+	// Master Product
+	repositoryProduct := repositories.NewRepositoryProduct(db)
+	serviceProduct := services.NewServiceProduct(repositoryProduct)
+	handlerProduct := handlers.NewHandlerProduct(serviceProduct)
+	router.GET("/api/v1/master/product/ping", handlerProduct.HandlerPing)
+	route.POST("/product/create", handlerProduct.HandlerCreate)
+	route.GET("/product/results", handlerProduct.HandlerResults)
+	route.DELETE("/product/delete", handlerProduct.HandlerDelete)
+	route.PUT("/product/update", handlerProduct.HandlerUpdate)
 }

@@ -11,4 +11,8 @@ type EntityMenu interface {
 	EntityResultRelations(input *schemes.Menu) (*[]schemes.GetMenuRelation, schemes.SchemeDatabaseError)
 	EntityDelete(input *schemes.Menu) (*models.Menu, schemes.SchemeDatabaseError)
 	EntityUpdate(input *schemes.Menu) (*models.Menu, schemes.SchemeDatabaseError)
+
+	EntityGetMenu(input *schemes.Menu) (*[]schemes.GetMenu, schemes.SchemeDatabaseError)
+	EntityGetMenuDetail(input *schemes.MenuDetail) (*[]schemes.GetMenuDetail, schemes.SchemeDatabaseError)
+	EntityGetMenuDetailFunction(input *schemes.MenuDetailFunction) (*[]schemes.GetMenuDetailFunction, schemes.SchemeDatabaseError)
 }

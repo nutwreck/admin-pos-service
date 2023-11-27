@@ -65,6 +65,42 @@ func (s *serviceMenu) EntityResultRelations(input *schemes.Menu) (*[]schemes.Get
 	return res, err
 }
 
+func (s *serviceMenu) EntityGetMenu(input *schemes.Menu) (*[]schemes.GetMenu, schemes.SchemeDatabaseError) {
+	var menu schemes.Menu
+	menu.Sort = input.Sort
+	menu.MerchantID = input.MerchantID
+	menu.Name = input.Name
+	menu.ID = input.ID
+
+	res, err := s.menu.EntityGetMenu(&menu)
+	return res, err
+}
+
+func (s *serviceMenu) EntityGetMenuDetail(input *schemes.MenuDetail) (*[]schemes.GetMenuDetail, schemes.SchemeDatabaseError) {
+	var menuDetail schemes.MenuDetail
+	menuDetail.Sort = input.Sort
+	menuDetail.MerchantID = input.MerchantID
+	menuDetail.MenuID = input.MenuID
+	menuDetail.Name = input.Name
+	menuDetail.ID = input.ID
+
+	res, err := s.menu.EntityGetMenuDetail(&menuDetail)
+	return res, err
+}
+
+func (s *serviceMenu) EntityGetMenuDetailFunction(input *schemes.MenuDetailFunction) (*[]schemes.GetMenuDetailFunction, schemes.SchemeDatabaseError) {
+	var MenuDetailFunction schemes.MenuDetailFunction
+	MenuDetailFunction.Sort = input.Sort
+	MenuDetailFunction.MerchantID = input.MerchantID
+	MenuDetailFunction.MenuDetailID = input.MenuDetailID
+	MenuDetailFunction.MenuID = input.MenuID
+	MenuDetailFunction.Name = input.Name
+	MenuDetailFunction.ID = input.ID
+
+	res, err := s.menu.EntityGetMenuDetailFunction(&MenuDetailFunction)
+	return res, err
+}
+
 /**
 * ==============================================
 * Service Delete Master Menu By ID Teritory

@@ -47,6 +47,11 @@ type GetMenuRelationRaw struct {
 	MenuDetailFunctionActive *bool  `json:"menu_detail_function_active"`
 }
 
+type GroupMenuKey struct {
+	MenuID   string
+	MenuName string
+}
+
 type GetMenuRelation struct {
 	ID         string           `json:"id"`
 	Name       string           `json:"label_group"`

@@ -5,32 +5,33 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/google/uuid"
 	"github.com/nutwreck/admin-pos-service/configs"
 	"github.com/nutwreck/admin-pos-service/constants"
 )
 
 type Product struct {
-	ID                    uint64             `json:"id" gorm:"primary_key;autoIncrement"`
-	Merchant              Merchant           `json:"merchant" gorm:"foreignkey:MerchantID"`
-	MerchantID            string             `json:"merchant_id" gorm:"type:varchar; not null"`
-	Outlet                Outlet             `json:"outlet" gorm:"foreignkey:OutletID"`
-	OutletID              string             `json:"outlet_id" gorm:"type:varchar; not null"`
-	ProductCategory       ProductCategory    `json:"product_category" gorm:"foreignkey:ProductCategoryID"`
-	ProductCategoryID     uint64             `json:"product_category_id" gorm:"type:int; not null"`
-	ProductCategorySub    ProductCategorySub `json:"product_category_sub" gorm:"foreignkey:ProductCategoryaSubID"`
-	ProductCategoryaSubID uint64             `json:"product_category_sub_id" gorm:"type:int; not null"`
-	Code                  string             `json:"code" gorm:"type:varchar; not null"`
-	Name                  string             `json:"name" gorm:"type:varchar; not null"`
-	Barcode               string             `json:"barcode" gorm:"type:varchar;"`
-	CapitalPrice          float64            `json:"capital_price" gorm:"type:double precision; not null; default=0"`
-	SellingPrice          float64            `json:"selling_price" gorm:"type:double precision; not null; default=0"`
-	Supplier              Supplier           `json:"supplier" gorm:"foreignkey:SupplierID"`
-	SupplierID            uint64             `json:"supplier_id" gorm:"type:int;"`
-	UnitOfMeasurement     UnitOfMeasurement  `json:"unit_of_measurement" gorm:"foreignkey:UnitOfMeasurementID"`
-	UnitOfMeasurementID   string             `json:"unit_of_measurement_id" gorm:"type:varchar; not null"`
-	Active                *bool              `json:"active" gorm:"type:boolean; not null"`
-	CreatedAt             time.Time          `json:"created_at"`
-	UpdatedAt             time.Time          `json:"updated_at"`
+	ID                   string             `json:"id" gorm:"primary_key"`
+	Merchant             Merchant           `json:"merchant" gorm:"foreignkey:MerchantID"`
+	MerchantID           string             `json:"merchant_id" gorm:"type:varchar; not null"`
+	Outlet               Outlet             `json:"outlet" gorm:"foreignkey:OutletID"`
+	OutletID             string             `json:"outlet_id" gorm:"type:varchar; not null"`
+	ProductCategory      ProductCategory    `json:"product_category" gorm:"foreignkey:ProductCategoryID"`
+	ProductCategoryID    string             `json:"product_category_id" gorm:"type:varchar; not null"`
+	ProductCategorySub   ProductCategorySub `json:"product_category_sub" gorm:"foreignkey:ProductCategorySubID"`
+	ProductCategorySubID string             `json:"product_category_sub_id" gorm:"type:varchar; not null"`
+	Code                 string             `json:"code" gorm:"type:varchar; not null"`
+	Name                 string             `json:"name" gorm:"type:varchar; not null"`
+	Barcode              string             `json:"barcode" gorm:"type:varchar;"`
+	CapitalPrice         float64            `json:"capital_price" gorm:"type:double precision; not null; default=0"`
+	SellingPrice         float64            `json:"selling_price" gorm:"type:double precision; not null; default=0"`
+	SupplierID           string             `json:"supplier_id" gorm:"type:varchar;"`
+	UnitOfMeasurement    UnitOfMeasurement  `json:"unit_of_measurement" gorm:"foreignkey:UnitOfMeasurementID"`
+	UnitOfMeasurementID  string             `json:"unit_of_measurement_id" gorm:"type:varchar; not null"`
+	Image                string             `json:"image" gorm:"type:varchar;"`
+	Active               *bool              `json:"active" gorm:"type:boolean; not null"`
+	CreatedAt            time.Time          `json:"created_at"`
+	UpdatedAt            time.Time          `json:"updated_at"`
 }
 
 func (Product) TableName() string {
@@ -39,6 +40,7 @@ func (Product) TableName() string {
 
 func (m *Product) BeforeCreate(db *gorm.DB) error {
 	if !configs.IsSeederRunning {
+		m.ID = uuid.NewString()
 		m.Active = &constants.TRUE_VALUE
 		m.CreatedAt = time.Now().Local()
 	}
