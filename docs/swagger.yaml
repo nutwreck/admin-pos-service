@@ -46,6 +46,55 @@ definitions:
     - email
     - password
     type: object
+  schemes.MappingRoleMenuRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      menu_detail_function_id:
+        example: 4e769a02-0214-4277-90d0-bdf7f7b7c064
+        type: string
+      menu_detail_id:
+        example: 4e769a02-0214-4277-90d0-bdf7f7b7c064
+        type: string
+      menu_id:
+        example: 4e769a02-0214-4277-90d0-bdf7f7b7c064
+        type: string
+      merchant_id:
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
+        type: string
+      name:
+        type: string
+      role_id:
+        example: 4e769a02-0214-4277-90d0-bdf7f7b7c064
+        type: string
+    required:
+    - menu_detail_function_id
+    - menu_detail_id
+    - menu_id
+    - merchant_id
+    - name
+    - role_id
+    type: object
+  schemes.MappingRoleMenuUserRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      mapping_role_menu_id:
+        example: 4e769a02-0214-4277-90d0-bdf7f7b7c064
+        type: string
+      merchant_id:
+        example: 81c0b615-d575-4d30-a81a-6b8db70fd4e0
+        type: string
+      user_id:
+        example: 4e769a02-0214-4277-90d0-bdf7f7b7c064
+        type: string
+    required:
+    - mapping_role_menu_id
+    - merchant_id
+    - user_id
+    type: object
   schemes.MenuDetailFunctionRequest:
     properties:
       active:
@@ -857,7 +906,9 @@ paths:
         name: customer
         required: true
         schema:
-          $ref: '#/definitions/schemes.CustomerRequest'
+          items:
+            $ref: '#/definitions/schemes.CustomerRequest'
+          type: array
       produces:
       - application/json
       responses:
@@ -1073,6 +1124,452 @@ paths:
       summary: Get Update Master Customer
       tags:
       - Master Customer
+  /api/v1/master/mapping-role-menu-user/create:
+    post:
+      consumes:
+      - application/json
+      description: Create Mapping Role Menu User
+      parameters:
+      - description: Create Mapping Role Menu User
+        in: body
+        name: mappingrolemenuuser
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/schemes.MappingRoleMenuUserRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Mapping Role Menu User
+      tags:
+      - Mapping Role Menu User
+  /api/v1/master/mapping-role-menu-user/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete Mapping Role Menu User
+      parameters:
+      - description: Delete Mapping Role Menu User
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete Mapping Role Menu User
+      tags:
+      - Mapping Role Menu User
+  /api/v1/master/mapping-role-menu-user/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List Mapping Role Menu User
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : mappingrolemenuuser.id,
+          merchant.id, merchant.name, user.id, user.name, mappingrolemenu.id, mappingrolemenu.name,
+          mappingrolemenuuser.created_at, default is mappingrolemenuuser.created_at
+          DESC | If you don''t want to use it, fill it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Mapping Role Menu User
+      tags:
+      - Mapping Role Menu User
+  /api/v1/master/mapping-role-menu-user/update:
+    put:
+      consumes:
+      - application/json
+      description: Get Update Mapping Role Menu User
+      parameters:
+      - description: Update Mapping Role Menu User
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: Update Mapping Role Menu User
+        in: body
+        name: mappingrolemenuuser
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.MappingRoleMenuUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update Mapping Role Menu User
+      tags:
+      - Mapping Role Menu User
+  /api/v1/master/mapping-role-menu/create:
+    post:
+      consumes:
+      - application/json
+      description: Create Mapping Role Menu
+      parameters:
+      - description: Create Mapping Role Menu
+        in: body
+        name: mappingrolemenu
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.MappingRoleMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/schemes.Responses201Example'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Mapping Role Menu
+      tags:
+      - Mapping Role Menu
+  /api/v1/master/mapping-role-menu/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Get Delete Mapping Role Menu
+      parameters:
+      - description: Delete Mapping Role Menu
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Delete Mapping Role Menu
+      tags:
+      - Mapping Role Menu
+  /api/v1/master/mapping-role-menu/results:
+    get:
+      consumes:
+      - application/json
+      description: Get List Mapping Role Menu
+      parameters:
+      - description: 'Use ASC or DESC | Available column sort : mappingrolemenu.id,
+          mappingrolemenu.name, mappingrolemenu.active, mappingrolemenu.created_at,
+          merchant.id, merchant.name, role.id, role.name, menu.id, menu.name, menudetail.id,
+          menudetail.name, menudetailfunction.id, menudetailfunction.name, default
+          is mappingrolemenu.created_at DESC | If you don''t want to use it, fill
+          it blank'
+        in: query
+        name: sort
+        type: string
+      - description: Page number for pagination, default is 1 | if you want to disable
+          pagination, fill it with the number 0
+        in: query
+        name: page
+        type: integer
+      - description: Items per page for pagination, default is 10 | if you want to
+          disable pagination, fill it with the number 0
+        in: query
+        name: perpage
+        type: integer
+      - description: Search by merchant
+        in: query
+        name: merchant_id
+        type: string
+      - description: Search by name using LIKE pattern
+        in: query
+        name: name
+        type: string
+      - description: Search by ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.ResponsesPagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Mapping Role Menu
+      tags:
+      - Mapping Role Menu
+  /api/v1/master/mapping-role-menu/update:
+    put:
+      consumes:
+      - application/json
+      description: Get Update Mapping Role Menu
+      parameters:
+      - description: Update Mapping Role Menu
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: Update Mapping Role Menu
+        in: body
+        name: mappingrolemenu
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.MappingRoleMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.Responses'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemes.Responses400Example'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemes.Responses401Example'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/schemes.Responses403Example'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemes.Responses404Example'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemes.Responses409Example'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemes.Responses500Example'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Update Mapping Role Menu
+      tags:
+      - Mapping Role Menu
   /api/v1/master/menu-detail-function/create:
     post:
       consumes:
@@ -3575,7 +4072,9 @@ paths:
         name: role
         required: true
         schema:
-          $ref: '#/definitions/schemes.RoleRequest'
+          items:
+            $ref: '#/definitions/schemes.RoleRequest'
+          type: array
       produces:
       - application/json
       responses:
@@ -3801,7 +4300,9 @@ paths:
         name: sales
         required: true
         schema:
-          $ref: '#/definitions/schemes.SalesRequest'
+          items:
+            $ref: '#/definitions/schemes.SalesRequest'
+          type: array
       produces:
       - application/json
       responses:
@@ -4028,7 +4529,9 @@ paths:
         name: supplier
         required: true
         schema:
-          $ref: '#/definitions/schemes.SupplierRequest'
+          items:
+            $ref: '#/definitions/schemes.SupplierRequest'
+          type: array
       produces:
       - application/json
       responses:
@@ -4255,7 +4758,9 @@ paths:
         name: uomtype
         required: true
         schema:
-          $ref: '#/definitions/schemes.UnitOfMeasurementTypeRequest'
+          items:
+            $ref: '#/definitions/schemes.UnitOfMeasurementTypeRequest'
+          type: array
       produces:
       - application/json
       responses:
@@ -4477,7 +4982,9 @@ paths:
         name: uom
         required: true
         schema:
-          $ref: '#/definitions/schemes.UnitOfMeasurementRequest'
+          items:
+            $ref: '#/definitions/schemes.UnitOfMeasurementRequest'
+          type: array
       produces:
       - application/json
       responses:

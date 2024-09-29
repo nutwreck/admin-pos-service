@@ -184,4 +184,24 @@ func NewRouteMaster(db *gorm.DB, router *gin.Engine) {
 	route.GET("/product/results", handlerProduct.HandlerResults)
 	route.DELETE("/product/delete", handlerProduct.HandlerDelete)
 	route.PUT("/product/update", handlerProduct.HandlerUpdate)
+
+	// Mapping Role Menu
+	repositoryMappingRoleMenu := repositories.NewRepositoryMappingRoleMenu(db)
+	serviceMappingRoleMenu := services.NewServiceMappingRoleMenu(repositoryMappingRoleMenu)
+	handlerMappingRoleMenu := handlers.NewHandlerMappingRoleMenu(serviceMappingRoleMenu)
+	router.GET("/api/v1/master/mapping-role-menu/ping", handlerMappingRoleMenu.HandlerPing)
+	route.POST("/mapping-role-menu/create", handlerMappingRoleMenu.HandlerCreate)
+	route.GET("/mapping-role-menu/results", handlerMappingRoleMenu.HandlerResults)
+	route.DELETE("/mapping-role-menu/delete", handlerMappingRoleMenu.HandlerDelete)
+	route.PUT("/mapping-role-menu/update", handlerMappingRoleMenu.HandlerUpdate)
+
+	// Mapping Role Menu User
+	repositoryMappingRoleMenuUser := repositories.NewRepositoryMappingRoleMenuUser(db)
+	serviceMappingRoleMenuUser := services.NewServiceMappingRoleMenuUser(repositoryMappingRoleMenuUser)
+	handlerMappingRoleMenuUser := handlers.NewHandlerMappingRoleMenuUser(serviceMappingRoleMenuUser)
+	router.GET("/api/v1/master/mapping-role-menu-user/ping", handlerMappingRoleMenuUser.HandlerPing)
+	route.POST("/mapping-role-menu-user/create", handlerMappingRoleMenuUser.HandlerCreate)
+	route.GET("/mapping-role-menu-user/results", handlerMappingRoleMenuUser.HandlerResults)
+	route.DELETE("/mapping-role-menu-user/delete", handlerMappingRoleMenuUser.HandlerDelete)
+	route.PUT("/mapping-role-menu-user/update", handlerMappingRoleMenuUser.HandlerUpdate)
 }

@@ -45,7 +45,7 @@ func (h *handleUnitOfMeasurement) HandlerPing(ctx *gin.Context) {
 // @Tags		Master UOM
 // @Accept		json
 // @Produce		json
-// @Param		uom body schemes.UnitOfMeasurementRequest true "Create Master UOM"
+// @Param		uom body []schemes.UnitOfMeasurementRequest true "Create Master UOM"
 // @Success 200 {object} schemes.Responses
 // @Success 201 {object} schemes.Responses201Example
 // @Failure 400 {object} schemes.Responses400Example
@@ -57,7 +57,8 @@ func (h *handleUnitOfMeasurement) HandlerPing(ctx *gin.Context) {
 // @Security	ApiKeyAuth
 // @Router /api/v1/master/uom/create [post]
 func (h *handleUnitOfMeasurement) HandlerCreate(ctx *gin.Context) {
-	var body schemes.UnitOfMeasurement
+	var body []schemes.UnitOfMeasurement
+	var datas []schemes.UnitOfMeasurement
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -65,14 +66,26 @@ func (h *handleUnitOfMeasurement) HandlerCreate(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorUnitOfMeasurement(ctx, body, "create")
-
-	if code > 0 {
-		helpers.ErrorResponse(ctx, errors)
-		return
+	for _, input := range body {
+		errors, code := ValidatorUnitOfMeasurement(ctx, input, "create")
+		if code > 0 {
+			helpers.ErrorResponse(ctx, errors)
+			return
+		}
 	}
 
-	_, error := h.uom.EntityCreate(&body)
+	for _, req := range body {
+		var uom schemes.UnitOfMeasurement
+		uom.MerchantID = req.MerchantID
+		uom.UOMTypeID = req.UOMTypeID
+		uom.Symbol = req.Symbol
+		uom.ConversionFactor = req.ConversionFactor
+		uom.Name = req.Name
+
+		datas = append(datas, uom)
+	}
+
+	_, error := h.uom.EntityCreate(&datas)
 
 	if error.Type == "error_create_01" {
 		helpers.APIResponse(ctx, "Master UOM name already exist", error.Code, nil)

@@ -6,7 +6,7 @@ import (
 )
 
 type EntitySales interface {
-	EntityCreate(input *schemes.Sales) (*models.Sales, schemes.SchemeDatabaseError)
+	EntityCreate(input *[]schemes.Sales) (*models.Sales, schemes.SchemeDatabaseError)
 	EntityResults(input *schemes.Sales) (*[]schemes.GetSales, int64, schemes.SchemeDatabaseError)
 	EntityResult(input *schemes.Sales) (*models.Sales, schemes.SchemeDatabaseError)
 	EntityDelete(input *schemes.Sales) (*models.Sales, schemes.SchemeDatabaseError)

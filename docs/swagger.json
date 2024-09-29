@@ -421,7 +421,10 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schemes.CustomerRequest"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemes.CustomerRequest"
+                            }
                         }
                     }
                 ],
@@ -691,6 +694,679 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/schemes.CustomerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/mapping-role-menu-user/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create Mapping Role Menu User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mapping Role Menu User"
+                ],
+                "summary": "Create Mapping Role Menu User",
+                "parameters": [
+                    {
+                        "description": "Create Mapping Role Menu User",
+                        "name": "mappingrolemenuuser",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemes.MappingRoleMenuUserRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses201Example"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/mapping-role-menu-user/delete": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get Delete Mapping Role Menu User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mapping Role Menu User"
+                ],
+                "summary": "Get Delete Mapping Role Menu User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Delete Mapping Role Menu User",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/mapping-role-menu-user/results": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get List Mapping Role Menu User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mapping Role Menu User"
+                ],
+                "summary": "Get List Mapping Role Menu User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Use ASC or DESC | Available column sort : mappingrolemenuuser.id, merchant.id, merchant.name, user.id, user.name, mappingrolemenu.id, mappingrolemenu.name, mappingrolemenuuser.created_at, default is mappingrolemenuuser.created_at DESC | If you don't want to use it, fill it blank",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0",
+                        "name": "perpage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by merchant",
+                        "name": "merchant_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.ResponsesPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/mapping-role-menu-user/update": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get Update Mapping Role Menu User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mapping Role Menu User"
+                ],
+                "summary": "Get Update Mapping Role Menu User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Update Mapping Role Menu User",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Mapping Role Menu User",
+                        "name": "mappingrolemenuuser",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemes.MappingRoleMenuUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/mapping-role-menu/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create Mapping Role Menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mapping Role Menu"
+                ],
+                "summary": "Create Mapping Role Menu",
+                "parameters": [
+                    {
+                        "description": "Create Mapping Role Menu",
+                        "name": "mappingrolemenu",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemes.MappingRoleMenuRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses201Example"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/mapping-role-menu/delete": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get Delete Mapping Role Menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mapping Role Menu"
+                ],
+                "summary": "Get Delete Mapping Role Menu",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Delete Mapping Role Menu",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/mapping-role-menu/results": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get List Mapping Role Menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mapping Role Menu"
+                ],
+                "summary": "Get List Mapping Role Menu",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Use ASC or DESC | Available column sort : mappingrolemenu.id, mappingrolemenu.name, mappingrolemenu.active, mappingrolemenu.created_at, merchant.id, merchant.name, role.id, role.name, menu.id, menu.name, menudetail.id, menudetail.name, menudetailfunction.id, menudetailfunction.name, default is mappingrolemenu.created_at DESC | If you don't want to use it, fill it blank",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0",
+                        "name": "perpage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by merchant",
+                        "name": "merchant_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by name using LIKE pattern",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search by ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.ResponsesPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses400Example"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses401Example"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses403Example"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses404Example"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses409Example"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.Responses500Example"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/master/mapping-role-menu/update": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get Update Mapping Role Menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mapping Role Menu"
+                ],
+                "summary": "Get Update Mapping Role Menu",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Update Mapping Role Menu",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Mapping Role Menu",
+                        "name": "mappingrolemenu",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemes.MappingRoleMenuRequest"
                         }
                     }
                 ],
@@ -4520,7 +5196,10 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schemes.RoleRequest"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemes.RoleRequest"
+                            }
                         }
                     }
                 ],
@@ -4864,7 +5543,10 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schemes.SalesRequest"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemes.SalesRequest"
+                            }
                         }
                     }
                 ],
@@ -5208,7 +5890,10 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schemes.SupplierRequest"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemes.SupplierRequest"
+                            }
                         }
                     }
                 ],
@@ -5552,7 +6237,10 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schemes.UnitOfMeasurementTypeRequest"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemes.UnitOfMeasurementTypeRequest"
+                            }
                         }
                     }
                 ],
@@ -5890,7 +6578,10 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schemes.UnitOfMeasurementRequest"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemes.UnitOfMeasurementRequest"
+                            }
                         }
                     }
                 ],
@@ -6614,6 +7305,72 @@
                     "type": "string",
                     "minLength": 8,
                     "example": "12345678"
+                }
+            }
+        },
+        "schemes.MappingRoleMenuRequest": {
+            "type": "object",
+            "required": [
+                "menu_detail_function_id",
+                "menu_detail_id",
+                "menu_id",
+                "merchant_id",
+                "name",
+                "role_id"
+            ],
+            "properties": {
+                "active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "menu_detail_function_id": {
+                    "type": "string",
+                    "example": "4e769a02-0214-4277-90d0-bdf7f7b7c064"
+                },
+                "menu_detail_id": {
+                    "type": "string",
+                    "example": "4e769a02-0214-4277-90d0-bdf7f7b7c064"
+                },
+                "menu_id": {
+                    "type": "string",
+                    "example": "4e769a02-0214-4277-90d0-bdf7f7b7c064"
+                },
+                "merchant_id": {
+                    "type": "string",
+                    "example": "81c0b615-d575-4d30-a81a-6b8db70fd4e0"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "string",
+                    "example": "4e769a02-0214-4277-90d0-bdf7f7b7c064"
+                }
+            }
+        },
+        "schemes.MappingRoleMenuUserRequest": {
+            "type": "object",
+            "required": [
+                "mapping_role_menu_id",
+                "merchant_id",
+                "user_id"
+            ],
+            "properties": {
+                "active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "mapping_role_menu_id": {
+                    "type": "string",
+                    "example": "4e769a02-0214-4277-90d0-bdf7f7b7c064"
+                },
+                "merchant_id": {
+                    "type": "string",
+                    "example": "81c0b615-d575-4d30-a81a-6b8db70fd4e0"
+                },
+                "user_id": {
+                    "type": "string",
+                    "example": "4e769a02-0214-4277-90d0-bdf7f7b7c064"
                 }
             }
         },

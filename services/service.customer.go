@@ -20,16 +20,23 @@ func NewServiceCustomer(customer entities.EntityCustomer) *serviceCustomer {
 *===========================================
  */
 
-func (s *serviceCustomer) EntityCreate(input *schemes.Customer) (*models.Customer, schemes.SchemeDatabaseError) {
-	var customer schemes.Customer
-	customer.Name = input.Name
-	customer.Phone = input.Phone
-	customer.Address = input.Address
-	customer.Description = input.Description
-	customer.MerchantID = input.MerchantID
-	customer.OutletID = input.OutletID
+func (s *serviceCustomer) EntityCreate(inputs *[]schemes.Customer) (*models.Customer, schemes.SchemeDatabaseError) {
+	var createdCustomer []schemes.Customer
 
-	res, err := s.customer.EntityCreate(&customer)
+	// Loop through each input in the batch
+	for _, input := range *inputs {
+		var customer schemes.Customer
+		customer.Name = input.Name
+		customer.Phone = input.Phone
+		customer.Address = input.Address
+		customer.Description = input.Description
+		customer.MerchantID = input.MerchantID
+		customer.OutletID = input.OutletID
+
+		createdCustomer = append(createdCustomer, customer)
+	}
+
+	res, err := s.customer.EntityCreate(&createdCustomer)
 	return res, err
 }
 

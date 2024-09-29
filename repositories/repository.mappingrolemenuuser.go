@@ -11,35 +11,35 @@ import (
 	"gorm.io/gorm"
 )
 
-type repositoryRole struct {
+type repositoryMappingRoleMenuUser struct {
 	db *gorm.DB
 }
 
-func NewRepositoryRole(db *gorm.DB) *repositoryRole {
-	return &repositoryRole{db: db}
+func NewRepositoryMappingRoleMenuUser(db *gorm.DB) *repositoryMappingRoleMenuUser {
+	return &repositoryMappingRoleMenuUser{db: db}
 }
 
 /**
 * ===============================================
-* Repository Create New Master Role Teritory
+* Repository Create New Mapping Role Menu User Teritory
 *================================================
  */
 
-func (r *repositoryRole) EntityCreate(input *[]schemes.Role) (*models.Role, schemes.SchemeDatabaseError) {
+func (r *repositoryMappingRoleMenuUser) EntityCreate(input *[]schemes.MappingRoleMenuUser) (*models.MappingRoleMenuUser, schemes.SchemeDatabaseError) {
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
 	// Mulai transaksi
 	tx := r.db.Begin()
 
 	for _, input := range *input {
-		var role models.Role
-		role.Name = input.Name
-		role.Type = input.Type
-		role.MerchantID = input.MerchantID
+		var mappingRoleMenuUser models.MappingRoleMenuUser
+		mappingRoleMenuUser.UserID = input.UserID
+		mappingRoleMenuUser.MappingRoleMenuID = input.MappingRoleMenuID
+		mappingRoleMenuUser.MerchantID = input.MerchantID
 
-		db := tx.Model(&role)
+		db := tx.Model(&mappingRoleMenuUser)
 
-		checkRoleName := db.Debug().Where("merchant_id = ? AND name = ? AND type = ?", role.MerchantID, role.Name, role.Type).First(&role)
+		checkRoleName := db.Debug().Where("merchant_id = ? AND user_id = ? AND mapping_role_menu_id = ?", mappingRoleMenuUser.MerchantID, mappingRoleMenuUser.UserID, mappingRoleMenuUser.MappingRoleMenuID).First(&mappingRoleMenuUser)
 
 		if checkRoleName.RowsAffected > 0 {
 			tx.Rollback()
@@ -50,9 +50,9 @@ func (r *repositoryRole) EntityCreate(input *[]schemes.Role) (*models.Role, sche
 			return nil, <-err
 		}
 
-		addRole := db.Debug().Create(&role)
+		addData := db.Debug().Create(&mappingRoleMenuUser)
 
-		if addRole.RowsAffected < 1 {
+		if addData.RowsAffected < 1 {
 			tx.Rollback()
 			err <- schemes.SchemeDatabaseError{
 				Code: http.StatusForbidden,
@@ -71,18 +71,18 @@ func (r *repositoryRole) EntityCreate(input *[]schemes.Role) (*models.Role, sche
 
 /**
 * ================================================
-* Repository Results All Master Role Teritory
+* Repository Results All Mapping Role Menu User Teritory
 *=================================================
  */
 
-func (r *repositoryRole) EntityResults(input *schemes.Role) (*[]schemes.GetAllRole, int64, schemes.SchemeDatabaseError) {
+func (r *repositoryMappingRoleMenuUser) EntityResults(input *schemes.MappingRoleMenuUser) (*[]schemes.GetMappingRoleMenuUser, int64, schemes.SchemeDatabaseError) {
 	var (
-		role            []models.Role
-		result          []schemes.GetAllRole
+		role            []models.MappingRoleMenuUser
+		result          []schemes.GetMappingRoleMenuUser
 		countData       schemes.CountData
 		args            []interface{}
 		totalData       int64
-		sortData        string = "role.created_at DESC"
+		sortData        string = "mappingrolemenuuser.created_at DESC"
 		queryCountData  string = constants.EMPTY_VALUE
 		queryData       string = constants.EMPTY_VALUE
 		queryAdditional string = constants.EMPTY_VALUE
@@ -102,46 +102,39 @@ func (r *repositoryRole) EntityResults(input *schemes.Role) (*[]schemes.GetAllRo
 	//Untuk mengambil jumlah data tanpa limit
 	queryCountData = `
 		SELECT
-			COUNT(role.*) AS count_data
-		FROM master.roles AS role
+			COUNT(mappingrolemenuuser.*) AS count_data
+		FROM master.mapping_role_menu_users AS mappingrolemenuuser
 	`
 
 	//Untuk mengambil detail data
 	queryData = `
 		SELECT
-			role.id,
-			role.name,
-			role.type,
-			role.active,
+			mappingrolemenuuser.id,
 			merchant.id AS merchant_id,
 			merchant.name AS merchant_name,
-			role.created_at
-		FROM master.roles AS role
+			user.id AS user_id,
+			user.name AS user_name,
+			mappingrolemenu.id AS mapping_role_menu_id,
+			mappingrolemenu.name AS mapping_role_menu_name,
+			mappingrolemenuuser.created_at
+		FROM master.mapping_role_menu_users AS mappingrolemenuuser
 	`
 
 	queryAdditional = `
-		JOIN master.merchants AS merchant ON role.merchant_id = merchant.id AND merchant.active = true
+		JOIN master.merchants AS merchant ON mappingrolemenuuser.merchant_id = merchant.id AND merchant.active = true
+		JOIN master.users AS user ON mappingrolemenuuser.user_id = user.id AND user.active = true
+		JOIN master.mapping_role_menus AS mappingrolemenu ON mappingrolemenuuser.mapping_role_menu_id = mappingrolemenu.id
 	`
 
 	queryAdditional += ` WHERE TRUE`
 
 	if input.MerchantID != constants.EMPTY_VALUE {
-		queryAdditional += ` AND role.merchant_id = ?`
+		queryAdditional += ` AND mappingrolemenuuser.merchant_id = ?`
 		args = append(args, input.MerchantID)
 	}
 
-	if input.Name != constants.EMPTY_VALUE {
-		queryAdditional += ` AND role.type LIKE ?`
-		args = append(args, input.Name)
-	}
-
-	if input.Name != constants.EMPTY_VALUE {
-		queryAdditional += ` AND role.name LIKE ?`
-		args = append(args, "%"+input.Name+"%")
-	}
-
 	if input.ID != constants.EMPTY_VALUE {
-		queryAdditional += ` AND role.id = ?`
+		queryAdditional += ` AND mappingrolemenuuser.id = ?`
 		args = append(args, input.ID)
 	}
 
@@ -177,81 +170,81 @@ func (r *repositoryRole) EntityResults(input *schemes.Role) (*[]schemes.GetAllRo
 
 /**
 * =================================================
-* Repository Delete Master Role By ID Teritory
+* Repository Delete Mapping Role Menu User By ID Teritory
 *==================================================
  */
 
-func (r *repositoryRole) EntityDelete(input *schemes.Role) (*models.Role, schemes.SchemeDatabaseError) {
-	var role models.Role
-	role.ID = input.ID
+func (r *repositoryMappingRoleMenuUser) EntityDelete(input *schemes.MappingRoleMenuUser) (*models.MappingRoleMenuUser, schemes.SchemeDatabaseError) {
+	var mappingRoleMenuUser models.MappingRoleMenuUser
+	mappingRoleMenuUser.ID = input.ID
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
-	db := r.db.Model(&role)
+	db := r.db.Model(&mappingRoleMenuUser)
 
-	checkRoleId := db.Debug().First(&role)
+	checkId := db.Debug().First(&mappingRoleMenuUser)
 
-	if checkRoleId.RowsAffected < 1 {
+	if checkId.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusNotFound,
 			Type: "error_delete_01",
 		}
-		return &role, <-err
+		return &mappingRoleMenuUser, <-err
 	}
 
-	deleteRole := db.Debug().Delete(&role)
+	deleteRole := db.Debug().Delete(&mappingRoleMenuUser)
 
 	if deleteRole.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusForbidden,
 			Type: "error_delete_02",
 		}
-		return &role, <-err
+		return &mappingRoleMenuUser, <-err
 	}
 
 	err <- schemes.SchemeDatabaseError{}
-	return &role, <-err
+	return &mappingRoleMenuUser, <-err
 }
 
 /**
 * =================================================
-* Repository Update Master Role By ID Teritory
+* Repository Update Mapping Role Menu User By ID Teritory
 *==================================================
  */
 
-func (r *repositoryRole) EntityUpdate(input *schemes.Role) (*models.Role, schemes.SchemeDatabaseError) {
-	var role models.Role
-	role.ID = input.ID
+func (r *repositoryMappingRoleMenuUser) EntityUpdate(input *schemes.MappingRoleMenuUser) (*models.MappingRoleMenuUser, schemes.SchemeDatabaseError) {
+	var mappingRoleMenuUser models.MappingRoleMenuUser
+	mappingRoleMenuUser.ID = input.ID
 
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
-	db := r.db.Model(&role)
+	db := r.db.Model(&mappingRoleMenuUser)
 
-	checkRoleId := db.Debug().First(&role)
+	checkId := db.Debug().First(&mappingRoleMenuUser)
 
-	if checkRoleId.RowsAffected < 1 {
+	if checkId.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusNotFound,
 			Type: "error_update_01",
 		}
-		return &role, <-err
+		return &mappingRoleMenuUser, <-err
 	}
 
-	role.Name = input.Name
-	role.Type = input.Type
-	role.MerchantID = input.MerchantID
-	role.Active = input.Active
+	mappingRoleMenuUser.UserID = input.UserID
+	mappingRoleMenuUser.MappingRoleMenuID = input.MappingRoleMenuID
+	mappingRoleMenuUser.MerchantID = input.MerchantID
+	mappingRoleMenuUser.Active = input.Active
 
-	updateRole := db.Debug().Updates(&role)
+	updateRole := db.Debug().Updates(&mappingRoleMenuUser)
 
 	if updateRole.RowsAffected < 1 {
 		err <- schemes.SchemeDatabaseError{
 			Code: http.StatusForbidden,
 			Type: "error_update_02",
 		}
-		return &role, <-err
+		return &mappingRoleMenuUser, <-err
 	}
 
 	err <- schemes.SchemeDatabaseError{}
-	return &role, <-err
+	return &mappingRoleMenuUser, <-err
 }

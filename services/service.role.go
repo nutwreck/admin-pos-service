@@ -20,13 +20,20 @@ func NewServiceRole(role entities.EntityRole) *serviceRole {
 *=============================================
  */
 
-func (s *serviceRole) EntityCreate(input *schemes.Role) (*models.Role, schemes.SchemeDatabaseError) {
-	var role schemes.Role
-	role.Name = input.Name
-	role.Type = input.Type
-	role.MerchantID = input.MerchantID
+func (s *serviceRole) EntityCreate(inputs *[]schemes.Role) (*models.Role, schemes.SchemeDatabaseError) {
+	var createdRoles []schemes.Role
 
-	res, err := s.role.EntityCreate(&role)
+	// Loop through each input in the batch
+	for _, input := range *inputs {
+		var role schemes.Role
+		role.Name = input.Name
+		role.Type = input.Type
+		role.MerchantID = input.MerchantID
+
+		createdRoles = append(createdRoles, role)
+	}
+
+	res, err := s.role.EntityCreate(&createdRoles)
 	return res, err
 }
 

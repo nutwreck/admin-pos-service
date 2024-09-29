@@ -45,7 +45,7 @@ func (h *handlerRole) HandlerPing(ctx *gin.Context) {
 // @Tags		Master Role
 // @Accept		json
 // @Produce		json
-// @Param		role body schemes.RoleRequest true "Create Master Role"
+// @Param		role body []schemes.RoleRequest true "Create Master Role"
 // @Success 200 {object} schemes.Responses
 // @Success 201 {object} schemes.Responses201Example
 // @Failure 400 {object} schemes.Responses400Example
@@ -57,7 +57,8 @@ func (h *handlerRole) HandlerPing(ctx *gin.Context) {
 // @Security	ApiKeyAuth
 // @Router /api/v1/master/role/create [post]
 func (h *handlerRole) HandlerCreate(ctx *gin.Context) {
-	var body schemes.Role
+	var body []schemes.Role
+	var datas []schemes.Role
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -65,14 +66,24 @@ func (h *handlerRole) HandlerCreate(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorRole(ctx, body, "create")
-
-	if code > 0 {
-		helpers.ErrorResponse(ctx, errors)
-		return
+	for _, input := range body {
+		errors, code := ValidatorRole(ctx, input, "create")
+		if code > 0 {
+			helpers.ErrorResponse(ctx, errors)
+			return
+		}
 	}
 
-	_, error := h.role.EntityCreate(&body)
+	for _, req := range body {
+		var role schemes.Role
+		role.Name = req.Name
+		role.Type = req.Type
+		role.MerchantID = req.MerchantID
+
+		datas = append(datas, role)
+	}
+
+	_, error := h.role.EntityCreate(&datas)
 
 	if error.Type == "error_create_01" {
 		helpers.APIResponse(ctx, "Master Role name already exist", error.Code, nil)

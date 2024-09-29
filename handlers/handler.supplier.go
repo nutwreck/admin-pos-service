@@ -46,7 +46,7 @@ func (h *handleSupplier) HandlerPing(ctx *gin.Context) {
 // @Tags		Master Supplier
 // @Accept		json
 // @Produce		json
-// @Param		supplier body schemes.SupplierRequest true "Create Master Supplier"
+// @Param		supplier body []schemes.SupplierRequest true "Create Master Supplier"
 // @Success 200 {object} schemes.Responses
 // @Success 201 {object} schemes.Responses201Example
 // @Failure 400 {object} schemes.Responses400Example
@@ -58,7 +58,9 @@ func (h *handleSupplier) HandlerPing(ctx *gin.Context) {
 // @Security	ApiKeyAuth
 // @Router /api/v1/master/supplier/create [post]
 func (h *handleSupplier) HandlerCreate(ctx *gin.Context) {
-	var body schemes.Supplier
+	var body []schemes.Supplier
+	var datas []schemes.Supplier
+
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -66,14 +68,27 @@ func (h *handleSupplier) HandlerCreate(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorSupplier(ctx, body, "create")
-
-	if code > 0 {
-		helpers.ErrorResponse(ctx, errors)
-		return
+	for _, input := range body {
+		errors, code := ValidatorSupplier(ctx, input, "create")
+		if code > 0 {
+			helpers.ErrorResponse(ctx, errors)
+			return
+		}
 	}
 
-	_, error := h.supplier.EntityCreate(&body)
+	for _, req := range body {
+		var supplier schemes.Supplier
+		supplier.Name = req.Name
+		supplier.Phone = req.Phone
+		supplier.Address = req.Address
+		supplier.Description = req.Description
+		supplier.MerchantID = req.MerchantID
+		supplier.OutletID = req.OutletID
+
+		datas = append(datas, supplier)
+	}
+
+	_, error := h.supplier.EntityCreate(&datas)
 
 	if error.Type == "error_create_01" {
 		helpers.APIResponse(ctx, "Supplier phone number already taken", error.Code, nil)

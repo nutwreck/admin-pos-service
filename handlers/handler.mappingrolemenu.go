@@ -16,36 +16,36 @@ import (
 	gpc "github.com/restuwahyu13/go-playground-converter"
 )
 
-type handleUnitOfMeasurementType struct {
-	uomType entities.EntityUnitOfMeasurementType
+type handleMappingRoleMenu struct {
+	mappingRoleMenu entities.EntityMappingRoleMenu
 }
 
-func NewHandlerUnitOfMeasurementType(uomType entities.EntityUnitOfMeasurementType) *handleUnitOfMeasurementType {
-	return &handleUnitOfMeasurementType{uomType: uomType}
-}
-
-/**
-* =============================================
-* Handler Ping Status Master UOM Type Teritory
-*==============================================
- */
-
-func (h *handleUnitOfMeasurementType) HandlerPing(ctx *gin.Context) {
-	helpers.APIResponse(ctx, "Ping Master UOM Type", http.StatusOK, nil)
+func NewHandlerMappingRoleMenu(mappingRoleMenu entities.EntityMappingRoleMenu) *handleMappingRoleMenu {
+	return &handleMappingRoleMenu{mappingRoleMenu: mappingRoleMenu}
 }
 
 /**
-* ============================================
-* Handler Create New Master UOM Type Teritory
-*=============================================
+* =====================================================
+* Handler Ping Status Mapping Role Menu Teritory
+*======================================================
  */
-// CreateMasterUOMType godoc
-// @Summary		Create Master UOM Type
-// @Description	Create Master UOM Type
-// @Tags		Master UOM Type
+
+func (h *handleMappingRoleMenu) HandlerPing(ctx *gin.Context) {
+	helpers.APIResponse(ctx, "Ping Mapping Role Menu", http.StatusOK, nil)
+}
+
+/**
+* ====================================================
+* Handler Create New Mapping Role Menu Teritory
+*=====================================================
+ */
+// CreateMappingRoleMenu godoc
+// @Summary		Create Mapping Role Menu
+// @Description	Create Mapping Role Menu
+// @Tags		Mapping Role Menu
 // @Accept		json
 // @Produce		json
-// @Param		uomtype body []schemes.UnitOfMeasurementTypeRequest true "Create Master UOM Type"
+// @Param		mappingrolemenu body schemes.MappingRoleMenuRequest true "Create Mapping Role Menu"
 // @Success 200 {object} schemes.Responses
 // @Success 201 {object} schemes.Responses201Example
 // @Failure 400 {object} schemes.Responses400Example
@@ -55,10 +55,9 @@ func (h *handleUnitOfMeasurementType) HandlerPing(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/uom-type/create [post]
-func (h *handleUnitOfMeasurementType) HandlerCreate(ctx *gin.Context) {
-	var body []schemes.UnitOfMeasurementType
-	var datas []schemes.UnitOfMeasurementType
+// @Router /api/v1/master/mapping-role-menu/create [post]
+func (h *handleMappingRoleMenu) HandlerCreate(ctx *gin.Context) {
+	var body schemes.MappingRoleMenu
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -66,49 +65,40 @@ func (h *handleUnitOfMeasurementType) HandlerCreate(ctx *gin.Context) {
 		return
 	}
 
-	for _, input := range body {
-		errors, code := ValidatorUnitOfMeasurementType(ctx, input, "create")
-		if code > 0 {
-			helpers.ErrorResponse(ctx, errors)
-			return
-		}
+	errors, code := ValidatorMappingRoleMenu(ctx, body, "create")
+
+	if code > 0 {
+		helpers.ErrorResponse(ctx, errors)
+		return
 	}
 
-	for _, req := range body {
-		var uomType schemes.UnitOfMeasurementType
-		uomType.MerchantID = req.MerchantID
-		uomType.Name = req.Name
-
-		datas = append(datas, uomType)
-	}
-
-	_, error := h.uomType.EntityCreate(&datas)
+	_, error := h.mappingRoleMenu.EntityCreate(&body)
 
 	if error.Type == "error_create_01" {
-		helpers.APIResponse(ctx, "Master UOM Type name already exist", error.Code, nil)
+		helpers.APIResponse(ctx, "Mapping Role Menu name already exist", error.Code, nil)
 		return
 	}
 
 	if error.Type == "error_create_02" {
-		helpers.APIResponse(ctx, "Create new Master UOM Type failed", error.Code, nil)
+		helpers.APIResponse(ctx, "Create new Mapping Role Menu failed", error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, "Create new Master UOM Type successfully", http.StatusCreated, nil)
+	helpers.APIResponse(ctx, "Create new Mapping Role Menu successfully", http.StatusCreated, nil)
 }
 
 /**
-* =============================================
-* Handler Results All Master UOM Type Teritory
-*==============================================
+* ====================================================
+* Handler Results All Mapping Role Menu Teritory
+*=====================================================
  */
-// GetListMasterUOMType godoc
-// @Summary		Get List Master UOM Type
-// @Description	Get List Master UOM Type
-// @Tags		Master UOM Type
+// GetListMappingRoleMenu godoc
+// @Summary		Get List Mapping Role Menu
+// @Description	Get List Mapping Role Menu
+// @Tags		Mapping Role Menu
 // @Accept		json
 // @Produce		json
-// @Param sort query string false "Use ASC or DESC | Available column sort : uomtype.id, uomtype.name, uomtype.active, merchant.id, merchant.name, uomtype.created_at, default is uomtype.created_at DESC | If you don't want to use it, fill it blank"
+// @Param sort query string false "Use ASC or DESC | Available column sort : mappingrolemenu.id, mappingrolemenu.name, mappingrolemenu.active, mappingrolemenu.created_at, merchant.id, merchant.name, role.id, role.name, menu.id, menu.name, menudetail.id, menudetail.name, menudetailfunction.id, menudetailfunction.name, default is mappingrolemenu.created_at DESC | If you don't want to use it, fill it blank"
 // @Param page query int false "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0"
 // @Param perpage query int false "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0"
 // @Param merchant_id query string false "Search by merchant"
@@ -122,10 +112,10 @@ func (h *handleUnitOfMeasurementType) HandlerCreate(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/uom-type/results [get]
-func (h *handleUnitOfMeasurementType) HandlerResults(ctx *gin.Context) {
+// @Router /api/v1/master/mapping-role-menu/results [get]
+func (h *handleMappingRoleMenu) HandlerResults(ctx *gin.Context) {
 	var (
-		body          schemes.UnitOfMeasurementType
+		body          schemes.MappingRoleMenu
 		reqPage       = configs.FirstPage
 		reqPerPage    = configs.TotalPerPage
 		pages         int
@@ -174,10 +164,10 @@ func (h *handleUnitOfMeasurementType) HandlerResults(ctx *gin.Context) {
 		body.ID = idParam
 	}
 
-	res, totalData, error := h.uomType.EntityResults(&body)
+	res, totalData, error := h.mappingRoleMenu.EntityResults(&body)
 
 	if error.Type == "error_results_01" {
-		helpers.APIResponsePagination(ctx, "Master UOM Type data not found", error.Code, nil, pages, perPages, totalPages, totalDatas)
+		helpers.APIResponsePagination(ctx, "Mapping Role Menu data not found", error.Code, nil, pages, perPages, totalPages, totalDatas)
 		return
 	}
 
@@ -189,21 +179,21 @@ func (h *handleUnitOfMeasurementType) HandlerResults(ctx *gin.Context) {
 	totalPages = int(math.Ceil(totalPagesDiv))
 	totalDatas = int(totalData)
 
-	helpers.APIResponsePagination(ctx, "Master UOM Type data already to use", http.StatusOK, res, pages, perPages, totalPages, totalDatas)
+	helpers.APIResponsePagination(ctx, "Mapping Role Menu data already to use", http.StatusOK, res, pages, perPages, totalPages, totalDatas)
 }
 
 /**
-* ==============================================
-* Handler Delete Master UOM Type By ID Teritory
-*===============================================
+* =====================================================
+* Handler Delete Mapping Role Menu By ID Teritory
+*======================================================
  */
-// GetDeleteMasterUOMType godoc
-// @Summary		Get Delete Master UOM Type
-// @Description	Get Delete Master UOM Type
-// @Tags		Master UOM Type
+// GetDeleteMappingRoleMenu godoc
+// @Summary		Get Delete Mapping Role Menu
+// @Description	Get Delete Mapping Role Menu
+// @Tags		Mapping Role Menu
 // @Accept		json
 // @Produce		json
-// @Param		id query string true "Delete Master UOM Type"
+// @Param		id query string true "Delete Mapping Role Menu"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -212,47 +202,47 @@ func (h *handleUnitOfMeasurementType) HandlerResults(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/uom-type/delete [delete]
-func (h *handleUnitOfMeasurementType) HandlerDelete(ctx *gin.Context) {
-	var body schemes.UnitOfMeasurementType
+// @Router /api/v1/master/mapping-role-menu/delete [delete]
+func (h *handleMappingRoleMenu) HandlerDelete(ctx *gin.Context) {
+	var body schemes.MappingRoleMenu
 	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
-	errors, code := ValidatorUnitOfMeasurementType(ctx, body, "delete")
+	errors, code := ValidatorMappingRoleMenu(ctx, body, "delete")
 
 	if code > 0 {
 		helpers.ErrorResponse(ctx, errors)
 		return
 	}
 
-	res, error := h.uomType.EntityDelete(&body)
+	res, error := h.mappingRoleMenu.EntityDelete(&body)
 
 	if error.Type == "error_delete_01" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Master UOM Type data not found for this id %s ", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Mapping Role Menu data not found for this id %s ", id), error.Code, nil)
 		return
 	}
 
 	if error.Type == "error_delete_02" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Delete Master UOM Type data for this id %v failed", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Delete Mapping Role Menu data for this id %v failed", id), error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, fmt.Sprintf("Delete Master UOM Type data for this id %s success", id), http.StatusOK, res)
+	helpers.APIResponse(ctx, fmt.Sprintf("Delete Mapping Role Menu data for this id %s success", id), http.StatusOK, res)
 }
 
 /**
-* ==============================================
-* Handler Update Master UOM Type By ID Teritory
-*===============================================
+* =====================================================
+* Handler Update Mapping Role Menu By ID Teritory
+*======================================================
  */
-// GetUpdateMasterUOMType godoc
-// @Summary		Get Update Master UOM Type
-// @Description	Get Update Master UOM Type
-// @Tags		Master UOM Type
+// GetUpdateMappingRoleMenu godoc
+// @Summary		Get Update Mapping Role Menu
+// @Description	Get Update Mapping Role Menu
+// @Tags		Mapping Role Menu
 // @Accept		json
 // @Produce		json
-// @Param		id query string true "Update Master UOM Type"
-// @Param		uomtype body schemes.UnitOfMeasurementTypeRequest true "Update Master UOM Type"
+// @Param		id query string true "Update Mapping Role Menu"
+// @Param		mappingrolemenu body schemes.MappingRoleMenuRequest true "Update Mapping Role Menu"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -261,16 +251,20 @@ func (h *handleUnitOfMeasurementType) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/uom-type/update [put]
-func (h *handleUnitOfMeasurementType) HandlerUpdate(ctx *gin.Context) {
+// @Router /api/v1/master/mapping-role-menu/update [put]
+func (h *handleMappingRoleMenu) HandlerUpdate(ctx *gin.Context) {
 	var (
-		body      schemes.UnitOfMeasurementType
+		body      schemes.MappingRoleMenu
 		activeGet = false
 	)
 	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 	body.Name = ctx.PostForm("name")
 	body.MerchantID = ctx.PostForm("merchant_id")
+	body.RoleID = ctx.PostForm("role_id")
+	body.MenuID = ctx.PostForm("menu_id")
+	body.MenuDetailID = ctx.PostForm("menu_detail_id")
+	body.MenuDetailFunctionID = ctx.PostForm("menu_detail_function_id")
 	activeStr := ctx.PostForm("active")
 	if activeStr == "true" {
 		activeGet = constants.TRUE_VALUE
@@ -284,35 +278,35 @@ func (h *handleUnitOfMeasurementType) HandlerUpdate(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorUnitOfMeasurementType(ctx, body, "update")
+	errors, code := ValidatorMappingRoleMenu(ctx, body, "update")
 
 	if code > 0 {
 		helpers.ErrorResponse(ctx, errors)
 		return
 	}
 
-	_, error := h.uomType.EntityUpdate(&body)
+	_, error := h.mappingRoleMenu.EntityUpdate(&body)
 
 	if error.Type == "error_update_01" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Master UOM Type data not found for this id %s ", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Mapping Role Menu data not found for this id %s ", id), error.Code, nil)
 		return
 	}
 
 	if error.Type == "error_update_02" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Update Master UOM Type data failed for this id %s", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Update Mapping Role Menu data failed for this id %s", id), error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, fmt.Sprintf("Update Master UOM Type data success for this id %s", id), http.StatusOK, nil)
+	helpers.APIResponse(ctx, fmt.Sprintf("Update Mapping Role Menu data success for this id %s", id), http.StatusOK, nil)
 }
 
 /**
 * ==============================================
-*  All Validator User Input For Master UOM Type
+*  All Validator User Input For Mapping Role Menu
 *===============================================
  */
 
-func ValidatorUnitOfMeasurementType(ctx *gin.Context, input schemes.UnitOfMeasurementType, Type string) (interface{}, int) {
+func ValidatorMappingRoleMenu(ctx *gin.Context, input schemes.MappingRoleMenu, Type string) (interface{}, int) {
 	var schema gpc.ErrorConfig
 
 	if Type == "create" {
@@ -342,6 +336,46 @@ func ValidatorUnitOfMeasurementType(ctx *gin.Context, input schemes.UnitOfMeasur
 					Tag:     "uuid",
 					Field:   "MerchantID",
 					Message: "Merchant ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "RoleID",
+					Message: "Role ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "RoleID",
+					Message: "Role ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "MenuID",
+					Message: "Menu ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MenuID",
+					Message: "Menu ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "MenuDetailID",
+					Message: "Menu Detail ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MenuDetailID",
+					Message: "Menu Detail ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "MenuDetailFunctionID",
+					Message: "Menu Detail Function ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MenuDetailFunctionID",
+					Message: "Menu Detail Function ID must be uuid",
 				},
 			},
 		}
@@ -401,6 +435,46 @@ func ValidatorUnitOfMeasurementType(ctx *gin.Context, input schemes.UnitOfMeasur
 					Tag:     "uuid",
 					Field:   "MerchantID",
 					Message: "Merchant ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "RoleID",
+					Message: "Role ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "RoleID",
+					Message: "Role ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "MenuID",
+					Message: "Menu ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MenuID",
+					Message: "Menu ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "MenuDetailID",
+					Message: "Menu Detail ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MenuDetailID",
+					Message: "Menu Detail ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "MenuDetailFunctionID",
+					Message: "Menu Detail Function ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MenuDetailFunctionID",
+					Message: "Menu Detail Function ID must be uuid",
 				},
 			},
 		}

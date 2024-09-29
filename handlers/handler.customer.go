@@ -46,7 +46,7 @@ func (h *handleCustomer) HandlerPing(ctx *gin.Context) {
 // @Tags		Master Customer
 // @Accept		json
 // @Produce		json
-// @Param		customer body schemes.CustomerRequest true "Create Master Customer"
+// @Param		customer body []schemes.CustomerRequest true "Create Master Customer"
 // @Success 200 {object} schemes.Responses
 // @Success 201 {object} schemes.Responses201Example
 // @Failure 400 {object} schemes.Responses400Example
@@ -58,7 +58,8 @@ func (h *handleCustomer) HandlerPing(ctx *gin.Context) {
 // @Security	ApiKeyAuth
 // @Router /api/v1/master/customer/create [post]
 func (h *handleCustomer) HandlerCreate(ctx *gin.Context) {
-	var body schemes.Customer
+	var body []schemes.Customer
+	var datas []schemes.Customer
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -66,14 +67,27 @@ func (h *handleCustomer) HandlerCreate(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorCustomer(ctx, body, "create")
-
-	if code > 0 {
-		helpers.ErrorResponse(ctx, errors)
-		return
+	for _, input := range body {
+		errors, code := ValidatorCustomer(ctx, input, "create")
+		if code > 0 {
+			helpers.ErrorResponse(ctx, errors)
+			return
+		}
 	}
 
-	_, error := h.customer.EntityCreate(&body)
+	for _, req := range body {
+		var customer schemes.Customer
+		customer.Name = req.Name
+		customer.Phone = req.Phone
+		customer.Address = req.Address
+		customer.Description = req.Description
+		customer.MerchantID = req.MerchantID
+		customer.OutletID = req.OutletID
+
+		datas = append(datas, customer)
+	}
+
+	_, error := h.customer.EntityCreate(&datas)
 
 	if error.Type == "error_create_01" {
 		helpers.APIResponse(ctx, "Customer phone number already taken", error.Code, nil)

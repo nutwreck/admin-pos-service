@@ -6,7 +6,7 @@ import (
 )
 
 type EntitySupplier interface {
-	EntityCreate(input *schemes.Supplier) (*models.Supplier, schemes.SchemeDatabaseError)
+	EntityCreate(input *[]schemes.Supplier) (*models.Supplier, schemes.SchemeDatabaseError)
 	EntityResults(input *schemes.Supplier) (*[]schemes.GetSupplier, int64, schemes.SchemeDatabaseError)
 	EntityResult(input *schemes.Supplier) (*models.Supplier, schemes.SchemeDatabaseError)
 	EntityDelete(input *schemes.Supplier) (*models.Supplier, schemes.SchemeDatabaseError)

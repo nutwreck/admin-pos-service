@@ -26,41 +26,51 @@ func NewRepositorySupplier(db *gorm.DB) *repositorySupplier {
 *===========================================
  */
 
-func (r *repositorySupplier) EntityCreate(input *schemes.Supplier) (*models.Supplier, schemes.SchemeDatabaseError) {
-	var supplier models.Supplier
-	supplier.Name = input.Name
-	supplier.Phone = input.Phone
-	supplier.Address = input.Address
-	supplier.Description = input.Description
-	supplier.MerchantID = input.MerchantID
-	supplier.OutletID = input.OutletID
-
+func (r *repositorySupplier) EntityCreate(input *[]schemes.Supplier) (*models.Supplier, schemes.SchemeDatabaseError) {
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
-	db := r.db.Model(&supplier)
+	// Mulai transaksi
+	tx := r.db.Begin()
 
-	checkSupplierPhone := db.Debug().First(&supplier, "phone = ?", supplier.Phone)
+	for _, input := range *input {
+		var supplier models.Supplier
+		supplier.Name = input.Name
+		supplier.Phone = input.Phone
+		supplier.Address = input.Address
+		supplier.Description = input.Description
+		supplier.MerchantID = input.MerchantID
+		supplier.OutletID = input.OutletID
 
-	if checkSupplierPhone.RowsAffected > 0 {
-		err <- schemes.SchemeDatabaseError{
-			Code: http.StatusConflict,
-			Type: "error_create_01",
+		db := tx.Model(&supplier)
+
+		checkSupplierPhone := db.Debug().First(&supplier, "phone = ?", supplier.Phone)
+
+		if checkSupplierPhone.RowsAffected > 0 {
+			tx.Rollback()
+			err <- schemes.SchemeDatabaseError{
+				Code: http.StatusConflict,
+				Type: "error_create_01",
+			}
+			return nil, <-err
 		}
-		return &supplier, <-err
+
+		add := db.Debug().Create(&supplier)
+
+		if add.RowsAffected < 1 {
+			tx.Rollback()
+			err <- schemes.SchemeDatabaseError{
+				Code: http.StatusForbidden,
+				Type: "error_create_02",
+			}
+			return nil, <-err
+		}
 	}
 
-	addSupplier := db.Debug().Create(&supplier).Commit()
-
-	if addSupplier.RowsAffected < 1 {
-		err <- schemes.SchemeDatabaseError{
-			Code: http.StatusForbidden,
-			Type: "error_create_02",
-		}
-		return &supplier, <-err
-	}
+	// Commit transaksi jika semuanya berhasil
+	tx.Commit()
 
 	err <- schemes.SchemeDatabaseError{}
-	return &supplier, <-err
+	return nil, <-err
 }
 
 /**

@@ -16,36 +16,36 @@ import (
 	gpc "github.com/restuwahyu13/go-playground-converter"
 )
 
-type handleUnitOfMeasurementType struct {
-	uomType entities.EntityUnitOfMeasurementType
+type handlerMappingRoleMenuUser struct {
+	mappingRoleMenuUser entities.EntityMappingRoleMenuUser
 }
 
-func NewHandlerUnitOfMeasurementType(uomType entities.EntityUnitOfMeasurementType) *handleUnitOfMeasurementType {
-	return &handleUnitOfMeasurementType{uomType: uomType}
+func NewHandlerMappingRoleMenuUser(mappingRoleMenuUser entities.EntityMappingRoleMenuUser) *handlerMappingRoleMenuUser {
+	return &handlerMappingRoleMenuUser{mappingRoleMenuUser: mappingRoleMenuUser}
 }
 
 /**
 * =============================================
-* Handler Ping Status Master UOM Type Teritory
+* Handler Ping Status Mapping Role Menu User Teritory
 *==============================================
  */
 
-func (h *handleUnitOfMeasurementType) HandlerPing(ctx *gin.Context) {
-	helpers.APIResponse(ctx, "Ping Master UOM Type", http.StatusOK, nil)
+func (h *handlerMappingRoleMenuUser) HandlerPing(ctx *gin.Context) {
+	helpers.APIResponse(ctx, "Ping Mapping Role Menu User", http.StatusOK, nil)
 }
 
 /**
 * ============================================
-* Handler Create New Master UOM Type Teritory
+* Handler Create New Mapping Role Menu User Teritory
 *=============================================
  */
-// CreateMasterUOMType godoc
-// @Summary		Create Master UOM Type
-// @Description	Create Master UOM Type
-// @Tags		Master UOM Type
+// CreateMappingRoleMenuUser godoc
+// @Summary		Create Mapping Role Menu User
+// @Description	Create Mapping Role Menu User
+// @Tags		Mapping Role Menu User
 // @Accept		json
 // @Produce		json
-// @Param		uomtype body []schemes.UnitOfMeasurementTypeRequest true "Create Master UOM Type"
+// @Param		mappingrolemenuuser body []schemes.MappingRoleMenuUserRequest true "Create Mapping Role Menu User"
 // @Success 200 {object} schemes.Responses
 // @Success 201 {object} schemes.Responses201Example
 // @Failure 400 {object} schemes.Responses400Example
@@ -55,10 +55,10 @@ func (h *handleUnitOfMeasurementType) HandlerPing(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/uom-type/create [post]
-func (h *handleUnitOfMeasurementType) HandlerCreate(ctx *gin.Context) {
-	var body []schemes.UnitOfMeasurementType
-	var datas []schemes.UnitOfMeasurementType
+// @Router /api/v1/master/mapping-role-menu-user/create [post]
+func (h *handlerMappingRoleMenuUser) HandlerCreate(ctx *gin.Context) {
+	var body []schemes.MappingRoleMenuUser
+	var datas []schemes.MappingRoleMenuUser
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -67,7 +67,7 @@ func (h *handleUnitOfMeasurementType) HandlerCreate(ctx *gin.Context) {
 	}
 
 	for _, input := range body {
-		errors, code := ValidatorUnitOfMeasurementType(ctx, input, "create")
+		errors, code := ValidatorMappingRoleMenuUser(ctx, input, "create")
 		if code > 0 {
 			helpers.ErrorResponse(ctx, errors)
 			return
@@ -75,44 +75,44 @@ func (h *handleUnitOfMeasurementType) HandlerCreate(ctx *gin.Context) {
 	}
 
 	for _, req := range body {
-		var uomType schemes.UnitOfMeasurementType
-		uomType.MerchantID = req.MerchantID
-		uomType.Name = req.Name
+		var mappRMU schemes.MappingRoleMenuUser
+		mappRMU.UserID = req.UserID
+		mappRMU.MappingRoleMenuID = req.MappingRoleMenuID
+		mappRMU.MerchantID = req.MerchantID
 
-		datas = append(datas, uomType)
+		datas = append(datas, mappRMU)
 	}
 
-	_, error := h.uomType.EntityCreate(&datas)
+	_, error := h.mappingRoleMenuUser.EntityCreate(&datas)
 
 	if error.Type == "error_create_01" {
-		helpers.APIResponse(ctx, "Master UOM Type name already exist", error.Code, nil)
+		helpers.APIResponse(ctx, "Mapping Role Menu User name already exist", error.Code, nil)
 		return
 	}
 
 	if error.Type == "error_create_02" {
-		helpers.APIResponse(ctx, "Create new Master UOM Type failed", error.Code, nil)
+		helpers.APIResponse(ctx, "Create new Mapping Role Menu User failed", error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, "Create new Master UOM Type successfully", http.StatusCreated, nil)
+	helpers.APIResponse(ctx, "Create new Mapping Role Menu User successfully", http.StatusCreated, nil)
 }
 
 /**
 * =============================================
-* Handler Results All Master UOM Type Teritory
+* Handler Results All Mapping Role Menu User Teritory
 *==============================================
  */
-// GetListMasterUOMType godoc
-// @Summary		Get List Master UOM Type
-// @Description	Get List Master UOM Type
-// @Tags		Master UOM Type
+// GetListMappingRoleMenuUser godoc
+// @Summary		Get List Mapping Role Menu User
+// @Description	Get List Mapping Role Menu User
+// @Tags		Mapping Role Menu User
 // @Accept		json
 // @Produce		json
-// @Param sort query string false "Use ASC or DESC | Available column sort : uomtype.id, uomtype.name, uomtype.active, merchant.id, merchant.name, uomtype.created_at, default is uomtype.created_at DESC | If you don't want to use it, fill it blank"
+// @Param sort query string false "Use ASC or DESC | Available column sort : mappingrolemenuuser.id, merchant.id, merchant.name, user.id, user.name, mappingrolemenu.id, mappingrolemenu.name, mappingrolemenuuser.created_at, default is mappingrolemenuuser.created_at DESC | If you don't want to use it, fill it blank"
 // @Param page query int false "Page number for pagination, default is 1 | if you want to disable pagination, fill it with the number 0"
 // @Param perpage query int false "Items per page for pagination, default is 10 | if you want to disable pagination, fill it with the number 0"
 // @Param merchant_id query string false "Search by merchant"
-// @Param name query string false "Search by name using LIKE pattern"
 // @Param id query string false "Search by ID"
 // @Success 200 {object} schemes.ResponsesPagination
 // @Failure 400 {object} schemes.Responses400Example
@@ -122,10 +122,10 @@ func (h *handleUnitOfMeasurementType) HandlerCreate(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/uom-type/results [get]
-func (h *handleUnitOfMeasurementType) HandlerResults(ctx *gin.Context) {
+// @Router /api/v1/master/mapping-role-menu-user/results [get]
+func (h *handlerMappingRoleMenuUser) HandlerResults(ctx *gin.Context) {
 	var (
-		body          schemes.UnitOfMeasurementType
+		body          schemes.MappingRoleMenuUser
 		reqPage       = configs.FirstPage
 		reqPerPage    = configs.TotalPerPage
 		pages         int
@@ -165,19 +165,15 @@ func (h *handleUnitOfMeasurementType) HandlerResults(ctx *gin.Context) {
 	if merchantParam != constants.EMPTY_VALUE {
 		body.MerchantID = merchantParam
 	}
-	nameParam := ctx.DefaultQuery("name", constants.EMPTY_VALUE)
-	if nameParam != constants.EMPTY_VALUE {
-		body.Name = nameParam
-	}
 	idParam := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	if idParam != constants.EMPTY_VALUE {
 		body.ID = idParam
 	}
 
-	res, totalData, error := h.uomType.EntityResults(&body)
+	res, totalData, error := h.mappingRoleMenuUser.EntityResults(&body)
 
 	if error.Type == "error_results_01" {
-		helpers.APIResponsePagination(ctx, "Master UOM Type data not found", error.Code, nil, pages, perPages, totalPages, totalDatas)
+		helpers.APIResponsePagination(ctx, "Mapping Role Menu User data not found", error.Code, nil, pages, perPages, totalPages, totalDatas)
 		return
 	}
 
@@ -189,21 +185,21 @@ func (h *handleUnitOfMeasurementType) HandlerResults(ctx *gin.Context) {
 	totalPages = int(math.Ceil(totalPagesDiv))
 	totalDatas = int(totalData)
 
-	helpers.APIResponsePagination(ctx, "Master UOM Type data already to use", http.StatusOK, res, pages, perPages, totalPages, totalDatas)
+	helpers.APIResponsePagination(ctx, "Mapping Role Menu User data already to use", http.StatusOK, res, pages, perPages, totalPages, totalDatas)
 }
 
 /**
 * ==============================================
-* Handler Delete Master UOM Type By ID Teritory
+* Handler Delete Mapping Role Menu User By ID Teritory
 *===============================================
  */
-// GetDeleteMasterUOMType godoc
-// @Summary		Get Delete Master UOM Type
-// @Description	Get Delete Master UOM Type
-// @Tags		Master UOM Type
+// GetDeleteMappingRoleMenuUser godoc
+// @Summary		Get Delete Mapping Role Menu User
+// @Description	Get Delete Mapping Role Menu User
+// @Tags		Mapping Role Menu User
 // @Accept		json
 // @Produce		json
-// @Param		id query string true "Delete Master UOM Type"
+// @Param		id query string true "Delete Mapping Role Menu User"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -212,47 +208,47 @@ func (h *handleUnitOfMeasurementType) HandlerResults(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/uom-type/delete [delete]
-func (h *handleUnitOfMeasurementType) HandlerDelete(ctx *gin.Context) {
-	var body schemes.UnitOfMeasurementType
+// @Router /api/v1/master/mapping-role-menu-user/delete [delete]
+func (h *handlerMappingRoleMenuUser) HandlerDelete(ctx *gin.Context) {
+	var body schemes.MappingRoleMenuUser
 	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
 
-	errors, code := ValidatorUnitOfMeasurementType(ctx, body, "delete")
+	errors, code := ValidatorMappingRoleMenuUser(ctx, body, "delete")
 
 	if code > 0 {
 		helpers.ErrorResponse(ctx, errors)
 		return
 	}
 
-	res, error := h.uomType.EntityDelete(&body)
+	res, error := h.mappingRoleMenuUser.EntityDelete(&body)
 
 	if error.Type == "error_delete_01" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Master UOM Type data not found for this id %s ", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Mapping Role Menu User data not found for this id %s ", id), error.Code, nil)
 		return
 	}
 
 	if error.Type == "error_delete_02" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Delete Master UOM Type data for this id %v failed", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Delete Mapping Role Menu User data for this id %v failed", id), error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, fmt.Sprintf("Delete Master UOM Type data for this id %s success", id), http.StatusOK, res)
+	helpers.APIResponse(ctx, fmt.Sprintf("Delete Mapping Role Menu User data for this id %s success", id), http.StatusOK, res)
 }
 
 /**
 * ==============================================
-* Handler Update Master UOM Type By ID Teritory
+* Handler Update Mapping Role Menu User By ID Teritory
 *===============================================
  */
-// GetUpdateMasterUOMType godoc
-// @Summary		Get Update Master UOM Type
-// @Description	Get Update Master UOM Type
-// @Tags		Master UOM Type
+// GetUpdateMappingRoleMenuUser godoc
+// @Summary		Get Update Mapping Role Menu User
+// @Description	Get Update Mapping Role Menu User
+// @Tags		Mapping Role Menu User
 // @Accept		json
 // @Produce		json
-// @Param		id query string true "Update Master UOM Type"
-// @Param		uomtype body schemes.UnitOfMeasurementTypeRequest true "Update Master UOM Type"
+// @Param		id query string true "Update Mapping Role Menu User"
+// @Param		mappingrolemenuuser body schemes.MappingRoleMenuUserRequest true "Update Mapping Role Menu User"
 // @Success 200 {object} schemes.Responses
 // @Failure 400 {object} schemes.Responses400Example
 // @Failure 401 {object} schemes.Responses401Example
@@ -261,15 +257,16 @@ func (h *handleUnitOfMeasurementType) HandlerDelete(ctx *gin.Context) {
 // @Failure 409 {object} schemes.Responses409Example
 // @Failure 500 {object} schemes.Responses500Example
 // @Security	ApiKeyAuth
-// @Router /api/v1/master/uom-type/update [put]
-func (h *handleUnitOfMeasurementType) HandlerUpdate(ctx *gin.Context) {
+// @Router /api/v1/master/mapping-role-menu-user/update [put]
+func (h *handlerMappingRoleMenuUser) HandlerUpdate(ctx *gin.Context) {
 	var (
-		body      schemes.UnitOfMeasurementType
+		body      schemes.MappingRoleMenuUser
 		activeGet = false
 	)
 	id := ctx.DefaultQuery("id", constants.EMPTY_VALUE)
 	body.ID = id
-	body.Name = ctx.PostForm("name")
+	body.UserID = ctx.PostForm("user_id")
+	body.MappingRoleMenuID = ctx.PostForm("mapping_role_menu_id")
 	body.MerchantID = ctx.PostForm("merchant_id")
 	activeStr := ctx.PostForm("active")
 	if activeStr == "true" {
@@ -284,55 +281,40 @@ func (h *handleUnitOfMeasurementType) HandlerUpdate(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorUnitOfMeasurementType(ctx, body, "update")
+	errors, code := ValidatorMappingRoleMenuUser(ctx, body, "update")
 
 	if code > 0 {
 		helpers.ErrorResponse(ctx, errors)
 		return
 	}
 
-	_, error := h.uomType.EntityUpdate(&body)
+	_, error := h.mappingRoleMenuUser.EntityUpdate(&body)
 
 	if error.Type == "error_update_01" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Master UOM Type data not found for this id %s ", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Mapping Role Menu User data not found for this id %s ", id), error.Code, nil)
 		return
 	}
 
 	if error.Type == "error_update_02" {
-		helpers.APIResponse(ctx, fmt.Sprintf("Update Master UOM Type data failed for this id %s", id), error.Code, nil)
+		helpers.APIResponse(ctx, fmt.Sprintf("Update Mapping Role Menu User data failed for this id %s", id), error.Code, nil)
 		return
 	}
 
-	helpers.APIResponse(ctx, fmt.Sprintf("Update Master UOM Type data success for this id %s", id), http.StatusOK, nil)
+	helpers.APIResponse(ctx, fmt.Sprintf("Update Mapping Role Menu User data success for this id %s", id), http.StatusOK, nil)
 }
 
 /**
 * ==============================================
-*  All Validator User Input For Master UOM Type
+*  All Validator User Input For Mapping Role Menu User
 *===============================================
  */
 
-func ValidatorUnitOfMeasurementType(ctx *gin.Context, input schemes.UnitOfMeasurementType, Type string) (interface{}, int) {
+func ValidatorMappingRoleMenuUser(ctx *gin.Context, input schemes.MappingRoleMenuUser, Type string) (interface{}, int) {
 	var schema gpc.ErrorConfig
 
 	if Type == "create" {
 		schema = gpc.ErrorConfig{
 			Options: []gpc.ErrorMetaConfig{
-				{
-					Tag:     "required",
-					Field:   "Name",
-					Message: "Name is required on body",
-				},
-				{
-					Tag:     "lowercase",
-					Field:   "Name",
-					Message: "Name must be lowercase",
-				},
-				{
-					Tag:     "max",
-					Field:   "Name",
-					Message: "Name maximal 200 character",
-				},
 				{
 					Tag:     "required",
 					Field:   "MerchantID",
@@ -342,6 +324,26 @@ func ValidatorUnitOfMeasurementType(ctx *gin.Context, input schemes.UnitOfMeasur
 					Tag:     "uuid",
 					Field:   "MerchantID",
 					Message: "Merchant ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "UserID",
+					Message: "User ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "UserID",
+					Message: "User ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "MappingRoleMenuID",
+					Message: "Mapping Role Menu ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MappingRoleMenuID",
+					Message: "Mapping Role Menu ID must be uuid",
 				},
 			},
 		}
@@ -379,21 +381,6 @@ func ValidatorUnitOfMeasurementType(ctx *gin.Context, input schemes.UnitOfMeasur
 				},
 				{
 					Tag:     "required",
-					Field:   "Name",
-					Message: "Name is required on body",
-				},
-				{
-					Tag:     "lowercase",
-					Field:   "Name",
-					Message: "Name must be lowercase",
-				},
-				{
-					Tag:     "max",
-					Field:   "Name",
-					Message: "Name maximal 200 character",
-				},
-				{
-					Tag:     "required",
 					Field:   "MerchantID",
 					Message: "Merchant ID is required on param",
 				},
@@ -401,6 +388,26 @@ func ValidatorUnitOfMeasurementType(ctx *gin.Context, input schemes.UnitOfMeasur
 					Tag:     "uuid",
 					Field:   "MerchantID",
 					Message: "Merchant ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "UserID",
+					Message: "User ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "UserID",
+					Message: "User ID must be uuid",
+				},
+				{
+					Tag:     "required",
+					Field:   "MappingRoleMenuID",
+					Message: "Mapping Role Menu ID is required on param",
+				},
+				{
+					Tag:     "uuid",
+					Field:   "MappingRoleMenuID",
+					Message: "Mapping Role Menu ID must be uuid",
 				},
 			},
 		}

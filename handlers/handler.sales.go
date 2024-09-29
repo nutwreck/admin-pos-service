@@ -46,7 +46,7 @@ func (h *handleSales) HandlerPing(ctx *gin.Context) {
 // @Tags		Master Sales
 // @Accept		json
 // @Produce		json
-// @Param		sales body schemes.SalesRequest true "Create Master Sales"
+// @Param		sales body []schemes.SalesRequest true "Create Master Sales"
 // @Success 200 {object} schemes.Responses
 // @Success 201 {object} schemes.Responses201Example
 // @Failure 400 {object} schemes.Responses400Example
@@ -58,7 +58,8 @@ func (h *handleSales) HandlerPing(ctx *gin.Context) {
 // @Security	ApiKeyAuth
 // @Router /api/v1/master/sales/create [post]
 func (h *handleSales) HandlerCreate(ctx *gin.Context) {
-	var body schemes.Sales
+	var body []schemes.Sales
+	var datas []schemes.Sales
 	err := ctx.ShouldBindJSON(&body)
 
 	if err != nil {
@@ -66,14 +67,27 @@ func (h *handleSales) HandlerCreate(ctx *gin.Context) {
 		return
 	}
 
-	errors, code := ValidatorSales(ctx, body, "create")
-
-	if code > 0 {
-		helpers.ErrorResponse(ctx, errors)
-		return
+	for _, input := range body {
+		errors, code := ValidatorSales(ctx, input, "create")
+		if code > 0 {
+			helpers.ErrorResponse(ctx, errors)
+			return
+		}
 	}
 
-	_, error := h.sales.EntityCreate(&body)
+	for _, req := range body {
+		var sales schemes.Sales
+		sales.Name = req.Name
+		sales.Phone = req.Phone
+		sales.Address = req.Address
+		sales.Description = req.Description
+		sales.MerchantID = req.MerchantID
+		sales.OutletID = req.OutletID
+
+		datas = append(datas, sales)
+	}
+
+	_, error := h.sales.EntityCreate(&datas)
 
 	if error.Type == "error_create_01" {
 		helpers.APIResponse(ctx, "Sales phone number already taken", error.Code, nil)

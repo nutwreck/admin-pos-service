@@ -20,15 +20,22 @@ func NewServiceUnitOfMeasurement(uom entities.EntityUnitOfMeasurement) *serviceU
 *=============================================
  */
 
-func (s *serviceUnitOfMeasurement) EntityCreate(input *schemes.UnitOfMeasurement) (*models.UnitOfMeasurement, schemes.SchemeDatabaseError) {
-	var uom schemes.UnitOfMeasurement
-	uom.MerchantID = input.MerchantID
-	uom.UOMTypeID = input.UOMTypeID
-	uom.Symbol = input.Symbol
-	uom.ConversionFactor = input.ConversionFactor
-	uom.Name = input.Name
+func (s *serviceUnitOfMeasurement) EntityCreate(inputs *[]schemes.UnitOfMeasurement) (*models.UnitOfMeasurement, schemes.SchemeDatabaseError) {
+	var createdUOM []schemes.UnitOfMeasurement
 
-	res, err := s.uom.EntityCreate(&uom)
+	// Loop through each input in the batch
+	for _, input := range *inputs {
+		var uom schemes.UnitOfMeasurement
+		uom.MerchantID = input.MerchantID
+		uom.UOMTypeID = input.UOMTypeID
+		uom.Symbol = input.Symbol
+		uom.ConversionFactor = input.ConversionFactor
+		uom.Name = input.Name
+
+		createdUOM = append(createdUOM, uom)
+	}
+
+	res, err := s.uom.EntityCreate(&createdUOM)
 	return res, err
 }
 

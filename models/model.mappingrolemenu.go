@@ -12,6 +12,9 @@ import (
 
 type MappingRoleMenu struct {
 	ID                   string             `json:"id" gorm:"primary_key"`
+	Name                 string             `json:"name" gorm:"type:varchar; not null"`
+	Merchant             Merchant           `json:"merchant" gorm:"foreignkey:MerchantID"`
+	MerchantID           string             `json:"merchant_id" gorm:"type:varchar; not null"`
 	Role                 Role               `json:"role" gorm:"foreignkey:RoleID"`
 	RoleID               string             `json:"role_id" gorm:"type:varchar;  not null"`
 	Menu                 Menu               `json:"menu" gorm:"foreignkey:MenuID"`
@@ -23,6 +26,10 @@ type MappingRoleMenu struct {
 	Active               *bool              `json:"active" gorm:"type:boolean; not null"`
 	CreatedAt            time.Time          `json:"created_at"`
 	UpdatedAt            time.Time          `json:"updated_at"`
+}
+
+func (MappingRoleMenu) TableName() string {
+	return "master.mapping_role_menus"
 }
 
 func (m *MappingRoleMenu) BeforeCreate(db *gorm.DB) error {

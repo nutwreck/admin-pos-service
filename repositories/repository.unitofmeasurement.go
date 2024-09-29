@@ -25,40 +25,50 @@ func NewRepositoryUnitOfMeasurement(db *gorm.DB) *repositoryUnitOfMeasurement {
 *================================================
  */
 
-func (r *repositoryUnitOfMeasurement) EntityCreate(input *schemes.UnitOfMeasurement) (*models.UnitOfMeasurement, schemes.SchemeDatabaseError) {
-	var uom models.UnitOfMeasurement
-	uom.MerchantID = input.MerchantID
-	uom.UOMTypeID = input.UOMTypeID
-	uom.Symbol = input.Symbol
-	uom.ConversionFactor = input.ConversionFactor
-	uom.Name = input.Name
-
+func (r *repositoryUnitOfMeasurement) EntityCreate(input *[]schemes.UnitOfMeasurement) (*models.UnitOfMeasurement, schemes.SchemeDatabaseError) {
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
-	db := r.db.Model(&uom)
+	// Mulai transaksi
+	tx := r.db.Begin()
 
-	checkData := db.Debug().Where("merchant_id = ? AND uom_type_id = ? AND name = ?", uom.MerchantID, uom.UOMTypeID, uom.Name).First(&uom)
+	for _, input := range *input {
+		var uom models.UnitOfMeasurement
+		uom.MerchantID = input.MerchantID
+		uom.UOMTypeID = input.UOMTypeID
+		uom.Symbol = input.Symbol
+		uom.ConversionFactor = input.ConversionFactor
+		uom.Name = input.Name
 
-	if checkData.RowsAffected > 0 {
-		err <- schemes.SchemeDatabaseError{
-			Code: http.StatusConflict,
-			Type: "error_create_01",
+		db := tx.Model(&uom)
+
+		checkData := db.Debug().Where("merchant_id = ? AND uom_type_id = ? AND name = ?", uom.MerchantID, uom.UOMTypeID, uom.Name).First(&uom)
+
+		if checkData.RowsAffected > 0 {
+			tx.Rollback()
+			err <- schemes.SchemeDatabaseError{
+				Code: http.StatusConflict,
+				Type: "error_create_01",
+			}
+			return nil, <-err
 		}
-		return &uom, <-err
+
+		add := db.Debug().Create(&uom)
+
+		if add.RowsAffected < 1 {
+			tx.Rollback()
+			err <- schemes.SchemeDatabaseError{
+				Code: http.StatusForbidden,
+				Type: "error_create_02",
+			}
+			return nil, <-err
+		}
 	}
 
-	addData := db.Debug().Create(&uom).Commit()
-
-	if addData.RowsAffected < 1 {
-		err <- schemes.SchemeDatabaseError{
-			Code: http.StatusForbidden,
-			Type: "error_create_02",
-		}
-		return &uom, <-err
-	}
+	// Commit transaksi jika semuanya berhasil
+	tx.Commit()
 
 	err <- schemes.SchemeDatabaseError{}
-	return &uom, <-err
+	return nil, <-err
 }
 
 /**

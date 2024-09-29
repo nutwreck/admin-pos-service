@@ -25,37 +25,47 @@ func NewRepositoryUnitOfMeasurementType(db *gorm.DB) *repositoryUnitOfMeasuremen
 *================================================
  */
 
-func (r *repositoryUnitOfMeasurementType) EntityCreate(input *schemes.UnitOfMeasurementType) (*models.UnitOfMeasurementType, schemes.SchemeDatabaseError) {
-	var uomType models.UnitOfMeasurementType
-	uomType.MerchantID = input.MerchantID
-	uomType.Name = input.Name
-
+func (r *repositoryUnitOfMeasurementType) EntityCreate(input *[]schemes.UnitOfMeasurementType) (*models.UnitOfMeasurementType, schemes.SchemeDatabaseError) {
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
-	db := r.db.Model(&uomType)
+	// Mulai transaksi
+	tx := r.db.Begin()
 
-	checkData := db.Debug().Where("merchant_id = ? AND name = ?", uomType.MerchantID, uomType.Name).First(&uomType)
+	for _, input := range *input {
+		var uomType models.UnitOfMeasurementType
+		uomType.MerchantID = input.MerchantID
+		uomType.Name = input.Name
 
-	if checkData.RowsAffected > 0 {
-		err <- schemes.SchemeDatabaseError{
-			Code: http.StatusConflict,
-			Type: "error_create_01",
+		db := tx.Model(&uomType)
+
+		checkData := db.Debug().Where("merchant_id = ? AND name = ?", uomType.MerchantID, uomType.Name).First(&uomType)
+
+		if checkData.RowsAffected > 0 {
+			tx.Rollback()
+			err <- schemes.SchemeDatabaseError{
+				Code: http.StatusConflict,
+				Type: "error_create_01",
+			}
+			return nil, <-err
 		}
-		return &uomType, <-err
+
+		add := db.Debug().Create(&uomType)
+
+		if add.RowsAffected < 1 {
+			tx.Rollback()
+			err <- schemes.SchemeDatabaseError{
+				Code: http.StatusForbidden,
+				Type: "error_create_02",
+			}
+			return nil, <-err
+		}
 	}
 
-	addData := db.Debug().Create(&uomType).Commit()
-
-	if addData.RowsAffected < 1 {
-		err <- schemes.SchemeDatabaseError{
-			Code: http.StatusForbidden,
-			Type: "error_create_02",
-		}
-		return &uomType, <-err
-	}
+	// Commit transaksi jika semuanya berhasil
+	tx.Commit()
 
 	err <- schemes.SchemeDatabaseError{}
-	return &uomType, <-err
+	return nil, <-err
 }
 
 /**

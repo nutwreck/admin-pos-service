@@ -26,41 +26,51 @@ func NewRepositorySales(db *gorm.DB) *repositorySales {
 *===========================================
  */
 
-func (r *repositorySales) EntityCreate(input *schemes.Sales) (*models.Sales, schemes.SchemeDatabaseError) {
-	var sales models.Sales
-	sales.Name = input.Name
-	sales.Phone = input.Phone
-	sales.Address = input.Address
-	sales.Description = input.Description
-	sales.MerchantID = input.MerchantID
-	sales.OutletID = input.OutletID
-
+func (r *repositorySales) EntityCreate(input *[]schemes.Sales) (*models.Sales, schemes.SchemeDatabaseError) {
 	err := make(chan schemes.SchemeDatabaseError, 1)
 
-	db := r.db.Model(&sales)
+	// Mulai transaksi
+	tx := r.db.Begin()
 
-	checkPhone := db.Debug().First(&sales, "phone = ?", sales.Phone)
+	for _, input := range *input {
+		var sales models.Sales
+		sales.Name = input.Name
+		sales.Phone = input.Phone
+		sales.Address = input.Address
+		sales.Description = input.Description
+		sales.MerchantID = input.MerchantID
+		sales.OutletID = input.OutletID
 
-	if checkPhone.RowsAffected > 0 {
-		err <- schemes.SchemeDatabaseError{
-			Code: http.StatusConflict,
-			Type: "error_create_01",
+		db := tx.Model(&sales)
+
+		checkPhone := db.Debug().First(&sales, "phone = ?", sales.Phone)
+
+		if checkPhone.RowsAffected > 0 {
+			tx.Rollback()
+			err <- schemes.SchemeDatabaseError{
+				Code: http.StatusConflict,
+				Type: "error_create_01",
+			}
+			return nil, <-err
 		}
-		return &sales, <-err
+
+		add := db.Debug().Create(&sales)
+
+		if add.RowsAffected < 1 {
+			tx.Rollback()
+			err <- schemes.SchemeDatabaseError{
+				Code: http.StatusForbidden,
+				Type: "error_create_02",
+			}
+			return nil, <-err
+		}
 	}
 
-	addData := db.Debug().Create(&sales).Commit()
-
-	if addData.RowsAffected < 1 {
-		err <- schemes.SchemeDatabaseError{
-			Code: http.StatusForbidden,
-			Type: "error_create_02",
-		}
-		return &sales, <-err
-	}
+	// Commit transaksi jika semuanya berhasil
+	tx.Commit()
 
 	err <- schemes.SchemeDatabaseError{}
-	return &sales, <-err
+	return nil, <-err
 }
 
 /**
